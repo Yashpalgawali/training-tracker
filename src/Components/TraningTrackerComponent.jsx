@@ -1,0 +1,41 @@
+import HeaderComponent from './HeaderComponent';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
+import DesignationComponent from './Designation/DesignationComponent';
+import ViewDesignation from './Designation/ViewDesignation';
+import CompanyComponent from './Company/CompanyComponent';
+import ViewCompanyComponent from './Company/ViewCompaniesComponent';
+import DepartmentComponent from './Department/DepartmentComponent';
+import ViewDepartmentComponent from './Department/ViewDepartmentComponent';
+import { ToastContainer } from 'react-toastify';
+
+export default function TrainingTrackerComponent(){
+    return(
+       <BrowserRouter>
+        <HeaderComponent />
+          <ToastContainer position="top-center" autoClose={2000} />
+            <Routes>
+                <Route path='/company/:id' element={ <CompanyComponent /> }>
+
+                </Route>
+                <Route path='/companies' element={ <ViewCompanyComponent /> }>
+
+                </Route>
+
+                <Route path='/designation/:id' element={ <DesignationComponent /> }>
+
+                </Route>
+                <Route path='/viewdesignations' element={ <ViewDesignation /> }>
+
+                </Route>
+
+                 <Route path='/department/:id' element={ <DepartmentComponent /> }>
+
+                </Route>
+                <Route path='/viewdepartments' element={ <ViewDepartmentComponent /> }>
+
+                </Route>
+                
+            </Routes>
+       </BrowserRouter>
+    )
+}
