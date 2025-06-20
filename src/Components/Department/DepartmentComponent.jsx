@@ -4,6 +4,7 @@ import { getDepartmentById, saveDepartment, updateDepartment } from "../api/Depa
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { retrieveAllCompanies, retrieveCompanyById } from "../api/CompanyApiService"
 import { Button } from "@mui/material"
+import { showToast } from "../SharedComponent/showToast"
 
 export default function DepartmentComponent() {
     
@@ -38,9 +39,9 @@ export default function DepartmentComponent() {
         }
 
      } 
-    if(id) {
-        retrieveDepartmentById()
-    }
+        if(id) {
+            retrieveDepartmentById()
+        }
     }, [id])
     
      
@@ -69,10 +70,10 @@ export default function DepartmentComponent() {
             }
             if(id == -1) {
                 saveDepartment(dept).then((response)=> {
-                    sessionStorage.setItem('response',response.data.statusMsg)
+                    showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewdepartments`)
                 }).catch((error) => {
-                    sessionStorage.setItem('reserr',error.response.data.dept_name)
+                    showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewdepartments`)
                 })
             }
@@ -82,10 +83,10 @@ export default function DepartmentComponent() {
                     }
                     
                     updateDepartment(dept).then((response)=> {
-                        sessionStorage.setItem('response',response.data.responseMessage)
+                        showToast(response?.data?.responseMessage,"success")
                         navigate(`/viewdepartments`)
                     }).catch((error) => {
-                        sessionStorage.setItem('reserr',error.response.data.dept_name)
+                        showToast(error?.data?.errorMessage,"error")
                         navigate(`/viewdepartments`)
                     })
                 }            

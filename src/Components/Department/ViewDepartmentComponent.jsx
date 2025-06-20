@@ -6,6 +6,8 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import { Button, Tooltip } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
+
 
 export default function ViewDepartmentComponent() {
 
@@ -60,6 +62,7 @@ export default function ViewDepartmentComponent() {
 
     return(
         <div className="container">
+            
             <h2>View Departments 
                 <Button variant="contained" color="primary" style={ { float : 'right'} }onClick={addNewDepartment}>Add Department</Button>
             </h2>
@@ -88,7 +91,7 @@ export default function ViewDepartmentComponent() {
                                     <td>{dept.dept_name}</td>
                                     <td>{dept.company?.comp_name}</td>
                                     <td>
-                                        <Button variant="contained" color="success" onClick={()=>updateDepartmentById(dept.dept_id)}> <Tooltip title={`Update Department ${dept.dept_name}`} arrow placement="left"> &nbsp;UPDATE</Tooltip></Button>                                       
+                                        <Button variant="contained" color="success" onClick={()=>updateDepartmentById(dept.dept_id)}> <Tooltip title={`Update Department ${dept.dept_name}`} arrow placement="left"><EditIcon /> &nbsp;UPDATE</Tooltip></Button>                                       
                                     </td>
                                 </tr>
                             )

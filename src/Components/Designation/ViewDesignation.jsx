@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom"
 import { getAllDesignations }  from "../api/DesignationApiService"
 
 import $ from 'jquery'; // jQuery is required for DataTables to work
- 
-import DataTable from 'datatables.net-react'; // DataTables React integration
-import DT from 'datatables.net';
+
+import EditIcon from '@mui/icons-material/Edit';
+
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import { Button, Tooltip } from "@mui/material"
@@ -68,25 +68,7 @@ export default function ViewDesignation() {
             </h2>
             {successMessage && <div className="text-center alert alert-success"><strong> {successMessage} </strong></div> }
             {errorMessage && <div className="text-center alert alert-warning"> <strong>{errorMessage} </strong></div> }
-        {/* <DataTable  
-            data={desiglist}
-            columns={[
-                {title : 'Sr' , data: 'comp_id'},
-                {title : 'Designation Name' , data: 'comp_name'},
-                {title : 'Action' , data: 'comp_id',render : function(data,type ,row){
-                    return `<Button type="submit" variant="contained" color="primary" className="m-3" data-id="${row.id}"><EditSquareIcon /> Update</Button>`
-                    // return `<button className="btn btn-primary" data-id="${row.id}" >Update</button>`
-                } } 
-            ]}
-            options={{
-                searching: true,
-                paging: true,
-                ordering: true,
-                info: true,
-                responsive: true
-            }}
-        /> */}
-
+         
             <table ref={tableRef} className="table table-striped table-hover display">
                 <thead>
                     <tr >
@@ -108,7 +90,7 @@ export default function ViewDesignation() {
                             <td>{index+1}</td>
                             <td>{desig.desig_name}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateDesignation(desig.desig_id)} > <Tooltip arrow placement="left" title={`Update ${desig.desig_name}`}>  &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateDesignation(desig.desig_id)} > <Tooltip arrow placement="left" title={`Update ${desig.desig_name}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

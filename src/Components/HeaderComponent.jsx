@@ -29,6 +29,11 @@ export default function HeaderComponent(){
                              <Link className="nav-link" to="/viewdepartments">View Departments</Link>
                         }
                         </li>
+                         <li className="nav-item fs-5">
+                        {
+                             <Link className="nav-link" to="/viewtraining">View Trainings</Link>
+                        }
+                        </li>
                         </ul>
                     </div>
                     <ul className="navbar-nav">

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { getDesignationById, saveDesignation, updateDesignation } from "../api/DesignationApiService"
 import { Button } from "@mui/material"
+import { showToast } from "../SharedComponent/showToast"
 
 export default function DesignationComponent() {
     const [btnValue,setBtnValue] = useState('Add Designtion')
@@ -50,21 +51,21 @@ export default function DesignationComponent() {
         if(id != -1) {
            
             updateDesignation(designation).then((response) => {
-                sessionStorage.setItem('response',designation.desig_name+' is updated successfully')
+                showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewdesignations`)
             })
             .catch((error) => {
-                sessionStorage.setItem('reserr',designation.desig_name+' is not updated')
+                showToast(error?.data?.errorMessage,"error")
                 navigate(`/viewdesignations`)
             })
         }
         else {
             saveDesignation(designation).then((response) => {
-                sessionStorage.setItem('response',designation.desig_name+' is saved successfully')
+                showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewdesignations`)
             })
             .catch((error) => {
-                sessionStorage.setItem('reserr',designation.desig_name+' is not saved')
+                showToast(error?.data?.errorMessage,"error")
                 navigate(`/viewdesignations`)
             })
         }

@@ -7,12 +7,14 @@ import ViewCompanyComponent from './Company/ViewCompaniesComponent';
 import DepartmentComponent from './Department/DepartmentComponent';
 import ViewDepartmentComponent from './Department/ViewDepartmentComponent';
 import { ToastContainer } from 'react-toastify';
+import TrainingComponent from './Training/TrainingComponent';
+import ViewTrainingComponent from './Training/ViewTrainingComponent';
 
 export default function TrainingTrackerComponent(){
     return(
        <BrowserRouter>
         <HeaderComponent />
-          <ToastContainer position="top-center" autoClose={2000} />
+          <ToastContainer position="top-center" autoClose={2500} />
             <Routes>
                 <Route path='/company/:id' element={ <CompanyComponent /> }>
 
@@ -31,9 +33,11 @@ export default function TrainingTrackerComponent(){
                  <Route path='/department/:id' element={ <DepartmentComponent /> }>
 
                 </Route>
-                <Route path='/viewdepartments' element={ <ViewDepartmentComponent /> }>
+                <Route path='/viewdepartments' element={ <ViewDepartmentComponent /> }></Route>
+                
+                <Route path='/training/:id' element={ <TrainingComponent /> }> </Route>
 
-                </Route>
+                <Route path='/viewtraining' element={ <ViewTrainingComponent /> }> </Route>
                 
             </Routes>
        </BrowserRouter>

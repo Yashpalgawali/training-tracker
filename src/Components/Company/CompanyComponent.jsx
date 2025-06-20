@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
 import { ErrorMessage, Field, Formik,Form } from "formik"
 import { Button } from "@mui/material"
+import { showToast } from "../SharedComponent/showToast"
 
 export default function CompanyComponent () {
 
@@ -17,15 +18,15 @@ export default function CompanyComponent () {
         const getCompanyById = async() => {
              
             if(id != -1) {
-            setBtnValue('Update Company')         
-            retrieveCompanyById(id).then((response) => {
-                setCompName(response.data.comp_name)
-                setCompId(response.data.company_id)
-            })
-            .catch((error)=> { 
-                sessionStorage.setItem('reserr',error.response.data.errorMessage)
-                navigate(`/companies`)
-            })
+                setBtnValue('Update Company')         
+                retrieveCompanyById(id).then((response) => {
+                    setCompName(response.data.comp_name)
+                    setCompId(response.data.company_id)
+                })
+                .catch((error)=> { 
+                    sessionStorage.setItem('reserr',error.response.data.errorMessage)
+                    navigate(`/companies`)
+                })
         }
         };
 
@@ -48,23 +49,22 @@ export default function CompanyComponent () {
             if(id == -1) {
                 saveCompany(company)
                     .then((response)=> {
-                        sessionStorage.setItem('response',response.data.statusMsg)
+                        showToast(response?.data?.responseMessage,"success")
                         navigate('/companies')
                         })
                     .catch((error) => {   
-                        sessionStorage.setItem('reserr',error.response.data.comp_name)
+                        showToast(error?.data?.errorMessage,"error")
                         navigate('/companies')
                     }) 
             }
             else {
                 updateCompany(company)
                     .then((response)=> {
-                        console.log(response)
-                        sessionStorage.setItem('response',response.data.responseMessage)
+                        showToast(response?.data?.responseMessage,"success")
                         navigate('/companies')
                     })
                     .catch((error) => {
-                        sessionStorage.setItem('reserr',error.response.data.comp_name)
+                        showToast(error?.data?.errorMessage,"error")
                         navigate('/companies')
                     })
             }
@@ -76,7 +76,6 @@ export default function CompanyComponent () {
         if(values.comp_name.length<=3) {
             errors.comp_name = 'Please Enter at least 2 Characters'
         }
-
         return errors
    }
 

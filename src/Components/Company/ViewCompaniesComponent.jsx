@@ -6,6 +6,7 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import { Button, Tooltip } from "@mui/material"
+import EditIcon from '@mui/icons-material/Edit';
 
 
 export default function ViewCompanyComponent() {
@@ -104,7 +105,7 @@ export default function ViewCompanyComponent() {
                             <td>{index+1}</td>
                             <td>{comp.comp_name}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompany(comp.company_id)} > <Tooltip title="Update Company" placement="left" arrow>&nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompany(comp.company_id)} > <Tooltip title="Update Company" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))
