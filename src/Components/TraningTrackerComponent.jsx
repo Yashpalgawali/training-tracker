@@ -9,6 +9,7 @@ import ViewDepartmentComponent from './Department/ViewDepartmentComponent';
 import { ToastContainer } from 'react-toastify';
 import TrainingComponent from './Training/TrainingComponent';
 import ViewTrainingComponent from './Training/ViewTrainingComponent';
+import EmployeeComponent from './Employee/EmployeeComponent';
 
 export default function TrainingTrackerComponent(){
     return(
@@ -16,28 +17,23 @@ export default function TrainingTrackerComponent(){
         <HeaderComponent />
           <ToastContainer position="top-center" autoClose={2500} />
             <Routes>
-                <Route path='/company/:id' element={ <CompanyComponent /> }>
+                <Route path='/company/:id' element={ <CompanyComponent /> }> </Route>
+                
+                <Route path='/companies' element={ <ViewCompanyComponent /> }> </Route>
 
-                </Route>
-                <Route path='/companies' element={ <ViewCompanyComponent /> }>
+                <Route path='/designation/:id' element={ <DesignationComponent /> }> </Route>
 
-                </Route>
+                <Route path='/viewdesignations' element={ <ViewDesignation /> }> </Route>
 
-                <Route path='/designation/:id' element={ <DesignationComponent /> }>
+                <Route path='/department/:id' element={ <DepartmentComponent /> }> </Route>
 
-                </Route>
-                <Route path='/viewdesignations' element={ <ViewDesignation /> }>
-
-                </Route>
-
-                 <Route path='/department/:id' element={ <DepartmentComponent /> }>
-
-                </Route>
                 <Route path='/viewdepartments' element={ <ViewDepartmentComponent /> }></Route>
                 
                 <Route path='/training/:id' element={ <TrainingComponent /> }> </Route>
 
                 <Route path='/viewtraining' element={ <ViewTrainingComponent /> }> </Route>
+                
+                <Route path='/employee/:id' element={ <EmployeeComponent /> }> </Route>
                 
             </Routes>
        </BrowserRouter>

@@ -7,6 +7,10 @@ import 'datatables.net'; // DataTables core functionality
 import { Button, Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
+import { showToast } from "../SharedComponent/showToast"
+import { toast } from "react-toastify";
+
+
 export default function ViewTrainingComponent() {
 
     const [training_list,setTrainingList] = useState([])
@@ -16,15 +20,24 @@ export default function ViewTrainingComponent() {
     
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()
-
-    useEffect(()=> {
-        retrieveAllTrainings()
-    },[])
+    const didFetchRef = useRef(false);
+    
+    useEffect(() => {
+        if (!didFetchRef.current) {
+            didFetchRef.current = true;
+            retrieveAllTrainings();
+        }
+    }, []);
 
     function retrieveAllTrainings() {
         
         retrieveAllTraining().then((response)=> {             
             setTrainingList(response.data)
+        }).catch((error)=>{
+           
+           const message =  error?.response?.data?.errorMessage
+           showToast(message , "error")
+           
         })
     }
 

@@ -22,7 +22,7 @@ export default function ViewDesignation() {
 
     useEffect(
     () => 
-        { 
+        {
             if(sessionStorage.getItem('response')!='') {
                 setSuccessMessage(sessionStorage.getItem('response'))
                         setTimeout(() => {
@@ -50,7 +50,7 @@ export default function ViewDesignation() {
    
 
     function retrieveAllDesignations() {
-        getAllDesignations().then((response) => { setDesigList(response.data) })
+        getAllDesignations().then((response) => {   setDesigList(response.data) })
     }
 
     function updateDesignation(id) {
@@ -78,7 +78,8 @@ export default function ViewDesignation() {
                     </tr>
                 </thead>
                 <tbody>
-                  {desiglist.length === 0 ? (
+                  {
+                  desiglist.length === 0 ? (
                         <tr>
                             <td colSpan="3" style={{ textAlign: 'center' }}>
                                 No data available
@@ -94,7 +95,10 @@ export default function ViewDesignation() {
                             </td>
                             </tr>
                         ))
-                        )}
+                      )
+                       
+                    }   
+                         
                 </tbody>
             </table>
         </div>
