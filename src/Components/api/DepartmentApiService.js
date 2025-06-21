@@ -8,4 +8,4 @@ export const saveDepartment = (department) => apiClient.post(`/department/`,depa
 
 export const updateDepartment = (department) => apiClient.put(`/department/`,department)
 
-export const getDepartmentByCompanyId = (comp_id)=> apiClient.get(`/department/getdeptbycompid/${comp_id}`)
+export const getDepartmentByCompanyId = (comp_id)=> apiClient.get(`/department/company/${comp_id}`)

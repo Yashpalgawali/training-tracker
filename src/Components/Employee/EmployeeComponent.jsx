@@ -1,92 +1,54 @@
-import { useEffect, useRef, useState  } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { Formik , Form, Field, useFormikContext } from "formik";
+import { useEffect, useState } from "react"
+import { useNavigate, useParams} from "react-router-dom";
+import { Formik ,Form, Field, useFormikContext } from "formik";
 import { retrieveAllTraining } from "../api/TrainingApiService";
-import { showToast } from "../SharedComponent/showToast";
-import { getEmployeeById, saveEmployee } from "../api/EmployeeApiService";
-import { getAllDepartments, getDepartmentByCompanyId } from "../api/DepartmentApiService";
 import { getAllDesignations } from "../api/DesignationApiService";
 import { retrieveAllCompanies } from "../api/CompanyApiService";
+import { getDepartmentByCompanyId } from "../api/DepartmentApiService";
+import { showToast } from "../SharedComponent/showToast"
+import { Button } from "@mui/material";
+import Select from 'react-select';
+import { saveEmployee } from "../api/EmployeeApiService";
 
 export default function EmployeeComponent() {
 
-    const [emp_name,setEmpName] = useState('')
-    const [emp_code,setEmpCode] = useState('')
-    const [emp_id,setEmpId] = useState('')
-    const [desig_name,setDesigName] = useState('')
-    const [desig_id,setDesigID] = useState('')
-    const [dept_id,setDeptID] = useState('')
-    const [dept_name,setDeptName] = useState('')
-    const [desiglist,setDesigList] = useState([])
-    const [deptlist,setDeptList] = useState([])
-    const [complist,setCompList] = useState([])
-    const [traininglist,setTrainingList] = useState([])
-
     const [btnValue,setBtnValue] = useState('Add Employee')
 
-    const {id} = useParams()
+    const [emp_name, setEmpName] = useState('')
+    const [emp_code,setEmpCode] = useState('')
+    const [designations , setDesignations] = useState('')
+    const [department, setDepartment] = useState('')
+    const [desiglist , setDesigList] = useState([])
+    const [complist , setCompList] = useState([])
+    const [deptlist , setDeptList] = useState([])
+    const [traininglist , setTrainingList] = useState([])
+
+    const {id} = useParams
     const navigate = useNavigate()
-
-    const { setFieldValue, values } = useFormikContext();
-
-    const didRun = useRef(false)
-
+    
+   
     useEffect(() => {
-        if(didRun.current) {
-            return
-        }
-        didRun.current = true
-        retrieveAllTraining().then((response)=> {
+      
+        getAllDesignations().then((response) => {
+            setDesigList(response.data)
+        })
+        retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
         })
-        getAllDepartments().then((response) => {
-            setDeptList(response.data)
-        })
-        
-        getAllDesignations().then((response)=> {
-           setDesigList(response.data)
-        })
-        
-        retrieveAllCompanies().then((response)=> {
+        retrieveAllCompanies().then((response) => {
             setCompList(response.data)
         })
 
-        if(id != -1 ) {
-            setBtnValue('Update Employee')
-        }
-
-    }, [] )
-
-    function onSubmit(values) {
-        let designation = {
-            desig_id : values.designation.desig_id,
-            desig_name : values.designation.desig_name
-        }
-        let department = {
-            dept_id : values.department.dept_id,
-            dept_name : values.department.dept_name
-        }
-
-        let employee = {
-            emp_id : '',
-            emp_name : values.emp_name,
-            emp_code : values.emp_code,
-            designation : designation,
-            department : department
-        }
-
-        if(id== -1) {
-            saveEmployee(employee).then((response)=> {
-                showToast(response?.data?.responseMessage, "success")
-                navigate('/viewemployees')
-            }).catch((error)=> {
-                showToast(error?.data?.errorResponseMessage, "error")
-                navigate('/viewemployees')
-            })
-        }
+    },[] )
+    function handleDesignationChange(e) {
+        alert(e.target.value)
     }
 
-    const handleCompanyChange = async (event, setFieldValue) => {
+    function handleTrainingChange(e) {
+        alert(e.target.value)
+    }
+
+     const handleCompanyChange = async (event, setFieldValue) => {
         const compId = event.target.value;
         setFieldValue("company", compId);
     
@@ -99,87 +61,132 @@ export default function EmployeeComponent() {
           setFieldValue("department", "");
         }
       };
+    function onDepartmentChange(event) {
+        alert(event.target.value)
+    }
+    
+    function  onSubmit(values) {
+       
+        let employee = {
+            emp_name : values.emp_name,
+            emp_code : values.emp_code,
+            designationId : values.designations,
+            departmentId : values.department,
+            training_ids : values.training_ids
+        }
+        console.log(employee)
+        saveEmployee(employee).then((response) => {
+            alert('saved')
+        }).catch((error) => {
+            alert('error')
+        })
+
+    }
+
+    function TrainingMultiSelect({ options }) {
+        const { setFieldValue, values } = useFormikContext();
+
+        return (
+            <Select
+            name="training_ids"
+            isMulti
+            options={options}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={(selectedOptions) => {
+                const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];
+                
+                setFieldValue("training_ids", ids);
+            }}
+            value={options.filter((opt) => values.training_ids?.includes(opt.value))}
+            />
+        );
+    }
+
+    var options = ''
+    options =  traininglist    
+        .map((training) =>
+            ({
+                value: training.training_id,
+                label: `${training.training_name}`
+            }) );
+
     return(
         <div className="container">
             <h2 className="text-center">{btnValue}</h2>
-        <div>
-            <Formik
-                initialValues={ { emp_code, emp_name, } }
-                enableReinitialize={true}
-                validateOnBlur={false}
-                validateOnChange={false}
-                onSubmit={onSubmit}
-            >
-            {
-                ({ setFieldValue, values }) => (
-                    <Form>
-                        <fieldset>
-                            <label htmlFor="emp_name">Employee Name</label>
-                            <Field name="emp_name" className="form-control" placeholder="Enter Employee Name"></Field>
-                        </fieldset>
-                        <fieldset>
-                            <label htmlFor="emp_code">Employee Code</label>
-                            <Field name="emp_code" className="form-control" placeholder="Enter Employee Code"></Field>
-                        </fieldset>
-                        <fieldset>
-                            <label htmlFor="joining_date">Joining Date</label>
-                            <Field name="joining_date" className="form-control" placeholder="Enter Joining Date"></Field>
-                        </fieldset>
-                        <fieldset>
-                            <label htmlFor="designation">Designation</label>
-                            <Field as="select" name="designation" className="form-control">
-                                <option>Select Designation</option>
-                                {
-                                    desiglist.map((desig)=>(
-                                        <option value={desig.desig_id} key={desig.desig_id} >{desig.desig_name}</option>
-                                    ))
-                                }
-                            </Field>
-                        </fieldset>
+            <div>
+                <Formik
+                    enableReinitialize={true}
+                    initialValues={ { emp_name, emp_code, designations : '', department : '', company : '' ,training_ids : []} }
+                    validateOnBlur={false}
+                    validateOnChange={false}
+                    onSubmit={onSubmit}
+                >
+                {
+                    ({ setFieldValue, values }) =>(
+                        <Form>
+                            <fieldset className="form-group">
+                                <label htmlFor="emp_name">Employee Name</label>
+                                <Field name="emp_name" className="form-control" value={values.emp_name} placeholder="Enter Employee Name" type="text"></Field>
 
-                        <fieldset>
-                            <label htmlFor="company">Company</label>
-                            <Field
-                            as="select"
-                            className="form-control"
-                            name="company"
-                            value={values.company}
-                            onChange={(e) => handleCompanyChange(e, setFieldValue)}
-                            >
-                            <option value="">Please Select Company</option>
-                            {complist.map((company) => (
-                                <option
-                                value={company.company_id}
-                                key={company.company_id}
-                                >
-                                {company.comp_name}
-                                </option>
-                            ))}
-                            </Field>
-                        </fieldset>
-                        <fieldset>
-                            <label htmlFor="department">Department</label>
-                            <Field
-                                as="select"
-                                className="form-control"
-                                name="department"
-                                value={values.department}
-                                onChange={(e) => setFieldValue("department", e.target.value)}
-                            >
-                                <option value="">Please Select Department</option>
-                                {deptlist.map((dept) => (
-                                <option value={dept.dept_id} key={dept.dept_id}>
-                                    {dept.dept_name}
-                                </option>
-                                ))}
-                            </Field>
                             </fieldset>
-                    </Form>
-                )
-            }
-            </Formik>
-        </div>
-        </div>
+                            <fieldset className="form-group">
+                                <label htmlFor="emp_code">Employee Code</label>
+                                <Field name="emp_code" className="form-control" value={values.emp_code} placeholder="Enter Employee Code" type="text"></Field>
+                            </fieldset>
+                            <fieldset>
+                                <label htmlFor="designations" ></label>
+                                <Field as="select" name="designations" className="form-control"  value={values.designations}>
+                                    <option>Please Select Designation</option>
+                                    {
+                                        desiglist.map(
+                                            (desig)=>(
+                                                <option key={desig.desig_id} value={desig.desig_id}>{desig.desig_name}</option>
+                                            )
+                                        )
+                                    }
+                                </Field>
+                            </fieldset>
+                            <fieldset>
+                                <label htmlFor="company" ></label>
+                                <Field as="select" name="company" className="form-control" value={values.company}  onChange={(e) => handleCompanyChange(e, setFieldValue)} >
+                                    <option>Please Select Company</option>
+                                    {
+                                        complist.map(
+                                            (company)=>(
+                                                <option key={company.company_id} value={company.company_id}>{company.comp_name}</option>
+                                            )
+                                        )
+                                    }
+                                </Field>
+                            </fieldset>
+                             <fieldset>
+                                <label htmlFor="department" ></label>
+                                <Field as="select" name="department" className="form-control" value={values.department}   >
+                                    <option>Please Select Department</option>
+                                    {
+                                        deptlist.map(
+                                            (dept)=>(
+                                                <option key={dept.dept_id} value={dept.dept_id}>{dept.dept_name}</option>
+                                            )
+                                        )
+                                    }
+                                </Field>
+                            </fieldset>
+                            
+                            <fieldset>
+                                <label htmlFor="training_ids">Training</label>
+                                <TrainingMultiSelect options={options} />
+                            </fieldset>
+                            <div>
+                                <Button type="submit" variant="contained" color="primary" className="mt-2" >{btnValue}</Button>
+                            </div>
 
+                        </Form>
+                    )
+                }
+                </Formik>
+            </div>
+        </div>
     )
 }
