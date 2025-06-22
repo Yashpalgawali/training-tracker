@@ -16,7 +16,6 @@ export default function ViewTrainingComponent() {
     const [training_list,setTrainingList] = useState([])
     const [successMessage,setSuccessMessage] = useState('')
     const [errorMessage,setErrorMessage] = useState('')
-
     
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()

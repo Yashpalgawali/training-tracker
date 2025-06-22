@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import { Button, Tooltip } from "@mui/material"
+import { showToast } from "../SharedComponent/showToast";
 
 
 
@@ -19,6 +20,8 @@ export default function ViewDesignation() {
     const [successMessage , setSuccessMessage] = useState('')
     const [errorMessage , setErrorMessage] = useState('')
     const tableRef = useRef(null)
+
+    const didFetchRef = useRef(false);
 
     useEffect(
     () => 
@@ -37,8 +40,10 @@ export default function ViewDesignation() {
                     setErrorMessage('')
                     }, 2000);
             }             
-                                
-            retrieveAllDesignations()
+            if (!didFetchRef.current) {
+                didFetchRef.current = true;                            
+                retrieveAllDesignations()
+            }
         },[]) 
 
     useEffect(() => {
@@ -50,7 +55,11 @@ export default function ViewDesignation() {
    
 
     function retrieveAllDesignations() {
-        getAllDesignations().then((response) => {   setDesigList(response.data) })
+        getAllDesignations().then(
+            (response) => {   setDesigList(response.data) })
+            .catch((error)=> {
+                showToast(error.response.data.errorMessage, "error")
+            })
     }
 
     function updateDesignation(id) {

@@ -7,6 +7,7 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styl
 import 'datatables.net'; // DataTables core functionality
 import { Button, Tooltip } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
+import { showToast } from "../SharedComponent/showToast";
 
 
 export default function ViewDepartmentComponent() {
@@ -17,10 +18,13 @@ export default function ViewDepartmentComponent() {
     const tableRef = useRef(null); // Ref for the table
 
     const navigate = useNavigate()
-    
+    const didFetchRef = useRef(false)
     useEffect(
         () =>  {
-            retrieveAllDepartments()
+            if (!didFetchRef.current) {
+                didFetchRef.current = true; 
+                retrieveAllDepartments()
+            }
             if(sessionStorage.getItem('response')!= null) {
                 setSuccessMessage(sessionStorage.getItem('response'))
                 setErrorMessage('')
@@ -49,7 +53,12 @@ export default function ViewDepartmentComponent() {
       }, [deptlist]); // Re-initialize DataTables when activities data changes
     
     function retrieveAllDepartments() {
-        getAllDepartments().then((response) => setDeptList(response.data)).catch((error) => console.log(error))
+        getAllDepartments()
+            .then((response) => setDeptList(response.data))
+            .catch((error) => {
+                                showToast(error.response.data.errorMessage, "error")
+                                
+                              })
     }
 
     function updateDepartmentById(id) {
