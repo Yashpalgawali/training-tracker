@@ -10,6 +10,8 @@ import { ToastContainer } from 'react-toastify';
 import TrainingComponent from './Training/TrainingComponent';
 import ViewTrainingComponent from './Training/ViewTrainingComponent';
 import EmployeeComponent from './Employee/EmployeeComponent';
+import ViewEmployeeComponent from './Employee/ViewEmployeeComponent';
+import HomeComponent from './HomeComponent/HomeComponent';
 
 export default function TrainingTrackerComponent(){
     return(
@@ -35,6 +37,10 @@ export default function TrainingTrackerComponent(){
                 
                 <Route path='/employee/:id' element={ <EmployeeComponent /> }> </Route>
                 
+                <Route path='/viewemployees' element={ <ViewEmployeeComponent /> }> </Route>
+
+                <Route path='/home' element={ <HomeComponent /> }> </Route>
+
             </Routes>
        </BrowserRouter>
     )

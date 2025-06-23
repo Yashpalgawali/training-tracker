@@ -5,10 +5,9 @@ import { retrieveAllTraining } from "../api/TrainingApiService";
 import { getAllDesignations } from "../api/DesignationApiService";
 import { retrieveAllCompanies } from "../api/CompanyApiService";
 import { getDepartmentByCompanyId } from "../api/DepartmentApiService";
-import { showToast } from "../SharedComponent/showToast"
 import { Button } from "@mui/material";
 import Select from 'react-select';
-import { saveEmployee } from "../api/EmployeeApiService";
+import { getEmployeeById, saveEmployee } from "../api/EmployeeApiService";
 
 export default function EmployeeComponent() {
 
@@ -16,6 +15,7 @@ export default function EmployeeComponent() {
 
     const [emp_name, setEmpName] = useState('')
     const [emp_code,setEmpCode] = useState('')
+    const [joining_date,setEmpJoiningDate] = useState('')
     const [designations , setDesignations] = useState('')
     const [department, setDepartment] = useState('')
     const [desiglist , setDesigList] = useState([])
@@ -23,9 +23,8 @@ export default function EmployeeComponent() {
     const [deptlist , setDeptList] = useState([])
     const [traininglist , setTrainingList] = useState([])
 
-    const {id} = useParams
+    const {id} = useParams()
     const navigate = useNavigate()
-    
    
     useEffect(() => {
       
@@ -38,20 +37,24 @@ export default function EmployeeComponent() {
         retrieveAllCompanies().then((response) => {
             setCompList(response.data)
         })
-
+ 
+        if(id != -1) {
+            setBtnValue('Update Employee')
+            getEmployeeById(id).then((response) => {
+                console.log(response)
+                setEmpName(response.data.emp_name)
+                setEmpCode(response.data.emp_code)
+                setEmpJoiningDate(response.data.joining_date)
+                setDesignations(response.data.designation)
+            })
+        }
     },[] )
-    function handleDesignationChange(e) {
-        alert(e.target.value)
-    }
-
-    function handleTrainingChange(e) {
-        alert(e.target.value)
-    }
+    
 
      const handleCompanyChange = async (event, setFieldValue) => {
         const compId = event.target.value;
         setFieldValue("company", compId);
-    
+      
         if (compId) {
           const response = await getDepartmentByCompanyId(compId);
           setDeptList(response.data);
@@ -70,6 +73,7 @@ export default function EmployeeComponent() {
         let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
+            joining_date : values.joining_date,
             designationId : values.designations,
             departmentId : values.department,
             training_ids : values.training_ids
@@ -117,7 +121,7 @@ export default function EmployeeComponent() {
             <div>
                 <Formik
                     enableReinitialize={true}
-                    initialValues={ { emp_name, emp_code, designations : '', department : '', company : '' ,training_ids : []} }
+                    initialValues={ { emp_name, emp_code, joining_date, designations : '', department : '', company : '' ,training_ids : []} }
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={onSubmit}
@@ -128,11 +132,14 @@ export default function EmployeeComponent() {
                             <fieldset className="form-group">
                                 <label htmlFor="emp_name">Employee Name</label>
                                 <Field name="emp_name" className="form-control" value={values.emp_name} placeholder="Enter Employee Name" type="text"></Field>
-
                             </fieldset>
                             <fieldset className="form-group">
                                 <label htmlFor="emp_code">Employee Code</label>
                                 <Field name="emp_code" className="form-control" value={values.emp_code} placeholder="Enter Employee Code" type="text"></Field>
+                            </fieldset>
+                              <fieldset className="form-group">
+                                <label htmlFor="joining_date">Employee Code</label>
+                                <Field name="joining_date" className="form-control" value={values.joining_date} placeholder="Enter Employee Code" type="text"></Field>
                             </fieldset>
                             <fieldset>
                                 <label htmlFor="designations" ></label>

@@ -4,19 +4,16 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import { Button, Tooltip } from "@mui/material";
+import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import { showToast } from "../SharedComponent/showToast"
-import { toast } from "react-toastify";
-
+ 
 
 export default function ViewTrainingComponent() {
 
     const [training_list,setTrainingList] = useState([])
-    const [successMessage,setSuccessMessage] = useState('')
-    const [errorMessage,setErrorMessage] = useState('')
-    
+     
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()
     const didFetchRef = useRef(false);
@@ -28,12 +25,10 @@ export default function ViewTrainingComponent() {
         }
     }, []);
 
-    function retrieveAllTrainings() {
-        
+    function retrieveAllTrainings() {        
         retrieveAllTraining().then((response)=> {             
             setTrainingList(response.data)
-        }).catch((error)=>{
-           
+        }).catch((error)=>{           
            const message =  error?.response?.data?.errorMessage
            showToast(message , "error")
            

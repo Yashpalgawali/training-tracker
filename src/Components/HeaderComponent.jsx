@@ -10,7 +10,7 @@ export default function HeaderComponent(){
                     <div className="collapse navbar-collapse">
                         <ul className="navbar-nav">
                         <li className="nav-item fs-5">
-                        { <Link className="nav-link" to="/welcome/in28minutes">Home</Link> }
+                        { <Link className="nav-link" to="/home">Home</Link> }
                         </li>
                         <li className="nav-item fs-5">
                         {
@@ -34,11 +34,11 @@ export default function HeaderComponent(){
                              <Link className="nav-link" to="/viewtraining">View Trainings</Link>
                         }
                         </li>
-                        {/* <li className="nav-item fs-5">
+                        <li className="nav-item fs-5">
                         {
-                             <Link className="nav-link" to="/viewemployees">View Employee</Link>
+                             <Link className="nav-link" to="/viewemployees">View Employees</Link>
                         }
-                        </li> */}
+                        </li>
                         </ul>
                     </div>
                     <ul className="navbar-nav">
