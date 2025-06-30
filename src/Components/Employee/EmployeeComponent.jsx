@@ -7,7 +7,9 @@ import { retrieveAllCompanies } from "../api/CompanyApiService";
 import { getDepartmentByCompanyId } from "../api/DepartmentApiService";
 import { Button } from "@mui/material";
 import Select from 'react-select';
-import { getEmployeeById, saveEmployee } from "../api/EmployeeApiService";
+import { getEmployeeById, saveEmployee, updateEmployee } from "../api/EmployeeApiService";
+import { showToast } from "../SharedComponent/showToast"
+
 
 export default function EmployeeComponent() {
 
@@ -69,21 +71,42 @@ export default function EmployeeComponent() {
     }
     
     function  onSubmit(values) {
-       
+       let designation = {
+        desig_id : values.designation,
+        desig_name : ''
+       }
+
+       let department = {
+        dept_id : values.department,
+        dept_name : ''
+       }
         let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
             joining_date : values.joining_date,
-            designationId : values.designations,
-            departmentId : values.department,
+            designation : designation,
+            department : department,
             training_ids : values.training_ids
         }
         console.log(employee)
-        saveEmployee(employee).then((response) => {
-            alert('saved')
-        }).catch((error) => {
-            alert('error')
-        })
+        if(id == -1) {
+                saveEmployee(employee).then((response) => {
+                  showToast(response?.data?.responseMessage,"success")
+                  navigate(`/viewemployees`)
+            }).catch((error) => {
+               showToast(error?.data?.errorMessage,"error")
+                navigate(`/viewemployees`)
+            })
+        }
+        else {
+            updateEmployee(employee).then((response)=>{
+                showToast(response?.data?.responseMessage,"success")
+                navigate(`/viewemployees`)
+            }).catch((error) => {
+               showToast(error?.data?.errorMessage,"error")
+               navigate(`/viewemployees`)
+            })
+        }
 
     }
 
@@ -121,13 +144,13 @@ export default function EmployeeComponent() {
             <div>
                 <Formik
                     enableReinitialize={true}
-                    initialValues={ { emp_name, emp_code, joining_date, designations : '', department : '', company : '' ,training_ids : []} }
+                    initialValues={ { emp_name, emp_code, joining_date, designation : '', department : '', company : '' ,training_ids : []} }
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={onSubmit}
                 >
                 {
-                    ({ setFieldValue, values }) =>(
+                    ({ setFieldValue, values }) =>( 
                         <Form>
                             <fieldset className="form-group">
                                 <label htmlFor="emp_name">Employee Name</label>
@@ -138,11 +161,11 @@ export default function EmployeeComponent() {
                                 <Field name="emp_code" className="form-control" value={values.emp_code} placeholder="Enter Employee Code" type="text"></Field>
                             </fieldset>
                               <fieldset className="form-group">
-                                <label htmlFor="joining_date">Employee Code</label>
-                                <Field name="joining_date" className="form-control" value={values.joining_date} placeholder="Enter Employee Code" type="text"></Field>
+                                <label htmlFor="joining_date">Joining Date</label>
+                                <Field name="joining_date" className="form-control" value={values.joining_date} placeholder="Enter Joining Date" type="date"></Field>
                             </fieldset>
                             <fieldset>
-                                <label htmlFor="designations" ></label>
+                                <label htmlFor="designation" ></label>
                                 <Field as="select" name="designations" className="form-control"  value={values.designations}>
                                     <option>Please Select Designation</option>
                                     {

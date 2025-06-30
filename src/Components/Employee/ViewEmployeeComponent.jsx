@@ -47,7 +47,7 @@ export default function ViewEmployeeComponent() {
         <div className="container">
             <h2 className="text-center">View Employees <Button variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> </h2>
             <div>
-                <table ref={tableRef} className="table tabele-striped table-hover">
+                <table ref={tableRef} className="table table-striped table-hover">
                     <thead>
                         <tr>
                             <th>Sr</th>

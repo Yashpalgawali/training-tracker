@@ -13,9 +13,9 @@ import EmployeeComponent from './Employee/EmployeeComponent';
 import ViewEmployeeComponent from './Employee/ViewEmployeeComponent';
 import HomeComponent from './HomeComponent/HomeComponent';
 
-export default function TrainingTrackerComponent(){
+export default function TrainingTrackerComponent() {
     return(
-       <BrowserRouter>
+       <BrowserRouter basename="/trainingtracker">
         <HeaderComponent />
           <ToastContainer position="top-center" autoClose={2500} />
             <Routes>
