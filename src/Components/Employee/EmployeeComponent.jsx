@@ -90,21 +90,25 @@ export default function EmployeeComponent() {
         }
         console.log(employee)
         if(id == -1) {
-                saveEmployee(employee).then((response) => {
+            
+            saveEmployee(employee).then((response) => {
                   showToast(response?.data?.responseMessage,"success")
                   navigate(`/viewemployees`)
-            }).catch((error) => {
+               }).catch((error) => {
+                
                showToast(error?.data?.errorMessage,"error")
-                navigate(`/viewemployees`)
+               navigate(`/viewemployees`)
             })
         }
         else {
+            employee.emp_id = id
+            console.log("emp Object ",employee)
             updateEmployee(employee).then((response)=>{
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
             }).catch((error) => {
-               showToast(error?.data?.errorMessage,"error")
-               navigate(`/viewemployees`)
+            showToast(error?.data?.errorMessage,"error")
+            navigate(`/viewemployees`)
             })
         }
 
@@ -166,7 +170,7 @@ export default function EmployeeComponent() {
                             </fieldset>
                             <fieldset>
                                 <label htmlFor="designation" ></label>
-                                <Field as="select" name="designations" className="form-control"  value={values.designations}>
+                                <Field as="select" name="designation" className="form-control"  value={values.designation}>
                                     <option>Please Select Designation</option>
                                     {
                                         desiglist.map(

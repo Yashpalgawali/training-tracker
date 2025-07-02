@@ -8,38 +8,21 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
+
 import { Button, Tooltip } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast";
-
-
 
 export default function ViewDesignation() {
 
     const [desiglist,setDesigList] = useState([])
     const navigate = useNavigate()
-    const [successMessage , setSuccessMessage] = useState('')
-    const [errorMessage , setErrorMessage] = useState('')
     const tableRef = useRef(null)
 
     const didFetchRef = useRef(false);
 
     useEffect(
     () => 
-        {
-            if(sessionStorage.getItem('response')!='') {
-                setSuccessMessage(sessionStorage.getItem('response'))
-                        setTimeout(() => {
-                        sessionStorage.removeItem('response')
-                        setSuccessMessage('')
-                    }, 2000);
-            }
-            if(sessionStorage.getItem('reserr')!=''){
-                setErrorMessage(sessionStorage.getItem('reserr'))
-                    setTimeout(() => {
-                    sessionStorage.removeItem('reserr')
-                    setErrorMessage('')
-                    }, 2000);
-            }             
+        {               
             if (!didFetchRef.current) {
                 didFetchRef.current = true;                            
                 retrieveAllDesignations()
@@ -75,9 +58,6 @@ export default function ViewDesignation() {
             <h2 className="text-center m-4">View Designation 
                 <Button type="submit" variant="contained" color="primary" style={ { float: 'right  ' } } className="m-2" onClick={addNewDesignation} >Add Designation</Button>    
             </h2>
-            {successMessage && <div className="text-center alert alert-success"><strong> {successMessage} </strong></div> }
-            {errorMessage && <div className="text-center alert alert-warning"> <strong>{errorMessage} </strong></div> }
-         
             <table ref={tableRef} className="table table-striped table-hover display">
                 <thead>
                     <tr >

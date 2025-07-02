@@ -13,14 +13,17 @@ export default function ViewEmployeeComponent() {
     const [empList,setEmpList] = useState([])
 
     const navigate = useNavigate()
-    const didRunRef = useRef(false)
+    const didFetchRef = useRef(false)
     const tableRef = useRef(false)
 
-    useEffect(()=> {
-        if(!didRunRef.current)
-            didRunRef.current = true
-        retriveAllEmployeeList()        
-    },[])
+    useEffect(
+    () => 
+        {               
+            if (!didFetchRef.current) {
+                didFetchRef.current = true;                            
+                retriveAllEmployeeList()
+            }
+        },[])
 
     useEffect(() => {
         if(tableRef.current && empList.length>0) {
@@ -30,7 +33,7 @@ export default function ViewEmployeeComponent() {
 
     function retriveAllEmployeeList() {
         retrieveAllEmployees().then((response) =>{
-            console.log(response)
+            
             setEmpList(response.data)
         }).catch((error)=>{            
              showToast(error.response.data.errorMessage, "error")
@@ -64,7 +67,7 @@ export default function ViewEmployeeComponent() {
                     {
                         empList.length === 0 ? (
                             <tr>
-                                <td colSpan="6">No Employees Data Found</td>
+                                <td colSpan="8">No Employees Data Found</td>
                             </tr>
                         )
                         :
