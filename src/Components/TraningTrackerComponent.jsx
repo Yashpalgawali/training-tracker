@@ -12,6 +12,8 @@ import ViewTrainingComponent from './Training/ViewTrainingComponent';
 import EmployeeComponent from './Employee/EmployeeComponent';
 import ViewEmployeeComponent from './Employee/ViewEmployeeComponent';
 import HomeComponent from './HomeComponent/HomeComponent';
+import ViewEmployeeTrainings from './Employee/ViewEmployeeTrainings';
+import EmployeeTrainingComponent from './Employee/EmployeeTrainingComponent';
 
 export default function TrainingTrackerComponent() {
     return(
@@ -38,6 +40,10 @@ export default function TrainingTrackerComponent() {
                 <Route path='/employee/:id' element={ <EmployeeComponent /> }> </Route>
                 
                 <Route path='/viewemployees' element={ <ViewEmployeeComponent /> }> </Route>
+
+                <Route path='/training/employee/:id' element={ <ViewEmployeeTrainings /> }> </Route>
+                
+                <Route path='/train/employee' element={ <EmployeeTrainingComponent /> }> </Route>
 
                 <Route path='/home' element={ <HomeComponent /> }> </Route>
 

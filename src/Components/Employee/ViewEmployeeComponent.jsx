@@ -7,8 +7,26 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+import EditIcon from '@mui/icons-material/Edit';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
+
+ const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.common.black,
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.black,
+  },
+}));
 
 export default function ViewEmployeeComponent() {
+  
 
     const [empList,setEmpList] = useState([])
 
@@ -32,8 +50,8 @@ export default function ViewEmployeeComponent() {
     }, [empList] )
 
     function retriveAllEmployeeList() {
-        retrieveAllEmployees().then((response) =>{
-            
+        retrieveAllEmployees().then((response) => {
+            console.log(response.data)        
             setEmpList(response.data)
         }).catch((error)=>{            
              showToast(error.response.data.errorMessage, "error")
@@ -46,9 +64,19 @@ export default function ViewEmployeeComponent() {
     function addNewEmployee() {
         navigate(`/employee/-1`)
     }
+
+    function getEmployeeTrainings(id)
+    {         
+        navigate(`/training/employee/${id}`)
+    }
+
+    function isDisabled(){
+
+    }
+
     return (
         <div className="container">
-            <h2 className="text-center">View Employees <Button variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> </h2>
+            <h2 className="text-center">View Employees <Button style={ { float : 'right'} }  variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> </h2>
             <div>
                 <table ref={tableRef} className="table table-striped table-hover">
                     <thead>
@@ -59,7 +87,6 @@ export default function ViewEmployeeComponent() {
                             <th>Joining Date</th>
                             <th>Department</th>
                             <th>Company</th>
-                            <th>Training</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -81,8 +108,21 @@ export default function ViewEmployeeComponent() {
                                         <td>{emp.joining_date}</td>
                                         <td>{emp.department}</td>
                                         <td>{emp.company}</td>
-                                        <td>{emp.trainings}</td>
-                                        <td><Button variant="contained" color="primary" onClick={() => updateEmployee(emp.emp_id) } >UPDATE</Button> </td>
+                                        <td>
+                                         
+                                            <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => updateEmployee(emp.emp_id) } aria-label="add">
+                                                <BootstrapTooltip title="Add Training">
+                                                    <AddIcon />
+                                                </BootstrapTooltip>
+                                                
+                                            </Fab>
+                                            <Fab  size="medium" color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="add">
+                                                <BootstrapTooltip title="View Training">
+                                                    <VisibilityIcon />
+                                                </BootstrapTooltip>
+                                                
+                                            </Fab>
+                                        </td>
                                     </tr>
                                 )
                             )
@@ -90,6 +130,9 @@ export default function ViewEmployeeComponent() {
                     }
                     </tbody>
                 </table>
+                 <div>
+       
+    </div>
             </div>
         </div>
     )

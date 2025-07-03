@@ -10,14 +10,14 @@ import Select from 'react-select';
 import { getEmployeeById, saveEmployee, updateEmployee } from "../api/EmployeeApiService";
 import { showToast } from "../SharedComponent/showToast"
 
-
 export default function EmployeeComponent() {
 
     const [btnValue,setBtnValue] = useState('Add Employee')
 
     const [emp_name, setEmpName] = useState('')
     const [emp_code,setEmpCode] = useState('')
-    const [joining_date,setEmpJoiningDate] = useState('')
+    const [training_date,setEmpTrainingDate] = useState('')
+    const [completion_date,setEmpCompletionDate] = useState('')
     const [designations , setDesignations] = useState('')
     const [department, setDepartment] = useState('')
     const [desiglist , setDesigList] = useState([])
@@ -27,9 +27,9 @@ export default function EmployeeComponent() {
 
     const {id} = useParams()
     const navigate = useNavigate()
-   
+
     useEffect(() => {
-      
+
         getAllDesignations().then((response) => {
             setDesigList(response.data)
         })
@@ -39,19 +39,19 @@ export default function EmployeeComponent() {
         retrieveAllCompanies().then((response) => {
             setCompList(response.data)
         })
- 
+
         if(id != -1) {
             setBtnValue('Update Employee')
             getEmployeeById(id).then((response) => {
-                console.log(response)
+              
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)
-                setEmpJoiningDate(response.data.joining_date)
+                setEmpTrainingDate(response.data.training_date)
+                setEmpCompletionDate(response.data.completion_date)
                 setDesignations(response.data.designation)
             })
         }
     },[] )
-    
 
      const handleCompanyChange = async (event, setFieldValue) => {
         const compId = event.target.value;
@@ -66,9 +66,6 @@ export default function EmployeeComponent() {
           setFieldValue("department", "");
         }
       };
-    function onDepartmentChange(event) {
-        alert(event.target.value)
-    }
     
     function  onSubmit(values) {
        let designation = {
@@ -80,35 +77,36 @@ export default function EmployeeComponent() {
         dept_id : values.department,
         dept_name : ''
        }
-        let employee = {
+       
+       let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
-            joining_date : values.joining_date,
+            training_date : values.training_date,
             designation : designation,
             department : department,
             training_ids : values.training_ids
         }
-        console.log(employee)
+
         if(id == -1) {
-            
+
             saveEmployee(employee).then((response) => {
                   showToast(response?.data?.responseMessage,"success")
                   navigate(`/viewemployees`)
-               }).catch((error) => {
-                
-               showToast(error?.data?.errorMessage,"error")
-               navigate(`/viewemployees`)
-            })
+                })
+               .catch((error) => {                
+                    showToast(error?.data?.errorMessage,"error")
+                    navigate(`/viewemployees`)
+                })
         }
         else {
             employee.emp_id = id
-            console.log("emp Object ",employee)
+
             updateEmployee(employee).then((response)=>{
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
             }).catch((error) => {
-            showToast(error?.data?.errorMessage,"error")
-            navigate(`/viewemployees`)
+                showToast(error?.data?.errorMessage,"error")
+                navigate(`/viewemployees`)
             })
         }
 
@@ -125,8 +123,7 @@ export default function EmployeeComponent() {
             className="basic-multi-select"
             classNamePrefix="select"
             onChange={(selectedOptions) => {
-                const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];
-                
+                const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
                 setFieldValue("training_ids", ids);
             }}
             value={options.filter((opt) => values.training_ids?.includes(opt.value))}
@@ -148,7 +145,7 @@ export default function EmployeeComponent() {
             <div>
                 <Formik
                     enableReinitialize={true}
-                    initialValues={ { emp_name, emp_code, joining_date, designation : '', department : '', company : '' ,training_ids : []} }
+                    initialValues={ { emp_name, emp_code, training_date, designation : '', department : '', company : '' ,training_ids : []} }
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={onSubmit}
@@ -164,9 +161,13 @@ export default function EmployeeComponent() {
                                 <label htmlFor="emp_code">Employee Code</label>
                                 <Field name="emp_code" className="form-control" value={values.emp_code} placeholder="Enter Employee Code" type="text"></Field>
                             </fieldset>
-                              <fieldset className="form-group">
-                                <label htmlFor="joining_date">Joining Date</label>
-                                <Field name="joining_date" className="form-control" value={values.joining_date} placeholder="Enter Joining Date" type="date"></Field>
+                            <fieldset className="form-group">
+                                <label htmlFor="training_date">Training Date</label>
+                                <Field name="training_date" className="form-control" value={values.training_date} placeholder="Enter Joining Date" type="date"></Field>
+                            </fieldset>
+                            <fieldset className="form-group">
+                                <label htmlFor="completion_date">Training Completion Date</label>
+                                <Field name="completion_date" className="form-control" value={values.completion_date} placeholder="Enter Training Completion Date" type="date"></Field>
                             </fieldset>
                             <fieldset>
                                 <label htmlFor="designation" ></label>
@@ -174,7 +175,7 @@ export default function EmployeeComponent() {
                                     <option>Please Select Designation</option>
                                     {
                                         desiglist.map(
-                                            (desig)=>(
+                                            (desig)=> (
                                                 <option key={desig.desig_id} value={desig.desig_id}>{desig.desig_name}</option>
                                             )
                                         )
