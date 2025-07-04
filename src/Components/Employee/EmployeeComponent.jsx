@@ -33,9 +33,9 @@ export default function EmployeeComponent() {
         getAllDesignations().then((response) => {
             setDesigList(response.data)
         })
-        retrieveAllTraining().then((response) => {
-            setTrainingList(response.data)
-        })
+        // retrieveAllTraining().then((response) => {
+        //     setTrainingList(response.data)
+        // })
         retrieveAllCompanies().then((response) => {
             setCompList(response.data)
         })
@@ -43,11 +43,11 @@ export default function EmployeeComponent() {
         if(id != -1) {
             setBtnValue('Update Employee')
             getEmployeeById(id).then((response) => {
-              
+               
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)
-                setEmpTrainingDate(response.data.training_date)
-                setEmpCompletionDate(response.data.completion_date)
+                // setEmpTrainingDate(response.data.training_date)
+                // setEmpCompletionDate(response.data.completion_date)
                 setDesignations(response.data.designation)
             })
         }
@@ -69,22 +69,20 @@ export default function EmployeeComponent() {
     
     function  onSubmit(values) {
        let designation = {
-        desig_id : values.designation,
-        desig_name : ''
+            desig_id : values.designation,
+            desig_name : ''
        }
 
        let department = {
-        dept_id : values.department,
-        dept_name : ''
+            dept_id : values.department,
+            dept_name : ''
        }
        
        let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
-            training_date : values.training_date,
             designation : designation,
-            department : department,
-            training_ids : values.training_ids
+            department : department            
         }
 
         if(id == -1) {
@@ -112,32 +110,32 @@ export default function EmployeeComponent() {
 
     }
 
-    function TrainingMultiSelect({ options }) {
-        const { setFieldValue, values } = useFormikContext();
+    // function TrainingMultiSelect({ options }) {
+    //     const { setFieldValue, values } = useFormikContext();
 
-        return (
-            <Select
-            name="training_ids"
-            isMulti
-            options={options}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={(selectedOptions) => {
-                const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
-                setFieldValue("training_ids", ids);
-            }}
-            value={options.filter((opt) => values.training_ids?.includes(opt.value))}
-            />
-        );
-    }
+    //     return (
+    //         <Select
+    //         name="training_ids"
+    //         isMulti
+    //         options={options}
+    //         className="basic-multi-select"
+    //         classNamePrefix="select"
+    //         onChange={(selectedOptions) => {
+    //             const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
+    //             setFieldValue("training_ids", ids);
+    //         }}
+    //         value={options.filter((opt) => values.training_ids?.includes(opt.value))}
+    //         />
+    //     );
+    // }
 
-    var options = ''
-    options =  traininglist    
-        .map((training) =>
-            ({
-                value: training.training_id,
-                label: `${training.training_name}`
-            }) );
+    // var options = ''
+    // options =  traininglist    
+    //     .map((training) =>
+    //         ({
+    //             value: training.training_id,
+    //             label: `${training.training_name}`
+    //         }) );
 
     return(
         <div className="container">
@@ -161,14 +159,14 @@ export default function EmployeeComponent() {
                                 <label htmlFor="emp_code">Employee Code</label>
                                 <Field name="emp_code" className="form-control" value={values.emp_code} placeholder="Enter Employee Code" type="text"></Field>
                             </fieldset>
-                            <fieldset className="form-group">
+                            {/* <fieldset className="form-group">
                                 <label htmlFor="training_date">Training Date</label>
                                 <Field name="training_date" className="form-control" value={values.training_date} placeholder="Enter Joining Date" type="date"></Field>
                             </fieldset>
                             <fieldset className="form-group">
                                 <label htmlFor="completion_date">Training Completion Date</label>
                                 <Field name="completion_date" className="form-control" value={values.completion_date} placeholder="Enter Training Completion Date" type="date"></Field>
-                            </fieldset>
+                            </fieldset> */}
                             <fieldset>
                                 <label htmlFor="designation" ></label>
                                 <Field as="select" name="designation" className="form-control"  value={values.designation}>
@@ -209,10 +207,10 @@ export default function EmployeeComponent() {
                                 </Field>
                             </fieldset>
                             
-                            <fieldset>
+                            {/* <fieldset>
                                 <label htmlFor="training_ids">Training</label>
                                 <TrainingMultiSelect options={options} />
-                            </fieldset>
+                            </fieldset> */}
                             <div>
                                 <Button type="submit" variant="contained" color="primary" className="mt-2" >{btnValue}</Button>
                             </div>

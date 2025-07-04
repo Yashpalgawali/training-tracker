@@ -43,7 +43,7 @@ export default function TrainingTrackerComponent() {
 
                 <Route path='/training/employee/:id' element={ <ViewEmployeeTrainings /> }> </Route>
                 
-                <Route path='/train/employee' element={ <EmployeeTrainingComponent /> }> </Route>
+                <Route path='/train/employee/:id' element={ <EmployeeTrainingComponent /> }> </Route>
 
                 <Route path='/home' element={ <HomeComponent /> }> </Route>
 

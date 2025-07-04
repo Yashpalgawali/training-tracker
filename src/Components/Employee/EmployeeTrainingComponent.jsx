@@ -14,7 +14,7 @@ import { Button, TextField } from "@mui/material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { saveEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function EmployeeTrainingComponent(){
 
@@ -26,9 +26,10 @@ export default function EmployeeTrainingComponent(){
     const [employee,setEmployee ] = useState('')
     const [btnValue,setBtnValue] = useState('Train Employee')
     const didFetchRun = useRef(false)
+
     const navigate = useNavigate()
 
-    //const [value, setValue] = useState<Dayjs | null>(dayjs('2022-04-17'));
+    const {id} = useParams()
 
     useEffect(() => {
         
@@ -37,6 +38,15 @@ export default function EmployeeTrainingComponent(){
             getAllDetails()
         }        
     },[])
+
+    useEffect(()=> {
+        if(id != -1) {
+            getEmployeeById(id).then((response) => {
+                console.log(response)
+                setEmployee(response.data)
+            })
+        }
+    }, [] )
 
     function getAllDetails() {
         retrieveAllEmployees().then((response) => {
@@ -79,27 +89,26 @@ export default function EmployeeTrainingComponent(){
         let employeeObject = {
             emp_id : parseInt(values.employee)
         }
-         
-        // await getEmployeeById(employee).then((response)=>{
-        //     alert('empolyu')
-        //     setEmployee(response.data)
-        // })
+
+        const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
+
+        const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
+       
         let employeeTraining = {
             employee : employeeObject,
-            training_date : values.training_date,
-            training_ids : values.training_ids
+            training_date : formattedTrainingDate,
+            training_ids : values.training_ids,
+            completion_date : formattedCompletionDate
         }
-        // const formattedDate = dayjs(values.training_date).format('DD-MM-YYYY');
-         
-        // console.log('Formatted date '+formattedDate)
-        
-       
+
         
         saveEmployeeTraining(employeeTraining).then((response) => {
+             
             showToast(response?.data?.responseMessage,"success")
             navigate(`/viewemployees`)
         })
-        .catch((error) =>{
+        .catch((error) => {
+             
             showToast(error?.data?.errorMessage,"error")
             navigate(`/viewemployees`)
         })
@@ -111,7 +120,7 @@ export default function EmployeeTrainingComponent(){
                <div>
                    <Formik
                        enableReinitialize={true}
-                       initialValues={ {  training_date, completion_date , employee : '' , training_ids : []} }
+                       initialValues={ {  training_date, completion_date ,  employee: employee ? employee.emp_id : ''  , training_ids : []} }
                        validateOnBlur={false}
                        validateOnChange={false}
                        onSubmit={onSubmit}
@@ -121,7 +130,7 @@ export default function EmployeeTrainingComponent(){
                            <Form>
                               <fieldset>
                                    <label htmlFor="employee" ></label>
-                                   <Field as="select" name="employee" className="form-control"  value={values.employee}>
+                                   <Field as="select" name="employee" className="form-control"  >
                                        <option>Please Select Employees</option>
                                        {
                                            empList.map(
@@ -140,7 +149,6 @@ export default function EmployeeTrainingComponent(){
                                    <label htmlFor="completion_date">Training Completion Date</label>
                                    <Field name="completion_date" className="form-control" value={values.completion_date} placeholder="Enter Training Completion Date" type="date"></Field>
                                </fieldset>
-                               
                                                                
                                <fieldset>
                                    <label htmlFor="training_ids">Training</label>

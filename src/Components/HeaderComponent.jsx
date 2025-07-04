@@ -41,7 +41,7 @@ export default function HeaderComponent(){
                         </li>
                          <li className="nav-item fs-5">
                         {
-                             <Link className="nav-link" to="/train/employee">Train Employee</Link>
+                             <Link className="nav-link" to="/train/employee/-1">Train Employee</Link>
                         }
                         </li>
                         </ul>

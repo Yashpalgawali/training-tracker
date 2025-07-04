@@ -70,8 +70,8 @@ export default function ViewEmployeeComponent() {
         navigate(`/training/employee/${id}`)
     }
 
-    function isDisabled(){
-
+    function addTraining(empid){
+         navigate(`/train/employee/${empid}`)
     }
 
     return (
@@ -110,13 +110,20 @@ export default function ViewEmployeeComponent() {
                                         <td>{emp.company}</td>
                                         <td>
                                          
-                                            <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => updateEmployee(emp.emp_id) } aria-label="add">
+                                            <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(emp.emp_id) } aria-label="add">
                                                 <BootstrapTooltip title="Add Training">
                                                     <AddIcon />
                                                 </BootstrapTooltip>
                                                 
                                             </Fab>
-                                            <Fab  size="medium" color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="add">
+
+                                             <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">
+                                                <BootstrapTooltip title="Update Employee Details">
+                                                    <EditIcon />
+                                                </BootstrapTooltip>                                                
+                                            </Fab>
+
+                                            <Fab  size="medium" color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
                                                 <BootstrapTooltip title="View Training">
                                                     <VisibilityIcon />
                                                 </BootstrapTooltip>
