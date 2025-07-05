@@ -52,8 +52,8 @@ const [loading, setLoading] = useState(false);
             dtInstanceRef.current = $(tableRef.current).DataTable({
                 // You can add options here if needed
             });
-    }
-       }, [traininglist] )
+         }
+    }, [traininglist] )
  
     useEffect(
     () => 
