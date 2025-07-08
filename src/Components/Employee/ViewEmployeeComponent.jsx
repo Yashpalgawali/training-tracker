@@ -26,7 +26,6 @@ import { styled } from '@mui/material/styles';
 }));
 
 export default function ViewEmployeeComponent() {
-  
 
     const [empList,setEmpList] = useState([])
 
@@ -51,7 +50,6 @@ export default function ViewEmployeeComponent() {
 
     function retriveAllEmployeeList() {
         retrieveAllEmployees().then((response) => {
-            console.log(response.data)        
             setEmpList(response.data)
         }).catch((error)=>{            
              showToast(error.response.data.errorMessage, "error")
@@ -84,7 +82,7 @@ export default function ViewEmployeeComponent() {
                             <th>Sr</th>
                             <th>Name</th>
                             <th>Code</th>
-                            <th>Joining Date</th>
+                          
                             <th>Department</th>
                             <th>Company</th>
                             <th>Action</th>
@@ -104,8 +102,7 @@ export default function ViewEmployeeComponent() {
                                     <tr key={emp.emp_id}>
                                         <td>{index+1}</td>
                                         <td>{emp.emp_name}</td>
-                                        <td>{emp.emp_code}</td>
-                                        <td>{emp.joining_date}</td>
+                                        <td>{emp.emp_code}</td>                                       
                                         <td>{emp.department}</td>
                                         <td>{emp.company}</td>
                                         <td>
@@ -113,8 +110,7 @@ export default function ViewEmployeeComponent() {
                                             <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(emp.emp_id) } aria-label="add">
                                                 <BootstrapTooltip title="Add Training">
                                                     <AddIcon />
-                                                </BootstrapTooltip>
-                                                
+                                                </BootstrapTooltip>                                                
                                             </Fab>
 
                                              <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">

@@ -1,8 +1,8 @@
-import { Button, useStepContext } from "@mui/material"
-import { ErrorMessage, Field, Form, Formik } from "formik"
+import { Button } from "@mui/material"
+import { Field, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { saveTraining, updateTraining } from "../api/TrainingApiService"
+import { getTrainingById, saveTraining, updateTraining } from "../api/TrainingApiService"
 import { showToast } from "../SharedComponent/showToast"
 
 export default function TrainingComponent() {
@@ -18,6 +18,10 @@ export default function TrainingComponent() {
         if(id != -1)
         {
             setBtnValue('Update Training')
+            getTrainingById(id).then((response) => {
+                setTrainingId(response.data.training_id)
+                setTrainingName(response.data.training_name)
+            })
         }
         
     },[id])

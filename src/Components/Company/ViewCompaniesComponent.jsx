@@ -5,46 +5,43 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import { Button, Tooltip } from "@mui/material"
+import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 
 
 export default function ViewCompanyComponent() {
 
     const [complist,setCompList] = useState([])
-    const [successMessage , setSuccessMessage] = useState('')
-    const [errorMessage , setErrorMessage] = useState('')
 
     const tableRef = useRef(null); // Ref for the table
-
     const navigate = useNavigate()
 
     useEffect(()=> refreshCompanies() , [] )
     
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
-        if (tableRef.current && complist.length >0 ) {
+        if (tableRef.current && complist.length > 0 ) {
           $(tableRef.current).DataTable(); // Initialize DataTables
         }
       }, [complist]); // Re-initialize DataTables when activities data changes
    
 
     function refreshCompanies() {
-        if(sessionStorage.getItem('response')!=''){
-            setSuccessMessage(sessionStorage.getItem('response'))
-             setTimeout(() => {
-                sessionStorage.removeItem('response')
-                setSuccessMessage('')
-             }, 2000);
-        }
+        //if(sessionStorage.getItem('response')!=''){
+        //     setSuccessMessage(sessionStorage.getItem('response'))
+        //      setTimeout(() => {
+        //         sessionStorage.removeItem('response')
+        //         setSuccessMessage('')
+        //      }, 2000);
+        // }
 
-        if(sessionStorage.getItem('reserr')!=''){
-            setErrorMessage(sessionStorage.getItem('reserr'))
-             setTimeout(() => {
-                sessionStorage.removeItem('reserr')
-                setErrorMessage('')
-             }, 2000);
-        }
+        // if(sessionStorage.getItem('reserr')!=''){
+        //     setErrorMessage(sessionStorage.getItem('reserr'))
+        //      setTimeout(() => {
+        //         sessionStorage.removeItem('reserr')
+        //         setErrorMessage('')
+        //      }, 2000);
+        // }
         retrieveAllCompanies().then((response)=> {
             setCompList(response.data)
         })
@@ -60,11 +57,10 @@ export default function ViewCompanyComponent() {
 
     return(
         <div className="container">
-            <h2 className="text-center m-4">View Company 
-                <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompany} > <Tooltip title="Add Company" arrow> Add Company</Tooltip></Button>    
-            </h2>
-            {successMessage && <div className="text-center alert alert-success"><strong> {successMessage}</strong> </div> }
-            {errorMessage && <div className="text-center alert alert-warning"> <strong>{errorMessage} </strong></div> }
+            <Box>
+                <Typography variant="h4" gutterBottom>View Companies <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompany} > <Tooltip title="Add Company" arrow> Add Company</Tooltip></Button>    </Typography>
+            </Box>
+          
         {/* <DataTable  
             data={complist}
             columns={[

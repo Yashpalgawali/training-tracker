@@ -24,13 +24,14 @@ import  EditIcon from '@mui/icons-material/Edit';
 export default function ViewEmployeeTrainings() {
 
     const [traininglist,setTrainingList] = useState([]);
-const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const {id} = useParams();
     const navigate = useNavigate()
     const didFetchRef = useRef(false)
     const tableRef = useRef(false)
- const dtInstanceRef = useRef(null); // to store DataTable instance
+    const dtInstanceRef = useRef(null); // to store DataTable instance
+    
     const [employee,setEmployee] = useState({
         emp_name : '',
         emp_code : '',
@@ -41,7 +42,7 @@ const [loading, setLoading] = useState(false);
             desig_name : ''
         }
     })
-      
+
     useEffect(() => {
            if (tableRef.current && traininglist.length > 0) {
             // Destroy old instance before reinitializing

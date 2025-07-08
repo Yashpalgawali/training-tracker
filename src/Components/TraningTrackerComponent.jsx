@@ -46,6 +46,7 @@ export default function TrainingTrackerComponent() {
                 <Route path='/train/employee/:id' element={ <EmployeeTrainingComponent /> }> </Route>
 
                 <Route path='/home' element={ <HomeComponent /> }> </Route>
+                <Route path='/' element={ <HomeComponent /> }> </Route>
 
             </Routes>
        </BrowserRouter>

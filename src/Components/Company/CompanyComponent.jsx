@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
 import { ErrorMessage, Field, Formik,Form } from "formik"
-import { Button } from "@mui/material"
+import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 
 export default function CompanyComponent () {
@@ -73,7 +73,7 @@ export default function CompanyComponent () {
    function validate(values) {
         let errors = { }
   
-        if(values.comp_name.length<=3) {
+        if(values.comp_name.length<2) {
             errors.comp_name = 'Please Enter at least 2 Characters'
         }
         return errors
@@ -92,7 +92,7 @@ export default function CompanyComponent () {
                {
                 (props) => (
                     <Form>                       
-                        <fieldset>
+                        {/* <fieldset>
                             <label htmlFor="comp_name" >Company</label>
                             <Field type="text" name="comp_name" className="form-control" placeholder="Enter Company name" ></Field>
                             <ErrorMessage  name='comp_name' component="div" className="alert alert-warning" />
@@ -100,11 +100,85 @@ export default function CompanyComponent () {
  
                         <div>
                             <Button type="submit"   variant="contained" color="primary" className="m-3">{btnValue}</Button>
-                        </div>
+                        </div> */}
+
+                        <Box
+                                component="form"
+                                sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+                                noValidate
+                                autoComplete="off"
+                                >
+                                <TextField  id="comp_name"
+                                            name="comp_name"
+                                            label="Company Name"
+                                            variant="filled"
+                                            placeholder="Enter Company Name"
+                                            value={props.values.comp_name}
+                                             onChange={props.handleChange}
+                                             onBlur={props.handleBlur}
+                                           error={props.touched.comp_name && Boolean(props.errors.comp_name)}
+                                            helperText={<ErrorMessage name="comp_name" />}
+                                            fullWidth />
+                                 {/* <ErrorMessage  name='comp_name' component="div" className="alert alert-warning" />                                  */}
+                        </Box>
+
+                         <Box  className="btnvalue">
+                                    <Button
+                                        type="submit"
+                                        style={{ float: 'left' }}
+                                        variant="contained"
+                                        color="primary"                                   
+                                    >
+                                    {btnValue}
+                                    </Button>
+                                </Box>
                     </Form>
                 )
                }
             </Formik>
         </div>
     ); 
+//     <Box className="container" sx={{ p: 2 }}>
+//     <Typography variant="h4"   gutterBottom>{btnValue}</Typography>
+
+//     <Formik
+//       initialValues={{ company_id, comp_name }}
+//       enableReinitialize={true}
+//       onSubmit={onSubmit}
+//       validate={validate}
+//       validateOnBlur={false}
+//       validateOnChange={false}
+//     >
+//       {(formikProps) => (
+//         <Form>
+//           <Stack spacing={3} maxWidth="600px">
+//             <TextField
+//               id="comp_name"
+//               name="comp_name"
+//               label="Company Name" 
+//               variant="standard"
+//               placeholder="Enter Company Name"
+//               value={formikProps.values.comp_name}
+//               onChange={formikProps.handleChange}
+//               onBlur={formikProps.handleBlur}
+//               error={formikProps.touched.comp_name && Boolean(formikProps.errors.comp_name)}
+//               helperText={<ErrorMessage name="comp_name" />}
+//               fullWidth
+//             />
+
+//             <Box>
+//               <Button
+//                 type="submit"
+//                 variant="contained"
+//                 color="primary"
+//               >
+//                 {btnValue}
+//               </Button>
+//             </Box>
+//           </Stack>
+//         </Form>
+//       )}
+//     </Formik>
+//   </Box>
+// );
 }
