@@ -2,11 +2,26 @@
   text-align: center;
 }
 
-/* .container {
-    margin-top: 100px;  
-} */
+ .error-container {
+    top: 50%;
+    left: 50%;
+    /* color: rgb(240, 64, 64); */
+    /* transform: scale(110%); */
+    /* animation-name: example;
+    animation-duration: 4s;   */
+ }
 
+/* The animation code */
+@keyframes example {
+   0%   {color: red;}
+  25%  {color: rgb(219, 219, 180);}
+  50%  {color: blue;}
+  100% {color: green;}
+}
 .btnvalue {
   justify-self: start !important;
   margin-left: 216px;
 }
+
+ 
+
