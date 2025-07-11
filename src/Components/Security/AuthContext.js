@@ -1,37 +1,45 @@
-import { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext, useState } from "react"; 
+import { executeJwtAuthentication } from "../api/LoginApiService";
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext()
 
 export const useAuth = ()=> useContext(AuthContext)
 
-export default function AuthProvider({children}) {
+export default function AuthProvider({children}) { 
+ 
+    const [isAuthenticated , setAuthenticated] = useState(false)
 
-const [number,setNumber] = useState(100)
+    const [jwtToken, setJwtToken] = useState('')
+    const [userid,setUserId] = useState('')
+    const [username, setUsername] = useState('')
 
-const [isAuthenticated , setAuthenticated] = useState(false)
+    async function login(username,password) {
+         
+        const resp = await executeJwtAuthentication(username,password)
+        const jwtToken = 'Bearer ' + resp.data.token
+        const decoded = jwtDecode(jwtToken)
+        
+        console.log('decoded ',decoded)
 
-
-
-function login(username,password) {
-    if(username==='admin') {
+        setUserId(decoded.userId)
         setAuthenticated(true)
-        alert('success')
+        setJwtToken(jwtToken)
+        setUsername(decoded.username)
+        sessionStorage.setItem('userid',decoded.userId)
+        localStorage.setItem('userid',decoded.userId)
+
+    
     }
-    else {
-        setAuthenticated(false)
-        alert('failed')
-    }
-}
 
     function logout()
-    {alert('Logged Out')
+    { 
         setAuthenticated(false)
-       return true
-
+        return true
     }
+
     return (
-        <AuthContext.Provider value={ { number , isAuthenticated, login, logout } }>
+        <AuthContext.Provider value={ { isAuthenticated, login, logout, jwtToken, userid,username } }>
             { children }
         </AuthContext.Provider>
     )

@@ -1,5 +1,5 @@
 import HeaderComponent from './HeaderComponent';
-import { BrowserRouter, Routes, Route } from 'react-router-dom'; 
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
 import DesignationComponent from './Designation/DesignationComponent';
 import ViewDesignation from './Designation/ViewDesignation';
 import CompanyComponent from './Company/CompanyComponent';
@@ -25,6 +25,7 @@ function AuthenticateRoute({children}) {
    if(authContext.isAuthenticated)
       return children
   
+   return <Navigate to="/" />
 }
 
 export default function TrainingTrackerComponent() {

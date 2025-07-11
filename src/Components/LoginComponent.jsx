@@ -2,24 +2,55 @@ import { Box, Button, TextField, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import { useAuth } from "./Security/AuthContext";
-
+import "../../src/Components/LogonComponent.css";
+// src\Components\LogonComponent.css
 export default function LoginComponent() {
     
     const [username , setUsername] = useState('')
     const [password , setPassword] = useState('')
     const authContext  = useAuth()
 
-    function handleSubmit(values) {
-        authContext.login(values.username,values.password)
+   const [pos, setPos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    setPos({ x: e.clientX, y: e.clientY });
+  };
+
+   async function handleSubmit(values) {
+         await authContext.login(values.username,values.password)
+         
     }
 
     return(
         <div className="container">
+
+            <div  style={{
+                position: "relative",
+                height: "100vh",
+                overflow: "hidden"
+            }}
+            onMouseMove={handleMouseMove}
+            >
+            {/* Floating circle */}
+            <div
+            style={{
+                position: "fixed", // 👈 fixed keeps it out of layout flow
+                top: pos.y - 10,
+                left: pos.x - 10,
+                width: 10,
+                height: 10,
+                borderRadius: "50%",
+                backgroundColor: "red",
+                pointerEvents: "none", // 👈 lets you interact with underlying form
+                zIndex: 9999
+            }}
+            />
             <Box>
                 <Typography variant="h4" gutterBottom>Login Here </Typography>
             </Box>
 
             <div>
+                 
                 <Formik
                     enableReinitialize={true}
                     initialValues={ { username , password } }
@@ -85,5 +116,6 @@ export default function LoginComponent() {
                 </Formik>
             </div>
         </div>
+      </div>
     )
 }
