@@ -13,3 +13,8 @@ export const executeJwtAuthentication =
                     headers : {"Content-Type": "application/json"}
                 } 
             )
+export const logoutFunction = 
+    (btoken) => apiClient.post(`/logouturl`, { }, { headers : {
+        Authorization : btoken ,
+        "Content-Type": "application/json"
+    }} )

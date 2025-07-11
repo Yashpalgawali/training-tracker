@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react"; 
-import { executeJwtAuthentication } from "../api/LoginApiService";
+import { executeJwtAuthentication , logoutFunction } from "../api/LoginApiService";
 import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext()
@@ -27,14 +27,23 @@ export default function AuthProvider({children}) {
         setJwtToken(jwtToken)
         setUsername(decoded.username)
         sessionStorage.setItem('userid',decoded.userId)
-        localStorage.setItem('userid',decoded.userId)
-
-    
+        localStorage.setItem('userid',decoded.userId)    
     }
 
-    function logout()
+    async function logout()
     { 
+        alert('logout called')
+        const result = await logoutFunction(jwtToken)
+        console.log('Log out result ',result)
+        alert(result.data.message) 
+        
         setAuthenticated(false)
+        setUserId('')
+        setJwtToken('')
+        setUsername('')
+        sessionStorage.clear()
+        localStorage.clear()
+       
         return true
     }
 

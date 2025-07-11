@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from "./Security/AuthContext";
-import { useState } from "react";
  
 
 export default function HeaderComponent() {
@@ -11,7 +10,7 @@ export default function HeaderComponent() {
     const isAuthenticated = authContext.isAuthenticated
     const navigate = useNavigate()
 
-    console.log(authContext)
+     
     function logout()
     {
         if(authContext.logout()) {
