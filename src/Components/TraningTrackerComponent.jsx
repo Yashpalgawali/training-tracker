@@ -22,10 +22,11 @@ import AuthProvider, { useAuth } from './Security/AuthContext';
 function AuthenticateRoute({children}) {
    const authContext  = useAuth()
 
-   if(authContext.isAuthenticated)
-      return children
-  
-   return <Navigate to="/" />
+   if(authContext.isAuthenticated) {
+       return children
+   }
+
+    return <Navigate to="/" />
 }
 
 export default function TrainingTrackerComponent() {
@@ -40,8 +41,8 @@ export default function TrainingTrackerComponent() {
                    <AuthenticateRoute> 
                       <CompanyComponent /> 
                    </AuthenticateRoute>
-                  }> 
-                  </Route>
+                  }>
+                 </Route>
                 
                 <Route path='/companies' element={ <AuthenticateRoute> <ViewCompanyComponent /> </AuthenticateRoute> }> </Route>
 

@@ -3,21 +3,27 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useState } from "react";
 import { useAuth } from "./Security/AuthContext";
 import "../../src/Components/LogonComponent.css";
+import { useNavigate } from "react-router-dom";
 // src\Components\LogonComponent.css
 export default function LoginComponent() {
     
     const [username , setUsername] = useState('')
     const [password , setPassword] = useState('')
     const authContext  = useAuth()
+  
+    const navigate = useNavigate()
+    
+    const [pos, setPos] = useState({ x: 0, y: 0 });
 
-   const [pos, setPos] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e) => {
-    setPos({ x: e.clientX, y: e.clientY });
-  };
+    const handleMouseMove = (e) => {
+        setPos({ x: e.clientX, y: e.clientY });
+    };
 
    async function handleSubmit(values) {
-         await authContext.login(values.username,values.password)
+       const res =  await authContext.login(values.username,values.password)
+       if(res) {
+        navigate('/viewemployees')
+       }
          
     }
 

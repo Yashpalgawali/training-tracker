@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import { getTrainingsByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
+import { getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
 
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import $, { data, error } from 'jquery'; // jQuery is required for DataTables to work
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import dayjs from "dayjs";
 
 import Dialog from '@mui/material/Dialog';
@@ -19,7 +19,9 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CircularProgress, Box } from '@mui/material';
+
 import  EditIcon from '@mui/icons-material/Edit';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export default function ViewEmployeeTrainings() {
 
@@ -89,11 +91,6 @@ export default function ViewEmployeeTrainings() {
         });
     }
 
-    // function updateCompletionTime(hist_id) {
-    //     sessionStorage.setItem('hist_id',hist_id)
-        
-    // }
-
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (id) => {
@@ -113,22 +110,42 @@ export default function ViewEmployeeTrainings() {
        
         const completion_date = formJson.completion_date;
         const histid = sessionStorage.getItem('hist_id')
-        
+       
         updateCompletionDate(histid,completion_date).then((response)=> {
             getUpdatedTrainingsByEmpId() 
-            showToast(response.data.responseMessage,"success")
+            console.log('success', response)
+             showToast(response.data.responseMessage,"success")
             navigate(`/training/employee/${id}`)
         }).catch((error) => {
-            showToast(error.response.data.errorMessage,"error")
+            console.log('ERROR', error)
+             showToast(error.response.data.errorMessage,"error")
         })
         handleClose();
     };
 
+    function downloadTrainingHistory(id) { 
+     
+            getTrainingsHistoryByEmployeeId(id).then((response)=> {
+                // Convert the array buffer to a Blob
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                // Create a link element to trigger download
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'Training History - '+employee.emp_name+'.xlsx';
+                link.click();
+        })
+    }
 
     return (
       <div className="container">
         <div>
-            <h3 className="text-center">View Employee Trainings</h3>
+            <Box>
+                <Typography variant="h4" gutterBottom>View Employee Trainings
+                    <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                </Typography>
+            </Box>
+            
             <div>
                 <div style={{ float : 'left' }}  className="mb-3">
                     <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
@@ -176,6 +193,7 @@ export default function ViewEmployeeTrainings() {
                                                 <td>{training.completion_date ? (training.completion_date): (<span style={{ color : 'red'}}> Not Completed</span>)} </td>
                                                 <td> 
                                                     <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_hist_id)}> <EditIcon /> Update</Button>
+                                                    
                                                 </td>
                                             </tr>
                             )

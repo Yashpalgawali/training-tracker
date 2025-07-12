@@ -2,7 +2,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { getDesignationById, saveDesignation, updateDesignation } from "../api/DesignationApiService"
-import { Button } from "@mui/material"
+import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 
 export default function DesignationComponent() {
@@ -73,7 +73,7 @@ export default function DesignationComponent() {
     
     return(
         <div className="container">
-            <h1>{btnValue}</h1>
+              <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik
                 initialValues={ { desig_id  ,desig_name } }
                 enableReinitialize={true}
@@ -85,14 +85,44 @@ export default function DesignationComponent() {
                 {
                     (props) => (
                         <Form>
-                            <fieldset>
+                            {/* <fieldset>
                                 <label htmlFor="design_name">Designation</label>
                                 <Field type="text" name="desig_name" className="form-control" placeholder="Enter Designation" ></Field>
                                 <ErrorMessage  component="div"  name="desig_name"  className="alert alert-warning"/>
                             </fieldset>
                             <div>
                                 <Button type="submit" variant="contained" color="primary" className="m-3">{btnValue}</Button>
-                            </div>
+                            </div> */}
+                            
+                            <Box
+                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+                                    noValidate
+                                    autoComplete="off"
+                                    >
+                                    <TextField  id="desig_name"
+                                                name="desig_name"
+                                                label="Designation Name"
+                                                variant="filled"
+                                                placeholder="Enter Designation Name"
+                                                value={props.values.desig_name}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                error={props.touched.desig_name && Boolean(props.errors.desig_name)}
+                                                helperText={<ErrorMessage name="desig_name" />}
+                                                fullWidth />
+                                       
+                            </Box>
+                            
+                                <Box className="btnvalue">
+                                        <Button
+                                            type="submit"
+                                            style={{ float: 'left' }}
+                                            variant="contained"
+                                            color="primary"                                   
+                                        >
+                                        {btnValue}
+                                        </Button>
+                                </Box>
                         </Form>
                     )
                 }

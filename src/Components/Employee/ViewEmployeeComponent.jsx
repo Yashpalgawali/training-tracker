@@ -4,7 +4,7 @@ import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import $ from 'jquery'; // jQuery is required for DataTables to work
-import { Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -59,22 +59,27 @@ export default function ViewEmployeeComponent() {
     function updateEmployee(id) {
         navigate(`/employee/${id}`)
     }
+
     function addNewEmployee() {
         navigate(`/employee/-1`)
     }
 
-    function getEmployeeTrainings(id)
-    {         
+    function getEmployeeTrainings(id)  {         
         navigate(`/training/employee/${id}`)
     }
 
-    function addTraining(empid){
+    function addTraining(empid) {
          navigate(`/train/employee/${empid}`)
     }
 
     return (
         <div className="container">
-            <h2 className="text-center">View Employees <Button style={ { float : 'right'} }  variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> </h2>
+            <Box>
+                <Typography variant="h4">View Employees
+                    <Button style={ { float : 'right'} }  variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
+                </Typography>
+            </Box>
+            {/* <h2 className="text-center">View Employees <Button style={ { float : 'right'} }  variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> </h2> */}
             <div>
                 <table ref={tableRef} className="table table-striped table-hover">
                     <thead>

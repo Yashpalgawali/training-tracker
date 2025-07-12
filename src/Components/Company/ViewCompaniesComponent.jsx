@@ -27,21 +27,7 @@ export default function ViewCompanyComponent() {
    
 
     function refreshCompanies() {
-        //if(sessionStorage.getItem('response')!=''){
-        //     setSuccessMessage(sessionStorage.getItem('response'))
-        //      setTimeout(() => {
-        //         sessionStorage.removeItem('response')
-        //         setSuccessMessage('')
-        //      }, 2000);
-        // }
-
-        // if(sessionStorage.getItem('reserr')!=''){
-        //     setErrorMessage(sessionStorage.getItem('reserr'))
-        //      setTimeout(() => {
-        //         sessionStorage.removeItem('reserr')
-        //         setErrorMessage('')
-        //      }, 2000);
-        // }
+     
         retrieveAllCompanies().then((response)=> {
             setCompList(response.data)
         })

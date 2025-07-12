@@ -1,6 +1,7 @@
 import { createContext, useContext, useState } from "react"; 
 import { executeJwtAuthentication , logoutFunction } from "../api/LoginApiService";
 import { jwtDecode } from "jwt-decode";
+import { apiClient } from "../api/apiClient";
 
 export const AuthContext = createContext()
 
@@ -15,24 +16,40 @@ export default function AuthProvider({children}) {
     const [username, setUsername] = useState('')
 
     async function login(username,password) {
-         
-        const resp = await executeJwtAuthentication(username,password)
-        const jwtToken = 'Bearer ' + resp.data.token
-        const decoded = jwtDecode(jwtToken)
+        try{ 
+            const resp = await executeJwtAuthentication(username,password)
         
-        console.log('decoded ',decoded)
+            if(resp.status==200) {
+                const jwtToken = 'Bearer ' + resp.data.token
+                const decoded = jwtDecode(jwtToken)
+                setUserId(decoded.userId)
+                setAuthenticated(true)
+                setJwtToken(jwtToken)
+                setUsername(decoded.username)
+                sessionStorage.setItem('userid',decoded.userId)
+                localStorage.setItem('userid',decoded.userId) 
 
-        setUserId(decoded.userId)
-        setAuthenticated(true)
-        setJwtToken(jwtToken)
-        setUsername(decoded.username)
-        sessionStorage.setItem('userid',decoded.userId)
-        localStorage.setItem('userid',decoded.userId)    
+                apiClient.interceptors.request.use(
+                    (config) => {
+                        config.headers.Authorization=jwtToken
+                        return config
+                    }
+                )
+                return true
+            }
+            else {
+                logout()
+                return false
+            }
+        }
+        catch(error) {
+            logout()
+            return false
+        }
     }
-
     async function logout()
     { 
-        alert('logout called')
+      
         const result = await logoutFunction(jwtToken)
         console.log('Log out result ',result)
         alert(result.data.message) 

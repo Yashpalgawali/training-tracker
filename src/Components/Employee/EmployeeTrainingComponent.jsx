@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { getEmployeeById, retrieveAllEmployees } from "../api/EmployeeApiService"
 import { retrieveAllTraining } from "../api/TrainingApiService"
-import { Field, Form, Formik, useFormikContext } from "formik"
+import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
 
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
@@ -10,7 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs, { Dayjs } from "dayjs";
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { Button, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, TextField, Typography } from "@mui/material";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { saveEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
@@ -41,11 +41,12 @@ export default function EmployeeTrainingComponent(){
 
     useEffect(()=> {
         if(id != -1) {
+            setBtnValue('Update Training')
             getEmployeeById(id).then((response) => {
                 console.log(response)
                 setEmployee(response.data)
             })
-        }
+        } 
     }, [] )
 
     function getAllDetails() {
@@ -53,7 +54,6 @@ export default function EmployeeTrainingComponent(){
             setEmployeeList(response.data)
         })
         retrieveAllTraining().then((response) => {
-            console.log('training List ',response.data)
             setTrainingList(response.data)
         })
     }
@@ -116,9 +116,101 @@ export default function EmployeeTrainingComponent(){
 
    return(
            <div className="container">
-               <h2 className="text-center">{btnValue}</h2>
+               <Typography variant="h4" gutterBottom>{btnValue}</Typography>
                <div>
-                   <Formik
+                 <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Formik
+                        enableReinitialize={true}
+                        initialValues={{
+                            training_date: training_date ? dayjs(training_date) : null,
+                            completion_date: completion_date ? dayjs(completion_date) : null,
+                            employee: employee ? employee.emp_id : '',
+                            training_ids: []
+                        }}
+                        validateOnBlur={false}
+                        validateOnChange={false}
+                        onSubmit={onSubmit}
+                        >
+                        {({ setFieldValue, values, handleChange, handleBlur, touched, errors }) => (
+                            <Form>
+                            {/* Employee Dropdown */}
+                            {/* Employee Select using react-select */}
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Employee</Typography>
+                                <Select
+                                name="employee"
+                                options={empList.map(emp => ({
+                                    value: emp.emp_id,
+                                    label: emp.emp_name
+                                }))}
+                                value={
+                                    empList
+                                    .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
+                                    .find(option => option.value === values.employee) || null
+                                }
+                                onChange={(option) => setFieldValue('employee', option ? option.value : '')}
+                                placeholder="Select Employee"
+                                />
+                                <FormHelperText error={touched.employee && Boolean(errors.employee)}>
+                                <ErrorMessage name="employee" />
+                                </FormHelperText>
+                            </Box>
+                            
+                           
+                              {/* Training Date Picker */}
+                                <Box mb={2}>
+                                <DatePicker
+                                    label="Training Date"
+                                    value={values.training_date}
+                                    onChange={(date) => setFieldValue('training_date', date)}
+                                    slotProps={{
+                                    textField: {
+                                        fullWidth: true,
+                                        error: touched.training_date && Boolean(errors.training_date),
+                                        helperText: <ErrorMessage name="training_date" />
+                                    }
+                                    }}
+                                />
+                                </Box>
+
+                                {/* Completion Date Picker */}
+                                <Box mb={2}>
+                                <DatePicker
+                                    label="Completion Date"
+                                    value={values.completion_date}
+                                    onChange={(date) => setFieldValue('completion_date', date)}
+                                    slotProps={{
+                                    textField: {
+                                        fullWidth: true,
+                                        error: touched.completion_date && Boolean(errors.completion_date),
+                                        helperText: <ErrorMessage name="completion_date" />
+                                    }
+                                    }}
+                                />
+                                </Box>
+                            
+                            {/* Training MultiSelect */}
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Training</Typography>
+                                <TrainingMultiSelect
+                                options={options}
+                                value={values.training_ids}
+                                onChange={(value) => setFieldValue('training_ids', value)}
+                                />
+                                <FormHelperText><ErrorMessage name="training_ids" /></FormHelperText>
+                            </Box>
+
+                            {/* Submit Button */}
+                            <Box mt={2}>
+                                <Button type="submit" variant="contained" color="primary">
+                                {btnValue}
+                                </Button>
+                            </Box>
+                            </Form>
+                        )}
+                        </Formik>
+            </LocalizationProvider>
+                   {/* <Formik
                        enableReinitialize={true}
                        initialValues={ {  training_date, completion_date ,  employee: employee ? employee.emp_id : ''  , training_ids : []} }
                        validateOnBlur={false}
@@ -161,7 +253,7 @@ export default function EmployeeTrainingComponent(){
                            </Form>
                        )
                    }
-                   </Formik>
+                   </Formik> */}
                </div>
            </div>
        )

@@ -9,7 +9,6 @@ export default function HeaderComponent() {
    
     const isAuthenticated = authContext.isAuthenticated
     const navigate = useNavigate()
-
      
     function logout()
     {
@@ -17,6 +16,7 @@ export default function HeaderComponent() {
             navigate('login')
         }
     }
+
  return(
     <header className="border-bottom border-light border-5 mb-5 p-2 ">
         <div className="container-fluid">

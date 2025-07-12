@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { getDepartmentById, saveDepartment, updateDepartment } from "../api/DepartmentApiService"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { retrieveAllCompanies, retrieveCompanyById } from "../api/CompanyApiService"
-import { Button } from "@mui/material"
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 
 export default function DepartmentComponent() {
@@ -95,7 +95,7 @@ export default function DepartmentComponent() {
   
     return(
         <div className="container">
-            <h1>{btnValue}</h1>        
+             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
         <div>
             <Formik
                 initialValues={ { dept_id , dept_name , companies:'' } }
@@ -108,7 +108,7 @@ export default function DepartmentComponent() {
                 {
                     (props)=> (
                         <Form>
-                            <fieldset className="form-group">
+                            {/* <fieldset className="form-group">
                             <label htmlFor="companies">Select Company </label>
                             <Field className="form-control" name="companies" as="select" >
                                 <option>Please Select Company</option>
@@ -129,13 +129,72 @@ export default function DepartmentComponent() {
                         </fieldset>
                             <div>
                                 <Button type="submit" disabled={isDisabled} id="submit" variant="contained" color="primary" className="m-3">{btnValue}</Button>    
-                            </div>
+                            </div> */}
+                            
+                            <Box
+                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+                                    noValidate
+                                    autoComplete="off"
+                                    >
+                                {/* Dropdown Select */}
+                                <FormControl
+                                    variant="filled"
+                                    fullWidth
+                                    error={props.touched.companies && Boolean(props.errors.companies)}
+                                >
+                                    <InputLabel id="desig_type-label">Company</InputLabel>
+                                    <Select
+                                    labelId="desig_type-label"
+                                    id="companies"
+                                    name="companies"
+                                    value={props.values.companies}
+                                    onChange={props.handleChange}
+                                    onBlur={props.handleBlur}
+                                    >
+                                        {
+                                            companies.map(
+                                                        (company) =>(
+                                                            <MenuItem key={company.company_id} value={company.company_id}>{company.comp_name}</MenuItem>
+                                                        )
+                                                        )   
+                                        }
+                                    
+                                    </Select>
+                                    <FormHelperText>
+                                    <ErrorMessage name="companies" />
+                                    </FormHelperText>
+                                </FormControl>
+                                    <TextField  id="dept_name"
+                                                name="dept_name"
+                                                label="Department Name"
+                                                variant="filled"
+                                                placeholder="Enter Department Name"
+                                                value={props.values.dept_name}
+                                                onChange={props.handleChange}
+                                                onBlur={props.handleBlur}
+                                                error={props.touched.dept_name && Boolean(props.errors.dept_name)}
+                                                helperText={<ErrorMessage name="dept_name" />}
+                                                fullWidth />
+                                
+                                       
+                            </Box>
+                  
+                            <Box className="btnvalue">
+                                    <Button
+                                        type="submit"
+                                        style={{ float: 'left' }}
+                                        variant="contained"
+                                        color="primary"                                   
+                                    >
+                                    {btnValue}
+                                    </Button>
+                            </Box>
                         </Form>
                     )
                 }
             </Formik>
         </div>
-        </div>
+      </div>
     )
     
 }

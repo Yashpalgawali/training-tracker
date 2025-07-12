@@ -81,7 +81,7 @@ export default function CompanyComponent () {
 
      return (
         <div className="container">
-          <h2>{btnValue}</h2>
+            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik initialValues={ { company_id,comp_name} }
                 enableReinitialize={true}
                 onSubmit={onSubmit}
@@ -103,7 +103,6 @@ export default function CompanyComponent () {
                         </div> */}
 
                         <Box
-                                component="form"
                                 sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
                                 noValidate
                                 autoComplete="off"
@@ -114,15 +113,15 @@ export default function CompanyComponent () {
                                             variant="filled"
                                             placeholder="Enter Company Name"
                                             value={props.values.comp_name}
-                                             onChange={props.handleChange}
-                                             onBlur={props.handleBlur}
-                                           error={props.touched.comp_name && Boolean(props.errors.comp_name)}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            error={props.touched.comp_name && Boolean(props.errors.comp_name)}
                                             helperText={<ErrorMessage name="comp_name" />}
                                             fullWidth />
                                  {/* <ErrorMessage  name='comp_name' component="div" className="alert alert-warning" />                                  */}
                         </Box>
-
-                         <Box  className="btnvalue">
+                      
+                         <Box className="btnvalue">
                                     <Button
                                         type="submit"
                                         style={{ float: 'left' }}
@@ -131,7 +130,7 @@ export default function CompanyComponent () {
                                     >
                                     {btnValue}
                                     </Button>
-                                </Box>
+                         </Box>
                     </Form>
                 )
                }
