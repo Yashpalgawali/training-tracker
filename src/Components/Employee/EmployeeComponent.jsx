@@ -101,10 +101,12 @@ export default function EmployeeComponent() {
         if(id == -1) {
 
             saveEmployee(employee).then((response) => {
+                console.log('EMployed SAVED succesfully ',response)
                   showToast(response?.data?.responseMessage,"success")
                   navigate(`/viewemployees`)
                 })
-               .catch((error) => {                
+               .catch((error) => {        
+                    console.log('EMployed SAVE FAILED ',error)
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 })
@@ -113,9 +115,11 @@ export default function EmployeeComponent() {
             employee.emp_id = id
 
             updateEmployee(employee).then((response)=>{
+                console.log('EMployed update succes ',response)
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
             }).catch((error) => {
+                console.log('EMployed update FAILED ',error)
                 showToast(error?.data?.errorMessage,"error")
                 navigate(`/viewemployees`)
             })
