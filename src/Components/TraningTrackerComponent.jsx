@@ -73,6 +73,9 @@ export default function TrainingTrackerComponent() {
 
             </Routes>
           </BrowserRouter>
+          <footer className='footer'>
+            <p><strong>&copy;</strong> All rights Reserved @ Tidycasa Pvt Ltd</p>
+          </footer> 
        </AuthProvider>
     )
 }
