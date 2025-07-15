@@ -97,7 +97,9 @@ export default function ViewEmployeeComponent() {
             <Box>
                 <Typography variant="h4">View Employees
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
-                    <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="success" onClick={downloadAllTrainings}><DownloadIcon /> Download All Trainings </Button>
+                        <BootstrapTooltip title="Download Trainings given to Employees">
+                                <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="success" onClick={downloadAllTrainings}><DownloadIcon /> Download  </Button>
+                        </BootstrapTooltip>                                                
                 </Typography>
             </Box>
             <div>

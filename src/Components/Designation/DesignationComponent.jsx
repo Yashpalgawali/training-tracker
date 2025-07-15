@@ -73,7 +73,7 @@ export default function DesignationComponent() {
     
     return(
         <div className="container">
-              <Typography variant="h4" gutterBottom>{btnValue}</Typography>
+            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik
                 initialValues={ { desig_id  ,desig_name } }
                 enableReinitialize={true}
@@ -85,15 +85,6 @@ export default function DesignationComponent() {
                 {
                     (props) => (
                         <Form>
-                            {/* <fieldset>
-                                <label htmlFor="design_name">Designation</label>
-                                <Field type="text" name="desig_name" className="form-control" placeholder="Enter Designation" ></Field>
-                                <ErrorMessage  component="div"  name="desig_name"  className="alert alert-warning"/>
-                            </fieldset>
-                            <div>
-                                <Button type="submit" variant="contained" color="primary" className="m-3">{btnValue}</Button>
-                            </div> */}
-                            
                             <Box
                                     sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
                                     noValidate
@@ -102,7 +93,7 @@ export default function DesignationComponent() {
                                     <TextField  id="desig_name"
                                                 name="desig_name"
                                                 label="Designation Name"
-                                                variant="filled"
+                                                variant="standard"
                                                 placeholder="Enter Designation Name"
                                                 value={props.values.desig_name}
                                                 onChange={props.handleChange}
@@ -127,6 +118,7 @@ export default function DesignationComponent() {
                     )
                 }
             </Formik>
+             <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
         </div>
     )
 }

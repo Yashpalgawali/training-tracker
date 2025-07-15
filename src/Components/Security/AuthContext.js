@@ -18,8 +18,9 @@ export default function AuthProvider({children}) {
     async function login(username,password) {
         try{ 
             const resp = await executeJwtAuthentication(username,password)
-        
+            console.log('response from JWT authentication ',resp)
             if(resp.status==200) {
+                alert('login success')
                 const jwtToken = 'Bearer ' + resp.data.token
                 const decoded = jwtDecode(jwtToken)
                 setUserId(decoded.userId)
@@ -38,30 +39,33 @@ export default function AuthProvider({children}) {
                 return true
             }
             else {
-                logout()
-                return false
+                 alert('login failed'+resp.data)
+                 console.log('Login failed returning false',resp.data)
+                 logout()
+                 return false
             }
         }
         catch(error) {
-            logout()
-            return false
+            alert('INSIDE Error ')
+            console.log(error)
+            // logout()
+            // return false
         }
     }
     async function logout()
-    { 
-      
+    {      
         const result = await logoutFunction(jwtToken)
-        console.log('Log out result ',result)
+      
         alert(result.data.message) 
         
         setAuthenticated(false)
         setUserId('')
-        setJwtToken('')
+        setJwtToken(null)
         setUsername('')
         sessionStorage.clear()
         localStorage.clear()
        
-        return true
+        return result
     }
 
     return (

@@ -4,14 +4,12 @@ import { retrieveAllTraining } from "../api/TrainingApiService"
 import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
 
-import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs, { Dayjs } from "dayjs";
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
-import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, TextField, Typography } from "@mui/material";
-import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { Box, Button, FormHelperText, Typography } from "@mui/material";
+
 import { saveEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,12 +23,14 @@ export default function EmployeeTrainingComponent(){
     const [completion_date , setCompletionDate] = useState('')
     const [employee,setEmployee ] = useState('')
     const [btnValue,setBtnValue] = useState('Train Employee')
+    
     const didFetchRun = useRef(false)
 
     const navigate = useNavigate()
-
     const {id} = useParams()
 
+    const [disabled,setDisabled] = useState(false)
+    
     useEffect(() => {
         
         if(!didFetchRun.current) {
@@ -41,9 +41,10 @@ export default function EmployeeTrainingComponent(){
 
     useEffect(()=> {
         if(id != -1) {
+            
+            setDisabled(true)
             setBtnValue('Update Training')
             getEmployeeById(id).then((response) => {
-                console.log(response)
                 setEmployee(response.data)
             })
         } 
@@ -62,17 +63,18 @@ export default function EmployeeTrainingComponent(){
         const { setFieldValue, values } = useFormikContext();
 
         return (
-            <Select
-            name="training_ids"
-            isMulti
-            options={options}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={(selectedOptions) => {
-                const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
-                setFieldValue("training_ids", ids);
-            }}
-            value={options.filter((opt) => values.training_ids?.includes(opt.value))}
+            
+            <Select               
+                name="training_ids"
+                isMulti
+                options={options}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                onChange={(selectedOptions) => {
+                    const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
+                    setFieldValue("training_ids", ids);
+                }}
+                value={options.filter((opt) => values.training_ids?.includes(opt.value))}
             />
         );
     }
@@ -101,14 +103,11 @@ export default function EmployeeTrainingComponent(){
             completion_date : formattedCompletionDate
         }
 
-        
-        saveEmployeeTraining(employeeTraining).then((response) => {
-             
+        saveEmployeeTraining(employeeTraining).then((response) => {             
             showToast(response?.data?.responseMessage,"success")
             navigate(`/viewemployees`)
         })
-        .catch((error) => {
-             
+        .catch((error) => {             
             showToast(error?.data?.errorMessage,"error")
             navigate(`/viewemployees`)
         })
@@ -137,19 +136,20 @@ export default function EmployeeTrainingComponent(){
                             {/* Employee Select using react-select */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Employee</Typography>
-                                <Select
-                                name="employee"
-                                options={empList.map(emp => ({
-                                    value: emp.emp_id,
-                                    label: emp.emp_name
-                                }))}
-                                value={
-                                    empList
-                                    .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
-                                    .find(option => option.value === values.employee) || null
-                                }
-                                onChange={(option) => setFieldValue('employee', option ? option.value : '')}
-                                placeholder="Select Employee"
+                                <Select              
+                                    isDisabled={disabled}                                    
+                                    name="employee"
+                                    options={empList.map(emp => ({
+                                        value: emp.emp_id,
+                                        label: emp.emp_name
+                                    }))}
+                                    value={
+                                        empList
+                                        .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
+                                        .find(option => option.value === values.employee) || null
+                                    }
+                                    onChange={(option) => setFieldValue('employee', option ? option.value : '')}
+                                    placeholder="Select Employee"
                                 />
                                 <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                 <ErrorMessage name="employee" />
@@ -177,6 +177,7 @@ export default function EmployeeTrainingComponent(){
                                 <Box mb={2}>
                                 <DatePicker
                                     label="Completion Date"
+                                   
                                     value={values.completion_date}
                                     onChange={(date) => setFieldValue('completion_date', date)}
                                     slotProps={{
@@ -191,7 +192,7 @@ export default function EmployeeTrainingComponent(){
                             
                             {/* Training MultiSelect */}
                             <Box mb={2}>
-                                <Typography variant="subtitle1">Training</Typography>
+                                <Typography variant="subtitle1">Select Trainings</Typography>
                                 <TrainingMultiSelect
                                 options={options}
                                 value={values.training_ids}
@@ -209,51 +210,8 @@ export default function EmployeeTrainingComponent(){
                             </Form>
                         )}
                         </Formik>
-            </LocalizationProvider>
-                   {/* <Formik
-                       enableReinitialize={true}
-                       initialValues={ {  training_date, completion_date ,  employee: employee ? employee.emp_id : ''  , training_ids : []} }
-                       validateOnBlur={false}
-                       validateOnChange={false}
-                       onSubmit={onSubmit}
-                   >
-                   {
-                       ({ setFieldValue, values }) =>( 
-                           <Form>
-                              <fieldset>
-                                   <label htmlFor="employee" ></label>
-                                   <Field as="select" name="employee" className="form-control"  >
-                                       <option>Please Select Employees</option>
-                                       {
-                                           empList.map(
-                                               (emp)=> (
-                                                   <option key={emp.emp_id} value={emp.emp_id}>{emp.emp_name}</option>
-                                               )
-                                           )
-                                       }
-                                   </Field>
-                               </fieldset>
-                               <fieldset className="form-group">
-                                   <label htmlFor="training_date">Training Date</label>
-                                   <Field name="training_date" className="form-control" value={values.training_date} placeholder="Enter Joining Date" type="date"></Field>
-                               </fieldset>
-                               <fieldset className="form-group">
-                                   <label htmlFor="completion_date">Training Completion Date</label>
-                                   <Field name="completion_date" className="form-control" value={values.completion_date} placeholder="Enter Training Completion Date" type="date"></Field>
-                               </fieldset>
-                                                               
-                               <fieldset>
-                                   <label htmlFor="training_ids">Training</label>
-                                   <TrainingMultiSelect options={options} />
-                               </fieldset>
-                               <div>
-                                   <Button type="submit" variant="contained" color="primary" className="mt-2" >{btnValue}</Button>
-                               </div>
-   
-                           </Form>
-                       )
-                   }
-                   </Formik> */}
+                </LocalizationProvider>
+                   
                </div>
            </div>
        )

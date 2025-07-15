@@ -92,16 +92,6 @@ export default function CompanyComponent () {
                {
                 (props) => (
                     <Form>                       
-                        {/* <fieldset>
-                            <label htmlFor="comp_name" >Company</label>
-                            <Field type="text" name="comp_name" className="form-control" placeholder="Enter Company name" ></Field>
-                            <ErrorMessage  name='comp_name' component="div" className="alert alert-warning" />
-                        </fieldset>
- 
-                        <div>
-                            <Button type="submit"   variant="contained" color="primary" className="m-3">{btnValue}</Button>
-                        </div> */}
-
                         <Box
                                 sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
                                 noValidate
@@ -110,7 +100,7 @@ export default function CompanyComponent () {
                                 <TextField  id="comp_name"
                                             name="comp_name"
                                             label="Company Name"
-                                            variant="filled"
+                                            variant="standard"
                                             placeholder="Enter Company Name"
                                             value={props.values.comp_name}
                                             onChange={props.handleChange}
@@ -118,7 +108,7 @@ export default function CompanyComponent () {
                                             error={props.touched.comp_name && Boolean(props.errors.comp_name)}
                                             helperText={<ErrorMessage name="comp_name" />}
                                             fullWidth />
-                                 {/* <ErrorMessage  name='comp_name' component="div" className="alert alert-warning" />                                  */}
+                               
                         </Box>
                       
                          <Box className="btnvalue">
@@ -130,6 +120,7 @@ export default function CompanyComponent () {
                                     >
                                     {btnValue}
                                     </Button>
+                                    <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
                          </Box>
                     </Form>
                 )

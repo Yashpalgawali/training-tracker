@@ -138,13 +138,13 @@ export default function DepartmentComponent() {
                                     >
                                 {/* Dropdown Select */}
                                 <FormControl
-                                    variant="filled"
+                                    variant="standard"
                                     fullWidth
                                     error={props.touched.companies && Boolean(props.errors.companies)}
                                 >
-                                    <InputLabel id="desig_type-label">Company</InputLabel>
+                                    <InputLabel id="company-label">Select Company</InputLabel>
                                     <Select
-                                    labelId="desig_type-label"
+                                    labelId="company-label"
                                     id="companies"
                                     name="companies"
                                     value={props.values.companies}
@@ -167,7 +167,7 @@ export default function DepartmentComponent() {
                                     <TextField  id="dept_name"
                                                 name="dept_name"
                                                 label="Department Name"
-                                                variant="filled"
+                                                variant="standard"
                                                 placeholder="Enter Department Name"
                                                 value={props.values.dept_name}
                                                 onChange={props.handleChange}
@@ -191,8 +191,9 @@ export default function DepartmentComponent() {
                             </Box>
                         </Form>
                     )
-                }
+                }                
             </Formik>
+           
         </div>
       </div>
     )

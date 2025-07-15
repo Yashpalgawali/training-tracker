@@ -92,7 +92,7 @@ export default function TrainingComponent() {
                                         id="training_name"
                                         name="training_name"
                                         label="Training Name"
-                                        variant="filled"
+                                        variant="standard"
                                         placeholder="Enter Training Name"
                                         value={props.values.training_name}
                                         onChange={props.handleChange}
@@ -112,9 +112,11 @@ export default function TrainingComponent() {
                                     </Button>
                          </Box>
                         </Form> 
+
                      )
                 }
                </Formik>
+               <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
             </div>
         </div>
     )

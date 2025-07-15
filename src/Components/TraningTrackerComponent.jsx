@@ -30,6 +30,8 @@ function AuthenticateRoute({children}) {
 }
 
 export default function TrainingTrackerComponent() {
+
+  
     return(
       <AuthProvider>
        <BrowserRouter basename="/trainingtracker">
@@ -73,8 +75,9 @@ export default function TrainingTrackerComponent() {
 
             </Routes>
           </BrowserRouter>
+          
           <footer className='footer'>
-            <p><strong>&copy;</strong> All rights Reserved @ Tidycasa Pvt Ltd</p>
+            <p><strong>&copy;</strong> All Rights Reserved @ Tidycasa Pvt. Ltd</p>
           </footer> 
        </AuthProvider>
     )

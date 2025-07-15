@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "./Security/AuthContext";
 import "../../src/Components/LogonComponent.css";
 import { useNavigate } from "react-router-dom";
-// src\Components\LogonComponent.css
+
 export default function LoginComponent() {
     
     const [username , setUsername] = useState('')
@@ -19,11 +19,18 @@ export default function LoginComponent() {
         setPos({ x: e.clientX, y: e.clientY });
     };
 
-   async function handleSubmit(values) {
-       const res =  await authContext.login(values.username,values.password)
-       if(res) {
-        navigate('/viewemployees')
-       }
+    async function handleSubmit(values) {
+        const res =  await authContext.login(values.username,values.password)
+
+        alert("result in login submit "+res)
+        console.log("result in login submit ",res)
+        if(res) {
+            alert('inside if')
+            navigate('/viewemployees')
+        }
+        // else {
+        //     navigate('/login',{ replace : true})
+        // }
          
     }
 
@@ -39,24 +46,23 @@ export default function LoginComponent() {
             >
             {/* Floating circle */}
             <div
-            style={{
-                position: "fixed", // 👈 fixed keeps it out of layout flow
-                top: pos.y - 10,
-                left: pos.x - 10,
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                backgroundColor: "red",
-                pointerEvents: "none", // 👈 lets you interact with underlying form
-                zIndex: 9999
-            }}
+                style={{
+                    position: "fixed", // 👈 fixed keeps it out of layout flow
+                    top: pos.y - 10,
+                    left: pos.x - 10,
+                    width: 10,
+                    height: 10,
+                    borderRadius: "50%",
+                    backgroundColor: "red",
+                    pointerEvents: "none", // 👈 lets you interact with underlying form
+                    zIndex: 9999
+                }}
             />
             <Box>
-                <Typography variant="h4" gutterBottom>Login Here </Typography>
+                <Typography variant="h4" gutterBottom>Time To Login!! </Typography>
             </Box>
 
             <div>
-                 
                 <Formik
                     enableReinitialize={true}
                     initialValues={ { username , password } }
