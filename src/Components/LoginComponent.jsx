@@ -21,11 +21,8 @@ export default function LoginComponent() {
 
     async function handleSubmit(values) {
         const res =  await authContext.login(values.username,values.password)
-
-        alert("result in login submit "+res)
-        console.log("result in login submit ",res)
-        if(res) {
-            alert('inside if')
+   
+        if(res) {            
             navigate('/viewemployees')
         }
         // else {

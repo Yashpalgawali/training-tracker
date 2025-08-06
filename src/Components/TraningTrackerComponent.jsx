@@ -76,8 +76,8 @@ export default function TrainingTrackerComponent() {
             </Routes>
           </BrowserRouter>
           
-          <footer className='footer'>
-            <p><strong>&copy;</strong> All Rights Reserved @ Tidycasa Pvt. Ltd</p>
+          <footer className='footer' style={{ marginTop : '50px' }}   >
+            <p><strong>&copy;</strong> All Rights Reserved @<strong>Tidycasa Pvt. Ltd</strong></p>
           </footer> 
        </AuthProvider>
     )

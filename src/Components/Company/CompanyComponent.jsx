@@ -120,55 +120,13 @@ export default function CompanyComponent () {
                                     >
                                     {btnValue}
                                     </Button>
-                                    <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
+                                    
                          </Box>
                     </Form>
-                )
+                  )
                }
             </Formik>
         </div>
     ); 
-//     <Box className="container" sx={{ p: 2 }}>
-//     <Typography variant="h4"   gutterBottom>{btnValue}</Typography>
-
-//     <Formik
-//       initialValues={{ company_id, comp_name }}
-//       enableReinitialize={true}
-//       onSubmit={onSubmit}
-//       validate={validate}
-//       validateOnBlur={false}
-//       validateOnChange={false}
-//     >
-//       {(formikProps) => (
-//         <Form>
-//           <Stack spacing={3} maxWidth="600px">
-//             <TextField
-//               id="comp_name"
-//               name="comp_name"
-//               label="Company Name" 
-//               variant="standard"
-//               placeholder="Enter Company Name"
-//               value={formikProps.values.comp_name}
-//               onChange={formikProps.handleChange}
-//               onBlur={formikProps.handleBlur}
-//               error={formikProps.touched.comp_name && Boolean(formikProps.errors.comp_name)}
-//               helperText={<ErrorMessage name="comp_name" />}
-//               fullWidth
-//             />
-
-//             <Box>
-//               <Button
-//                 type="submit"
-//                 variant="contained"
-//                 color="primary"
-//               >
-//                 {btnValue}
-//               </Button>
-//             </Box>
-//           </Stack>
-//         </Form>
-//       )}
-//     </Formik>
-//   </Box>
-// );
+ 
 }

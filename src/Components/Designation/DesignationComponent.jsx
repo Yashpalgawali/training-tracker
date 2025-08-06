@@ -118,7 +118,7 @@ export default function DesignationComponent() {
                     )
                 }
             </Formik>
-             <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
+          
         </div>
     )
 }

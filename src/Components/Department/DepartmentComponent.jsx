@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { getDepartmentById, saveDepartment, updateDepartment } from "../api/DepartmentApiService"
-import { ErrorMessage, Field, Form, Formik } from "formik"
+import { ErrorMessage, Form, Formik } from "formik"
 import { retrieveAllCompanies, retrieveCompanyById } from "../api/CompanyApiService"
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
@@ -10,7 +10,6 @@ export default function DepartmentComponent() {
     
     const {id} = useParams()
 
-    
     const [btnValue,setBtnValue] = useState('Add Department')    
     const [companies,setCompanies] = useState([])
     const [dept_id,setDeptId] = useState('')
@@ -37,14 +36,12 @@ export default function DepartmentComponent() {
                 setDeptName(response.data.dept_name)    
            })
         }
-
      } 
         if(id) {
             retrieveDepartmentById()
         }
     }, [id])
-    
-     
+         
     function validate(values) {
         let errors ={}
         if(values.dept_name.length <=1 ) {
@@ -92,11 +89,11 @@ export default function DepartmentComponent() {
                 }            
             })
     }
-  
+ 
     return(
-        <div className="container">
-             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-        <div>
+          <div className="container">
+            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
+       
             <Formik
                 initialValues={ { dept_id , dept_name , companies:'' } }
                 enableReinitialize={true}
@@ -192,10 +189,8 @@ export default function DepartmentComponent() {
                         </Form>
                     )
                 }                
-            </Formik>
-           
-        </div>
+            </Formik>      
       </div>
-    )
+    );
     
 }
