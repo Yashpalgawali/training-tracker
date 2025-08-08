@@ -21,6 +21,8 @@ export default function EmployeeComponent() {
  
     const [emp_name, setEmpName] = useState('')
     const [emp_code,setEmpCode] = useState('')
+    const [contractor_name,setContractorName] = useState('')
+
     const [joining_date, setJoiningDate] = useState('')
     const [category , setCategory] = useState('')
     const [designation , setDesignations] = useState('')
@@ -55,12 +57,13 @@ export default function EmployeeComponent() {
 
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
-
+                setContractorName(response.data?.contractor_name)
                 setDesignations(response.data.designation?.desig_id)
                 setCompany(response.data.department.company?.company_id)
-                let comp_id = response.data.department.company?.company_id
-                getDepartmentByCompanyId(comp_id).then((response)=>{
 
+                let comp_id = response.data.department.company?.company_id
+
+                getDepartmentByCompanyId(comp_id).then((response)=> {
                     setDepartment(response.data.department?.dept_id);
                     setDeptList(response.data)
                 })
@@ -84,7 +87,6 @@ export default function EmployeeComponent() {
             if(cnf) {
                 navigate(`/department/-1`)
             }
-
           })
          
         } else {
@@ -114,7 +116,8 @@ export default function EmployeeComponent() {
             emp_code : values.emp_code,
             designation : designation,
             department : department,
-            category : category           
+            category : category,
+            contractor_name : values.contractor_name           
         }
 
         if(id == -1) {
@@ -145,11 +148,11 @@ export default function EmployeeComponent() {
     return(
         <div className="container">
            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-            <div>
-                   <LocalizationProvider dateAdapter={AdapterDayjs}>
+             <div>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Formik
             enableReinitialize={true}
-            initialValues={{ emp_name, emp_code, designation, department, company, category,  joining_date: joining_date ? dayjs(joining_date) : null }}
+            initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, joining_date: joining_date ? dayjs(joining_date) : null }}
             validateOnBlur={false}
             validateOnChange={false}
             onSubmit={onSubmit}
@@ -170,6 +173,23 @@ export default function EmployeeComponent() {
                     variant="standard"
                     error={touched.emp_name && Boolean(errors.emp_name)}
                     helperText={<ErrorMessage name="emp_name" />}
+                    />
+                </Box>
+
+                {/* Contractor Name */}
+                <Box mb={2}>
+                    <Typography variant="subtitle1">Contractor Name</Typography>
+                    <TextField
+                    fullWidth
+                    id="contractor_name"
+                    name="contractor_name"
+                    value={values.contractor_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter Contractor Name"
+                    variant="standard"
+                    error={touched.contractor_name && Boolean(errors.contractor_name)}
+                    helperText={<ErrorMessage name="contractor_name" />}
                     />
                 </Box>
 
@@ -232,7 +252,7 @@ export default function EmployeeComponent() {
                  {/* Designation */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.category && Boolean(errors.category)}>
-                    <InputLabel id="category-label">category</InputLabel>
+                    <InputLabel id="category-label">Category</InputLabel>
                     <Select
                         labelId="category-label"
                         id="category"
