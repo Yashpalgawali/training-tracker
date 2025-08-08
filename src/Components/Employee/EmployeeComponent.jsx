@@ -9,6 +9,11 @@ import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select,
 
 import { getEmployeeById, saveEmployee, updateEmployee } from "../api/EmployeeApiService";
 import { showToast } from "../SharedComponent/showToast"
+import { retrieveAllCategories } from "../api/CategoryApiService";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function EmployeeComponent() {
 
@@ -16,13 +21,16 @@ export default function EmployeeComponent() {
  
     const [emp_name, setEmpName] = useState('')
     const [emp_code,setEmpCode] = useState('')
-   
+    const [joining_date, setJoiningDate] = useState('')
+    const [category , setCategory] = useState('')
     const [designation , setDesignations] = useState('')
     const [company ,setCompany] = useState('')
     const [department, setDepartment] = useState('')
-    const [desiglist , setDesigList] = useState([])
+
+    const [desiglist , setDesigList] = useState([])    
     const [complist , setCompList] = useState([])
     const [deptlist , setDeptList] = useState([])
+    const [categorylist , setCategoryList] = useState([])
 
     const {id} = useParams()
     const navigate = useNavigate()
@@ -33,6 +41,11 @@ export default function EmployeeComponent() {
             setDesigList(response.data)
         })
       
+        retrieveAllCategories().then((response) => {
+            console.log(response.data)
+            setCategoryList(response.data)
+        })
+
         retrieveAllCompanies().then((response) => {
             setCompList(response.data)
         })
@@ -91,22 +104,26 @@ export default function EmployeeComponent() {
             dept_name : ''
        }
      
+       let category = {
+            category_id : values.category,
+            category : ''
+       }
+    
        let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
             designation : designation,
-            department : department            
+            department : department,
+            category : category           
         }
 
         if(id == -1) {
 
-            saveEmployee(employee).then((response) => {
-                console.log('EMployed SAVED succesfully ',response)
+            saveEmployee(employee).then((response) => {                
                   showToast(response?.data?.responseMessage,"success")
                   navigate(`/viewemployees`)
                 })
                .catch((error) => {        
-                    console.log('EMployed SAVE FAILED ',error)
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 })
@@ -115,11 +132,9 @@ export default function EmployeeComponent() {
             employee.emp_id = id
 
             updateEmployee(employee).then((response)=>{
-                console.log('EMployed update succes ',response)
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
             }).catch((error) => {
-                console.log('EMployed update FAILED ',error)
                 showToast(error?.data?.errorMessage,"error")
                 navigate(`/viewemployees`)
             })
@@ -131,9 +146,10 @@ export default function EmployeeComponent() {
         <div className="container">
            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <div>
+                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Formik
             enableReinitialize={true}
-            initialValues={{ emp_name, emp_code, designation, department, company }}
+            initialValues={{ emp_name, emp_code, designation, department, company, category,  joining_date: joining_date ? dayjs(joining_date) : null }}
             validateOnBlur={false}
             validateOnChange={false}
             onSubmit={onSubmit}
@@ -173,7 +189,23 @@ export default function EmployeeComponent() {
                     helperText={<ErrorMessage name="emp_code" />}
                     />
                 </Box>
-
+                  {/* Joining Date Picker */}
+                    <Box mb={2}>
+                    <DatePicker
+                        format="DD/MM/YYYY"
+                        label="Joining Date"
+                        value={values.joining_date}
+                        onChange={(date) => setFieldValue('joining_date', date)}
+                        slotProps={{
+                        textField: {
+                            fullWidth: true,
+                            error: touched.joining_date && Boolean(errors.joining_date),
+                            helperText: <ErrorMessage name="joining_date" />
+                        }
+                        }}
+                    />
+                    </Box>
+                
                 {/* Designation */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.designation && Boolean(errors.designation)}>
@@ -197,7 +229,29 @@ export default function EmployeeComponent() {
                     <FormHelperText><ErrorMessage name="designation" /></FormHelperText>
                     </FormControl>
                 </Box>
-
+                 {/* Designation */}
+                <Box mb={2}>
+                    <FormControl fullWidth variant="standard" error={touched.category && Boolean(errors.category)}>
+                    <InputLabel id="category-label">category</InputLabel>
+                    <Select
+                        labelId="category-label"
+                        id="category"
+                        name="category"
+                        value={values.category}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Category"
+                    >
+                        <MenuItem value="">Please Select Category</MenuItem>
+                        {categorylist.map((cat) => (
+                        <MenuItem key={cat.category_id} value={cat.category_id}>
+                            {cat.category}
+                        </MenuItem>
+                        ))}
+                    </Select>
+                    <FormHelperText><ErrorMessage name="category" /></FormHelperText>
+                    </FormControl>
+                </Box>
                 {/* Company */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.company && Boolean(errors.company)}>
@@ -255,6 +309,7 @@ export default function EmployeeComponent() {
                 </Form>
             )}
             </Formik>
+            </LocalizationProvider>
                 {/* <Formik
                     enableReinitialize={true}
                     initialValues={ { emp_name, emp_code, designation , department , company } }

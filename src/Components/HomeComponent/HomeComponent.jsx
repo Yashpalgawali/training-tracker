@@ -12,11 +12,26 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-
-import { useState } from "react";
+import {
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
+} from "recharts";
+import { useEffect, useState } from "react";
+import { retrieveAllCompanies } from "../api/CompanyApiService";
+import { getCompetency } from "../api/EmployeeApiService";
+ 
 
 export default function HomeComponent() {
     const [open, setOpen] = useState(false);
+
+    const [data, setData] = useState([]);
+
+
+    useEffect(()=> {
+      getCompetency().then((response)=>{
+        console.log(response.data)
+        setData(response.data)
+      })
+    } , [])
 
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
@@ -69,13 +84,37 @@ export default function HomeComponent() {
   );
     return (
         <div className="container-fluid"  >
-             <div className="sidebar">
+             {/* <div className="sidebar">
                
                 <Button onClick={toggleDrawer(true)} variant="contained" color="secondary" size="130px">Menu</Button>
                 <Drawer open={open} onClose={toggleDrawer(false)}>
                     {DrawerList}
                 </Drawer>
-             </div>
+             </div> */}
+              <div style={{ textAlign: "center" }}>
+                <h2>Competency Chart</h2>
+                <RadarChart
+                  cx={300}
+                  cy={250}
+                  outerRadius={150}
+                  width={600}
+                  height={500}
+                  data={data}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="Company"
+                    dataKey="comp_name"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.6}
+                  />
+                  <Tooltip />
+                  <Legend />
+                </RadarChart>
+              </div>
             
         </div>
     )

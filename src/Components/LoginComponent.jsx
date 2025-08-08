@@ -28,7 +28,6 @@ export default function LoginComponent() {
         // else {
         //     navigate('/login',{ replace : true})
         // }
-         
     }
 
     return(

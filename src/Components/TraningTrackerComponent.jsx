@@ -17,6 +17,8 @@ import EmployeeTrainingComponent from './Employee/EmployeeTrainingComponent';
 import LoginComponent from './LoginComponent';
 import ErrorComponent from './ErrorComponent';
 import AuthProvider, { useAuth } from './Security/AuthContext';
+import CategoryComponent from './Category/CategoryComponent';
+import ViewCategoriesComponent from './Category/ViewCategoriesComponent';
 
 
 function AuthenticateRoute({children}) {
@@ -61,12 +63,14 @@ export default function TrainingTrackerComponent() {
                 <Route path='/viewtraining' element={ <AuthenticateRoute><ViewTrainingComponent /> </AuthenticateRoute>}> </Route>
                 
                 <Route path='/employee/:id' element={ <AuthenticateRoute><EmployeeComponent /></AuthenticateRoute> }> </Route>
-                
                 <Route path='/viewemployees' element={ <AuthenticateRoute><ViewEmployeeComponent /></AuthenticateRoute> }> </Route>
 
                 <Route path='/training/employee/:id' element={ <AuthenticateRoute><ViewEmployeeTrainings /> </AuthenticateRoute>}> </Route>
                 
                 <Route path='/train/employee/:id' element={<AuthenticateRoute> <EmployeeTrainingComponent /> </AuthenticateRoute>}> </Route>
+
+                <Route path='/category/:id' element={ <AuthenticateRoute><CategoryComponent /></AuthenticateRoute> }> </Route>
+                <Route path='/viewcategories' element={ <AuthenticateRoute><ViewCategoriesComponent /></AuthenticateRoute> }> </Route>
 
                 <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>

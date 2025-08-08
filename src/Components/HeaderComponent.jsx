@@ -60,6 +60,11 @@ export default function HeaderComponent() {
                              <Link className="nav-link" to="/train/employee/-1">Train Employee</Link>
                         }
                         </li>
+                          <li className="nav-item fs-5">
+                        { isAuthenticated &&
+                             <Link className="nav-link" to="/viewcategories">Category</Link>
+                        }
+                        </li>
                         </ul>
                     </div>
                     <ul className="navbar-nav">

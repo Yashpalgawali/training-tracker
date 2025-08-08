@@ -9,3 +9,5 @@ export const getEmployeeById = (id) => apiClient.get(`employee/${id}`)
 export const updateEmployee = (employee) => apiClient.put(`employee/`,employee)
 
 export const getEmployeeByEmpCode = (empcode) => apiClient.get(`employee/${empcode}`)
+
+export const getCompetency = () => apiClient.get(`/api/competencies`)
