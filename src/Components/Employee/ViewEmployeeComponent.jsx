@@ -1,11 +1,11 @@
 import $ from 'jquery'; // jQuery is required for DataTables to work
 import { useEffect, useRef, useState } from "react"
-import { retrieveAllEmployees } from "../api/EmployeeApiService"
+import { downAllEmployeesList, retrieveAllEmployees, uploadEmployeeList } from "../api/EmployeeApiService"
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,6 +18,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { getAllTrainingHistory } from "../api/EmployeeTrainingApiService";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 
  const BootstrapTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -92,6 +94,48 @@ export default function ViewEmployeeComponent() {
                 link.click();
             })
     }
+     
+    const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState("");
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    setFileName(selectedFile ? selectedFile.name : "");
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      alert("Please select an Excel file first");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await  uploadEmployeeList(formData)
+      alert(res.data);
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed");
+    }
+  };
+
+function downloadAllEmployees() {
+    downAllEmployeesList().then((response)=> {
+                
+                // Convert the array buffer to a Blob
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                // Create a link element to trigger download
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'All Employees List.xlsx';
+                link.click();
+            })
+    }
+
     return (
         <div className="container">
             <Box>
@@ -99,9 +143,50 @@ export default function ViewEmployeeComponent() {
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
                                 <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="success" onClick={downloadAllTrainings}><DownloadIcon /> Download  </Button>
-                        </BootstrapTooltip>                                                
-                </Typography>
+                        </BootstrapTooltip> 
+                        <BootstrapTooltip title="Download Employee List">
+                            <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="warning" onClick={downloadAllEmployees}><DownloadIcon /> Download  </Button>
+                        </BootstrapTooltip>                     
+                </Typography>                
             </Box>
+    <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+      {/* Hidden file input */}
+      <input
+        type="file"
+        accept=".xlsx,.xls"
+        id="excel-file"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+      />
+
+      {/* Label + Button */}
+      <label htmlFor="excel-file">
+        <Button
+          variant="contained"
+          component="span"
+          startIcon={<CloudUploadIcon />}
+        >
+          Choose Excel File
+        </Button>
+      </label>
+
+      {/* Show file name if selected */}
+      {fileName && (
+        <Typography variant="body2" color="textSecondary">
+          Selected: {fileName}
+        </Typography>
+      )}
+
+      {/* Upload Button */}
+      <Button
+        variant="contained"
+        color="success"
+        onClick={handleUpload}
+        disabled={!file}
+      >
+        Upload to Server
+      </Button>
+    </Box>
             <div>
                 <table ref={tableRef} className="table table-striped table-hover">
                     <thead>
