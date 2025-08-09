@@ -92,15 +92,15 @@ export default function EmployeeTrainingComponent(){
             emp_id : parseInt(values.employee)
         }
 
-        const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
+        // const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
 
-        const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
+        // const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
        
         let employeeTraining = {
             employee : employeeObject,
-            training_date : formattedTrainingDate,
+            training_date : training_date,
             training_ids : values.training_ids,
-            completion_date : formattedCompletionDate
+            completion_date : completion_date
         }
 
         saveEmployeeTraining(employeeTraining).then((response) => {             
@@ -160,6 +160,7 @@ export default function EmployeeTrainingComponent(){
                               {/* Training Date Picker */}
                                 <Box mb={2}>
                                 <DatePicker
+                                    format="DD/MM/YYYY"
                                     label="Training Date"
                                     value={values.training_date}
                                     onChange={(date) => setFieldValue('training_date', date)}
@@ -177,7 +178,7 @@ export default function EmployeeTrainingComponent(){
                                 <Box mb={2}>
                                 <DatePicker
                                     label="Completion Date"
-                                   
+                                    format="DD/MM/YYYY"
                                     value={values.completion_date}
                                     onChange={(date) => setFieldValue('completion_date', date)}
                                     slotProps={{

@@ -65,6 +65,12 @@ export default function HeaderComponent() {
                              <Link className="nav-link" to="/viewcategories">Category</Link>
                         }
                         </li>
+                        <li className="nav-item fs-5">
+                        { isAuthenticated &&
+                             <Link className="nav-link" to="/trainingtimeslots">Training Slots</Link>
+                        }
+                        </li>
+                        
                         </ul>
                     </div>
                     <ul className="navbar-nav">

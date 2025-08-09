@@ -15,20 +15,18 @@ import MailIcon from '@mui/icons-material/Mail';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
 } from "recharts";
-import { useEffect, useState } from "react";
-import { retrieveAllCompanies } from "../api/CompanyApiService";
+import { useEffect, useState } from "react"; 
 import { getCompetency } from "../api/EmployeeApiService";
+import { Typography } from "@mui/material";
  
 
 export default function HomeComponent() {
     const [open, setOpen] = useState(false);
 
-    const [data, setData] = useState([]);
-
-
+    const [data, setData] = useState([]); 
+    
     useEffect(()=> {
-      getCompetency().then((response)=>{
-        console.log(response.data)
+      getCompetency().then((response)=>{ 
         setData(response.data)
       })
     } , [])
@@ -84,6 +82,9 @@ export default function HomeComponent() {
   );
     return (
         <div className="container-fluid"  >
+          <Box>
+            <Typography gutterBottom variant="h4">Welcome</Typography>
+          </Box>
              {/* <div className="sidebar">
                
                 <Button onClick={toggleDrawer(true)} variant="contained" color="secondary" size="130px">Menu</Button>
@@ -91,7 +92,7 @@ export default function HomeComponent() {
                     {DrawerList}
                 </Drawer>
              </div> */}
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: "center"  }}>
                 <h2>Competency Chart</h2>
                 <RadarChart
                   cx={300}
@@ -106,7 +107,7 @@ export default function HomeComponent() {
                   <PolarRadiusAxis angle={30} domain={[0, 100]} />
                   <Radar
                     name="Company"
-                    dataKey="comp_name"
+                    dataKey="score"
                     stroke="#8884d8"
                     fill="#8884d8"
                     fillOpacity={0.6}

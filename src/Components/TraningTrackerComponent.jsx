@@ -19,6 +19,8 @@ import ErrorComponent from './ErrorComponent';
 import AuthProvider, { useAuth } from './Security/AuthContext';
 import CategoryComponent from './Category/CategoryComponent';
 import ViewCategoriesComponent from './Category/ViewCategoriesComponent';
+import TrainingTimeSlotComponent from './TrainingTimeSlot/TrainingTimeSlotComponent';
+import ViewTrainingTimeSlotComponent from './TrainingTimeSlot/ViewTrainingTimeSlotComponent';
 
 
 function AuthenticateRoute({children}) {
@@ -64,6 +66,9 @@ export default function TrainingTrackerComponent() {
                 
                 <Route path='/employee/:id' element={ <AuthenticateRoute><EmployeeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/viewemployees' element={ <AuthenticateRoute><ViewEmployeeComponent /></AuthenticateRoute> }> </Route>
+
+                <Route path='/trainingtimeslot/:id' element={ <AuthenticateRoute><TrainingTimeSlotComponent /></AuthenticateRoute> }> </Route>
+                <Route path='/trainingtimeslots' element={ <AuthenticateRoute><ViewTrainingTimeSlotComponent /></AuthenticateRoute> }> </Route>
 
                 <Route path='/training/employee/:id' element={ <AuthenticateRoute><ViewEmployeeTrainings /> </AuthenticateRoute>}> </Route>
                 
