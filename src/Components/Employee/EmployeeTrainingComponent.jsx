@@ -7,21 +7,24 @@ import Select from 'react-select';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
-import dayjs, { Dayjs } from "dayjs";
+import dayjs  from "dayjs";
 import { Box, Button, FormHelperText, Typography } from "@mui/material";
 
 import { saveEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
+import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 
 export default function EmployeeTrainingComponent(){
 
     const [trainingList,setTrainingList] = useState([])
+    const [trainingTimeSlotList,setTrainingTimeSlotList] = useState([])
     const [empList,setEmployeeList] = useState([])
     const [emp_train_hist_id,setEmpTrainHistId] = useState('')
     const [training_date , setTrainingDate] = useState('')
     const [completion_date , setCompletionDate] = useState('')
     const [employee,setEmployee ] = useState('')
+    const [trainingTimeSlot,setTrainingTimeSlot] = useState('')
     const [btnValue,setBtnValue] = useState('Train Employee')
     
     const didFetchRun = useRef(false)
@@ -57,6 +60,9 @@ export default function EmployeeTrainingComponent(){
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
         })
+        retrieveAllTrainingTimeSlots().then((response) => {
+            setTrainingTimeSlotList(response.data)
+        })
     }
 
      function TrainingMultiSelect({ options }) {
@@ -88,19 +94,23 @@ export default function EmployeeTrainingComponent(){
             }) );
 
     async function onSubmit(values) {
+
+        console.log("VALUES ARE ",values)
         let employeeObject = {
             emp_id : parseInt(values.employee)
         }
-
-        // const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
-
-        // const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
+        let timeSlotObj = {
+            training_time_slot_id : parseInt(values.trainingTimeSlot)
+        }
+        const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
+        const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
        
         let employeeTraining = {
             employee : employeeObject,
-            training_date : training_date,
+            trainingTimeSlot : timeSlotObj,
+            training_date : formattedTrainingDate,
             training_ids : values.training_ids,
-            completion_date : completion_date
+            completion_date : formattedCompletionDate
         }
 
         saveEmployeeTraining(employeeTraining).then((response) => {             
@@ -118,13 +128,13 @@ export default function EmployeeTrainingComponent(){
                <Typography variant="h4" gutterBottom>{btnValue}</Typography>
                <div>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Formik
-                        enableReinitialize={true}
+                <Formik                       
                         initialValues={{
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
                             employee: employee ? employee.emp_id : '',
-                            training_ids: []
+                            training_ids: [],
+                            trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
                         validateOnBlur={false}
                         validateOnChange={false}
@@ -158,7 +168,7 @@ export default function EmployeeTrainingComponent(){
                             
                            
                               {/* Training Date Picker */}
-                                <Box mb={2}>
+                                <Box mb={2}  >
                                 <DatePicker
                                     format="DD/MM/YYYY"
                                     label="Training Date"
@@ -166,16 +176,29 @@ export default function EmployeeTrainingComponent(){
                                     onChange={(date) => setFieldValue('training_date', date)}
                                     slotProps={{
                                     textField: {
-                                        fullWidth: true,
+                                        
                                         error: touched.training_date && Boolean(errors.training_date),
                                         helperText: <ErrorMessage name="training_date" />
+                                    }
+                                    }}
+                                />
+                                
+                                <DatePicker 
+                                    label="Completion Date"
+                                    format="DD/MM/YYYY"
+                                    value={values.completion_date}
+                                    onChange={(date) => setFieldValue('completion_date', date)}
+                                    slotProps={{
+                                    textField: {
+                                        error: touched.completion_date && Boolean(errors.completion_date),
+                                        helperText: <ErrorMessage name="completion_date" />
                                     }
                                     }}
                                 />
                                 </Box>
 
                                 {/* Completion Date Picker */}
-                                <Box mb={2}>
+                                {/* <Box mb={2}  >
                                 <DatePicker
                                     label="Completion Date"
                                     format="DD/MM/YYYY"
@@ -183,14 +206,33 @@ export default function EmployeeTrainingComponent(){
                                     onChange={(date) => setFieldValue('completion_date', date)}
                                     slotProps={{
                                     textField: {
-                                        fullWidth: true,
                                         error: touched.completion_date && Boolean(errors.completion_date),
                                         helperText: <ErrorMessage name="completion_date" />
                                     }
                                     }}
                                 />
-                                </Box>
+                                </Box> */}
                             
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Training Time Slot</Typography>
+                                <Select                                                                     
+                                    name="trainingTimeSlot"
+                                    options={trainingTimeSlotList.map(timeslot => ({
+                                        value: timeslot.training_time_slot_id,
+                                        label: timeslot.training_time_slot
+                                    }))}
+                                    value={
+                                        trainingTimeSlotList
+                                        .map(timeslot => ({ value: timeslot.training_time_slot_id, label: timeslot.training_time_slot }))
+                                        .find(option => option.value === values.trainingTimeSlot) || null
+                                    }
+                                    onChange={(option) => setFieldValue('trainingTimeSlot', option ? option.value : '')}
+                                    placeholder="Select Training time Slot"
+                                />
+                                <FormHelperText error={touched.trainingTimeSlot && Boolean(errors.trainingTimeSlot)}>
+                                <ErrorMessage name="trainingTimeSlot" />
+                                </FormHelperText>
+                            </Box>
                             {/* Training MultiSelect */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Select Trainings</Typography>

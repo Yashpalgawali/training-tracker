@@ -42,7 +42,7 @@ export default function ViewEmployeeTrainings() {
         },
         designation : {
             desig_name : ''
-        }
+        } 
     })
 
     useEffect(() => {
@@ -70,6 +70,7 @@ export default function ViewEmployeeTrainings() {
          const  getUpdatedTrainingsByEmpId = () => {
            
                 getTrainingsByEmployeeId(id).then((response) => {
+                    
                    setEmployee(response.data[0].employee)
                     setTrainingList(response.data)
                 });
@@ -172,6 +173,7 @@ export default function ViewEmployeeTrainings() {
                         <th>Training</th>
                         <th>Start Date</th>
                         <th>Complete Date</th>
+                        {/* <th>Time Slot</th> */}
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -191,6 +193,7 @@ export default function ViewEmployeeTrainings() {
                                                 <td>{training.training.training_name}</td>
                                                 <td>{training?.training_date}</td>
                                                 <td>{training.completion_date ? (training.completion_date): (<span style={{ color : 'red'}}> Not Completed</span>)} </td>
+                                                {/* <td>{training?.training_time_slot}</td> */}
                                                 <td> 
                                                     <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_hist_id)}> <EditIcon /> Update</Button>
                                                     
