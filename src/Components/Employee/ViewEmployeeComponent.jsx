@@ -111,7 +111,7 @@ export default function ViewEmployeeComponent() {
     }
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("empListExcel", file);
 
     try {
       const res = await  uploadEmployeeList(formData)

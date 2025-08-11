@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams} from "react-router-dom";
-import { Formik ,Form, Field, useFormikContext, ErrorMessage } from "formik";
+import { Formik ,Form, ErrorMessage } from "formik";
 
 import { getAllDesignations } from "../api/DesignationApiService";
 import { retrieveAllCompanies } from "../api/CompanyApiService";
@@ -52,22 +52,30 @@ export default function EmployeeComponent() {
             setCompList(response.data)
         })
         if(id != -1) {
-            setBtnValue('Update Employee')
+            setBtnValue('Update Employee') 
+            
             getEmployeeById(id).then((response) => {
-
+console.log(response)
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
                 setContractorName(response.data?.contractor_name)
                 setDesignations(response.data.designation?.desig_id)
                 setCompany(response.data.department.company?.company_id)
-
+                setCategory(response.data.category?.category_id)
+                
+                    // ✅ format joining_date for Formik initialValues
+                if (response.data?.joining_date) {
+                    const formattedDate = dayjs(response.data.joining_date).format("DD/MM/YYYY");
+                    // setJoiningDate(formattedDate); // this will flow into Formik's initialValues
+                    setJoiningDate(dayjs(formattedDate));
+                }           
+   
                 let comp_id = response.data.department.company?.company_id
 
                 getDepartmentByCompanyId(comp_id).then((response)=> {
                     setDepartment(response.data.department?.dept_id);
-                    setDeptList(response.data)
-                })
-                
+                    setDeptList(response.data)                    
+                })                
             })
         }
     },[id] )
@@ -96,6 +104,7 @@ export default function EmployeeComponent() {
       };
     
     function  onSubmit(values) {
+      
        let designation = {
             desig_id : values.designation,
             desig_name : ''
@@ -111,13 +120,16 @@ export default function EmployeeComponent() {
             category : ''
        }
     
+       const formattedJoiningDate = dayjs(values.joining_date).format("DD/MM/YYYY")
+
        let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
             designation : designation,
             department : department,
             category : category,
-            contractor_name : values.contractor_name           
+            contractor_name : values.contractor_name,
+            joining_date : formattedJoiningDate           
         }
 
         if(id == -1) {
@@ -176,23 +188,6 @@ export default function EmployeeComponent() {
                     />
                 </Box>
 
-                {/* Contractor Name */}
-                <Box mb={2}>
-                    <Typography variant="subtitle1">Contractor Name</Typography>
-                    <TextField
-                    fullWidth
-                    id="contractor_name"
-                    name="contractor_name"
-                    value={values.contractor_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter Contractor Name"
-                    variant="standard"
-                    error={touched.contractor_name && Boolean(errors.contractor_name)}
-                    helperText={<ErrorMessage name="contractor_name" />}
-                    />
-                </Box>
-
                 {/* Employee Code */}
                 <Box mb={2}>
                     <Typography variant="subtitle1">Employee Code</Typography>
@@ -209,13 +204,30 @@ export default function EmployeeComponent() {
                     helperText={<ErrorMessage name="emp_code" />}
                     />
                 </Box>
+                  {/* Contractor Name */}
+                <Box mb={2}>
+                    <Typography variant="subtitle1">Contractor Name</Typography>
+                    <TextField
+                    fullWidth
+                    id="contractor_name"
+                    name="contractor_name"
+                    value={values.contractor_name}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    placeholder="Enter Contractor Name"
+                    variant="standard"
+                    error={touched.contractor_name && Boolean(errors.contractor_name)}
+                    helperText={<ErrorMessage name="contractor_name" />}
+                    />
+                </Box>
                   {/* Joining Date Picker */}
                     <Box mb={2}>
                     <DatePicker
                         format="DD/MM/YYYY"
                         label="Joining Date"
+                        // value={values.joining_date ? dayjs(values.joining_date, "DD/MM/YYYY") : null}
                         value={values.joining_date}
-                        onChange={(date) => setFieldValue('joining_date', date)}
+                       onChange={(date) => setFieldValue("joining_date", date)}
                         slotProps={{
                         textField: {
                             fullWidth: true,
@@ -249,7 +261,32 @@ export default function EmployeeComponent() {
                     <FormHelperText><ErrorMessage name="designation" /></FormHelperText>
                     </FormControl>
                 </Box>
-                 {/* Designation */}
+
+                {/* Category */}
+                <Box mb={2}>
+                    <FormControl fullWidth variant="standard" error={touched.category && Boolean(errors.category)}>
+                    <InputLabel id="category-label">Category</InputLabel>
+                    <Select
+                        labelId="category-label"
+                        id="category"
+                        name="category"
+                        value={values.category}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Category"
+                    >
+                        <MenuItem value="">Please Select Category</MenuItem>
+                        {categorylist.map((cate) => (
+                        <MenuItem key={cate.category_id} value={cate.category_id}>
+                            {cate.category}
+                        </MenuItem>
+                        ))}
+                    </Select>
+                    <FormHelperText><ErrorMessage name="category" /></FormHelperText>
+                    </FormControl>
+                </Box>
+
+                 {/* Category
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.category && Boolean(errors.category)}>
                     <InputLabel id="category-label">Category</InputLabel>
@@ -271,7 +308,7 @@ export default function EmployeeComponent() {
                     </Select>
                     <FormHelperText><ErrorMessage name="category" /></FormHelperText>
                     </FormControl>
-                </Box>
+                </Box> */}
                 {/* Company */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.company && Boolean(errors.company)}>

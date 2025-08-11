@@ -12,9 +12,9 @@ export const getEmployeeByEmpCode = (empcode) => apiClient.get(`employee/${empco
 
 export const getCompetency = () => apiClient.get(`/api/competencies`)
 
-export const uploadEmployeeList = (emplist) => apiClient.post(`employee/upload`,emplist,{headers : { "Content-Type":"multipart/form-data" }})
+export const uploadEmployeeList = (empListExcel) => apiClient.post(`employee/upload`,empListExcel,{headers : { "Content-Type":"multipart/form-data" }})
 
-export const downAllEmployeesList = 
-                        () => apiClient.get(`employee/export/employee/list`,{
-                            responseType: 'arraybuffer'
+export const downAllEmployeesList =
+                        () => apiClient.get(`employee/export/employee/list`, {
+                            responseType : 'arraybuffer'
                         })
