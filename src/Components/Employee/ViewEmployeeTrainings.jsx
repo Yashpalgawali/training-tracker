@@ -5,9 +5,8 @@ import { getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateComple
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import $, { data, error } from 'jquery'; // jQuery is required for DataTables to work
-import { Button, Typography } from "@mui/material";
-import dayjs from "dayjs";
+import $ from 'jquery'; // jQuery is required for DataTables to work
+import { Button, Typography } from "@mui/material"; 
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -72,6 +71,7 @@ export default function ViewEmployeeTrainings() {
                 getTrainingsByEmployeeId(id).then((response) => {
                     
                    setEmployee(response.data[0].employee)
+                
                     setTrainingList(response.data)
                 });
         };
@@ -79,7 +79,7 @@ export default function ViewEmployeeTrainings() {
     function getTrainingsByEmpId() {
         setLoading(true);
         getTrainingsByEmployeeId(id).then((response) => {
-                console.log("time list ",response.data)
+                   console.log("Training list of employee is ",response.data)
                 setEmployee(response.data[0].employee)
                 setTrainingList(response.data)
        })
@@ -114,11 +114,11 @@ export default function ViewEmployeeTrainings() {
        
         updateCompletionDate(histid,completion_date).then((response)=> {
             getUpdatedTrainingsByEmpId() 
-            console.log('success', response)
+            
              showToast(response.data.responseMessage,"success")
             navigate(`/training/employee/${id}`)
         }).catch((error) => {
-            console.log('ERROR', error)
+             
              showToast(error.response.data.errorMessage,"error")
         })
         handleClose();
@@ -174,6 +174,7 @@ export default function ViewEmployeeTrainings() {
                         <th>Start Date</th>
                         <th>Complete Date</th>
                         <th>Time Slot</th>
+                        <th>Competency Scoreeeeeee</th>
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -194,6 +195,7 @@ export default function ViewEmployeeTrainings() {
                                                 <td>{training?.training_date}</td>
                                                 <td>{training.completion_date ? (training.completion_date): (<span style={{ color : 'red'}}> Not Completed</span>)} </td>
                                                 <td>{training?.trainingTimeSlot.training_time_slot}</td>
+                                                <td>{training.competency.score}</td>
                                                 <td> 
                                                     <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_hist_id)}> <EditIcon /> Update</Button>
                                                     

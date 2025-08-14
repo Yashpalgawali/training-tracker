@@ -8,12 +8,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs  from "dayjs";
-import { Box, Button, FormHelperText, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, TextField, Typography } from "@mui/material";
 
 import { saveEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
+import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 
 export default function EmployeeTrainingComponent(){
 
@@ -26,7 +27,8 @@ export default function EmployeeTrainingComponent(){
     const [employee,setEmployee ] = useState('')
     const [trainingTimeSlot,setTrainingTimeSlot] = useState('')
     const [btnValue,setBtnValue] = useState('Train Employee')
-    
+    const [score,setScore] =useState('')
+    const [scoreList,setScoreList] =  useState([])
     const didFetchRun = useRef(false)
 
     const navigate = useNavigate()
@@ -35,25 +37,26 @@ export default function EmployeeTrainingComponent(){
     const [disabled,setDisabled] = useState(false)
     
     useEffect(() => {
-        
+       
         if(!didFetchRun.current) {
             didFetchRun.current = false
             getAllDetails()
         }        
     },[])
 
-    useEffect(()=> {
+    useEffect(  ()=> {
         if(id != -1) {
-            
+           alert(id)
             setDisabled(true)
             setBtnValue('Update Training')
-            getEmployeeById(id).then((response) => {
+             getEmployeeById(id).then((response) => { 
                 setEmployee(response.data)
             })
         } 
-    }, [] )
+    }, [id] )
 
     function getAllDetails() {
+        
         retrieveAllEmployees().then((response) => {
             setEmployeeList(response.data)
         })
@@ -62,6 +65,10 @@ export default function EmployeeTrainingComponent(){
         })
         retrieveAllTrainingTimeSlots().then((response) => {
             setTrainingTimeSlotList(response.data)
+        })
+        retrieveAllCompetencies().then((response) => {
+            console.log('competency ',response.data)
+            setScoreList(response.data)
         })
     }
 
@@ -99,6 +106,9 @@ export default function EmployeeTrainingComponent(){
         let employeeObject = {
             emp_id : parseInt(values.employee)
         }
+        let competencyObj = {
+            competency_id : parseInt(values.score)
+        }
         let timeSlotObj = {
             training_time_slot_id : parseInt(values.trainingTimeSlot)
         }
@@ -110,9 +120,11 @@ export default function EmployeeTrainingComponent(){
             trainingTimeSlot : timeSlotObj,
             training_date : formattedTrainingDate,
             training_ids : values.training_ids,
+            competency : competencyObj,
             completion_date : formattedCompletionDate
         }
 
+        console.log("emptrain obj ",employeeTraining)
         saveEmployeeTraining(employeeTraining).then((response) => {             
             showToast(response?.data?.responseMessage,"success")
             navigate(`/viewemployees`)
@@ -132,7 +144,8 @@ export default function EmployeeTrainingComponent(){
                         initialValues={{
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
-                            employee: employee ? employee.emp_id : '',
+                            employee: employee ? id : '',
+                            competency : score ? score : '',
                             training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
@@ -140,19 +153,19 @@ export default function EmployeeTrainingComponent(){
                         validateOnChange={false}
                         onSubmit={onSubmit}
                         >
-                        {({ setFieldValue, values, handleChange, handleBlur, touched, errors }) => (
+                        {({ setFieldValue, values, handleChange, handleBlur,  touched, errors }) => (
                             <Form>
                             {/* Employee Dropdown */}
-                            {/* Employee Select using react-select */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Employee</Typography>
-                                <Select              
-                                    isDisabled={disabled}                                    
-                                    name="employee"
-                                    options={empList.map(emp => ({
-                                        value: emp.emp_id,
-                                        label: emp.emp_name
-                                    }))}
+                                
+                                     <Select              
+                                        isDisabled={disabled}                                    
+                                        name="employee"
+                                        options={empList.map(emp => ({
+                                            value: emp.emp_id,
+                                            label: emp.emp_name
+                                        }))}
                                     value={
                                         empList
                                         .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
@@ -160,13 +173,39 @@ export default function EmployeeTrainingComponent(){
                                     }
                                     onChange={(option) => setFieldValue('employee', option ? option.value : '')}
                                     placeholder="Select Employee"
-                                />
+                                    /> 
+                                
                                 <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                 <ErrorMessage name="employee" />
-                                </FormHelperText>
+                                </FormHelperText>  
+                                  
                             </Box>
-                            
-                           
+
+                            {/* Competency Score */}
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Competency Score</Typography>
+                                
+                                    <Select                                        
+                                        name="score"
+                                        options={scoreList.map(scores => ({
+                                            value: scores.competency_id,
+                                            label: scores.score
+                                        }))}
+                                    value={
+                                        scoreList
+                                        .map(scores => ({ value: scores.competency_id, label: scores.score }))
+                                        .find(option => option.value === values.score) || null
+                                    }
+                                    onChange={(option) => setFieldValue('score', option ? option.value : '')}
+                                    placeholder="Select Score"
+                                    /> 
+                                
+                                <FormHelperText error={touched.score && Boolean(errors.score)}>
+                                <ErrorMessage name="score" />
+                                </FormHelperText>  
+                                  
+                            </Box>
+                             
                               {/* Training Date Picker */}
                                 <Box mb={2}  >
                                 <DatePicker
@@ -175,8 +214,7 @@ export default function EmployeeTrainingComponent(){
                                     value={values.training_date}
                                     onChange={(date) => setFieldValue('training_date', date)}
                                     slotProps={{
-                                    textField: {
-                                        
+                                    textField: { 
                                         error: touched.training_date && Boolean(errors.training_date),
                                         helperText: <ErrorMessage name="training_date" />
                                     }
@@ -196,7 +234,7 @@ export default function EmployeeTrainingComponent(){
                                     }}
                                 />
                                 </Box>
-
+                                
                                 {/* Completion Date Picker */}
                                 {/* <Box mb={2}  >
                                 <DatePicker

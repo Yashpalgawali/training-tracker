@@ -55,7 +55,7 @@ export default function EmployeeComponent() {
             setBtnValue('Update Employee') 
             
             getEmployeeById(id).then((response) => {
-console.log(response)
+
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
                 setContractorName(response.data?.contractor_name)
