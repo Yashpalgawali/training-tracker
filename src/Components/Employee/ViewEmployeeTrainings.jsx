@@ -21,6 +21,10 @@ import { CircularProgress, Box } from '@mui/material';
 
 import  EditIcon from '@mui/icons-material/Edit';
 import DownloadIcon from '@mui/icons-material/Download';
+import {
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
+} from "recharts";
+import { getCompetency } from "../api/EmployeeApiService";
 
 export default function ViewEmployeeTrainings() {
 
@@ -33,6 +37,10 @@ export default function ViewEmployeeTrainings() {
     const tableRef = useRef(false)
     const dtInstanceRef = useRef(null); // to store DataTable instance
     
+    const [data, setData] = useState([]); 
+        
+       
+
     const [employee,setEmployee] = useState({
         emp_name : '',
         emp_code : '',
@@ -43,6 +51,12 @@ export default function ViewEmployeeTrainings() {
             desig_name : ''
         }
     })
+
+     useEffect(()=> {
+          getCompetency().then((response)=>{ 
+            setData(response.data)
+          })
+        } , [])
 
     useEffect(() => {
            if (tableRef.current && traininglist.length > 0) {
@@ -209,6 +223,32 @@ export default function ViewEmployeeTrainings() {
             </table>
             )}
         </div>
+
+<div style={{ textAlign: "center"  }}>
+                <h2>Competency Chart</h2>
+                <RadarChart
+                  cx={300}
+                  cy={250}
+                  outerRadius={150}
+                  width={600}
+                  height={500}
+                  data={data}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="Company"
+                    dataKey="score"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.6}
+                  />
+                  <Tooltip />
+                  <Legend />
+                </RadarChart>
+              </div>
+
          <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Update Completion Time</DialogTitle>
         <DialogContent sx={{ paddingBottom: 0 }}>

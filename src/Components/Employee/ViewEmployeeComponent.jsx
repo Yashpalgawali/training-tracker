@@ -40,6 +40,7 @@ export default function ViewEmployeeComponent() {
     const didFetchRef = useRef(false)
     const tableRef = useRef(false)
     const [disabled,setDisabled] = useState(false)
+
     useEffect(
     () => 
         {               
@@ -49,13 +50,35 @@ export default function ViewEmployeeComponent() {
             }
         },[])
 
+    // useEffect(() => {
+    //     if(tableRef.current && empList.length>0) {
+    //         // 🔴 Destroy old DataTable if exists
+    //         if ($.fn.DataTable.isDataTable(tableRef.current)) {
+    //             alert('destoyed')
+    //         $(tableRef.current).DataTable().destroy();
+    //         }
+    //         $(tableRef.current).DataTable({
+    //             responsive: true,
+    //              destroy: true // <-- Important, allows re-init
+    //         })
+    //     }
+    // }, [empList] )
     useEffect(() => {
-        if(tableRef.current && empList.length>0) {
-            $(tableRef.current).DataTable({
-                responsive: true
-            })
-        }
-    }, [empList] )
+  if (tableRef.current) {
+    // 🔴 Destroy old DataTable if exists
+    if ($.fn.DataTable.isDataTable(tableRef.current)) {
+      $(tableRef.current).DataTable().destroy();
+    }
+ 
+    // ✅ Initialize only when data exists
+    if (empList.length > 0) {
+      $(tableRef.current).DataTable({
+        responsive: true,
+        destroy: true // <-- Important, allows re-init
+      });
+    }
+  }
+}, [empList]);
 
     function retriveAllEmployeeList() {
         retrieveAllEmployees().then((response) => {
@@ -116,6 +139,9 @@ export default function ViewEmployeeComponent() {
     try {
       const res = await  uploadEmployeeList(formData)
       alert(res.data);
+       // 🔥 Refresh employee list after successful upload
+    retriveAllEmployeeList();
+           
     } catch (err) {
       console.error(err);
       alert("Upload failed");
