@@ -37,8 +37,8 @@ export default function DesignationComponent() {
         
         let errors  = {} 
 
-        if(values.desig_name.length<5) {
-            errors.desig_name="Enter at least 3 characters"
+        if(values.desig_name.length<2) {
+            errors.desig_name="Enter at least 2 characters"
         }
         return errors
     }
