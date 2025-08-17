@@ -1,8 +1,8 @@
-import { Button, useStepContext } from "@mui/material"
+import { Box, Button, TextField, Typography } from "@mui/material"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { saveTraining, updateTraining } from "../api/TrainingApiService"
+import { getTrainingById, saveTraining, updateTraining } from "../api/TrainingApiService"
 import { showToast } from "../SharedComponent/showToast"
 
 export default function TrainingComponent() {
@@ -18,6 +18,10 @@ export default function TrainingComponent() {
         if(id != -1)
         {
             setBtnValue('Update Training')
+            getTrainingById(id).then((response) => {
+                setTrainingId(response.data.training_id)
+                setTrainingName(response.data.training_name)
+            })
         }
         
     },[id])
@@ -56,10 +60,10 @@ export default function TrainingComponent() {
 
     return(
         <div className="container">
-            <div> 
-                <h2 className="text-center">{btnValue}</h2>
+            
+               <Typography variant="h4" gutterBottom>{btnValue}</Typography>
                 
-            </div>
+            
             <div>
                <Formik
                     initialValues={ { training_id, training_name } }
@@ -71,17 +75,48 @@ export default function TrainingComponent() {
                 {
                      (props) => (
                         <Form>
-                            <fieldset>
+                            {/* <fieldset>
                                     <label htmlFor="training_name"></label>
                                     <Field type="text" name="training_name" className="form-control"   placeholder="Enter Training name" ></Field>
                             </fieldset>
                             <div>
                                 <Button type="submit" variant="contained" color="primary" className="mt-2" >{btnValue}</Button>
-                            </div>
+                            </div> */}
+
+                            <Box
+                                 sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+                                noValidate
+                                autoComplete="off"
+                            >
+                                <TextField
+                                        id="training_name"
+                                        name="training_name"
+                                        label="Training Name"
+                                        variant="standard"
+                                        placeholder="Enter Training Name"
+                                        value={props.values.training_name}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        error={props.touched.training_name && Boolean(props.errors.training_name)}
+                                        helperText={<ErrorMessage name="training_name" />}
+                                        fullWidth />
+                            </Box>
+                             <Box className="btnvalue">
+                                    <Button
+                                        type="submit"
+                                        style={{ float: 'left' }}
+                                        variant="contained"
+                                        color="primary"                                   
+                                    >
+                                    {btnValue}
+                                    </Button>
+                         </Box>
                         </Form> 
+
                      )
                 }
                </Formik>
+               <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
             </div>
         </div>
     )

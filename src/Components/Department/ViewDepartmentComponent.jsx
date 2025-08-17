@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom"
 import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import { Button, Tooltip } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import { showToast } from "../SharedComponent/showToast";
 
@@ -72,11 +72,10 @@ export default function ViewDepartmentComponent() {
     return(
         <div className="container">
             
-            <h2>View Departments 
-                <Button variant="contained" color="primary" style={ { float : 'right'} }onClick={addNewDepartment}>Add Department</Button>
-            </h2>
-            {successMessage && <div className="alert alert-success"><strong>{successMessage}</strong></div>  }
-            {errorMessage && <div className="alert alert-warning"><strong> {errorMessage}</strong> </div>  }
+            <Box>
+                <Typography variant="h4" gutterBottom>View Departments <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewDepartment} > <Tooltip title="Add Department" arrow> Add Department</Tooltip></Button>    </Typography>
+            </Box>
+            
             <table className="table table-striped table-hover" ref={tableRef}>
                 <thead>
                     <tr>

@@ -4,42 +4,47 @@ import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyA
 import { ErrorMessage, Field, Formik,Form } from "formik"
 import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
+import { retrieveTrainingTimeSlotById, saveTrainingTimeSlot, updateTrainingTimeSlot } from "../api/TrainingTimeSlotApiService"
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo" 
 
-export default function CompanyComponent () {
+
+export default function TrainingTimeSlotComponent () {
 
     const {id} =  useParams()
-    const [comp_name , setCompName] = useState('')
-    const [company_id ,setCompId] = useState('')
+    const [training_time_slot ,setTrainingTimeSlot] = useState('')
+    const [training_time_slot_id ,setTrainingTimeSlotId] = useState('')
     const navigate = useNavigate()
     const [isDisabled, setIsDisabled] = useState(false)
-    const [btnValue, setBtnValue] = useState('Add Company')
+    const [btnValue, setBtnValue] = useState('Add Training Time Slot')
 
     useEffect(()=> {
-        const getCompanyById = async() => {
+        const getTrainingTimeSlotById = async() => {
              
             if(id != -1) {
-                setBtnValue('Update Company')         
-                retrieveCompanyById(id).then((response) => {
-                    setCompName(response.data.comp_name)
-                    setCompId(response.data.company_id)
+                setBtnValue('Update Training Time Slot')         
+                retrieveTrainingTimeSlotById(id).then((response) => {
+                    setTrainingTimeSlot(response.data?.training_time_slot)
+                    setTrainingTimeSlotId(response.data?.training_time_slot_id)
                 })
                 .catch((error)=> { 
                     sessionStorage.setItem('reserr',error.response.data.errorMessage)
-                    navigate(`/companies`)
+                    navigate(`/trainingtimeslots`)
                 })
         }
         };
 
         if(id){
-            getCompanyById()
+            getTrainingTimeSlotById()
         }
     }, [id] ) 
        
 
     function onSubmit(values) {
         setIsDisabled(true)
-            const company = {
-                company_id : id , comp_name: values.comp_name
+            const trainingTimeSlot = {
+                training_time_slot_id : id , training_time_slot: values.training_time_slot
             }
 
             setTimeout(() => {
@@ -47,42 +52,59 @@ export default function CompanyComponent () {
             }, 1000);
 
             if(id == -1) {
-                saveCompany(company)
+                saveTrainingTimeSlot(trainingTimeSlot)
                     .then((response)=> {
                         showToast(response?.data?.responseMessage,"success")
-                        navigate('/companies')
+                        navigate('/trainingtimeslots')
                         })
                     .catch((error) => {   
                         showToast(error?.data?.errorMessage,"error")
-                        navigate('/companies')
+                        navigate('/trainingtimeslots')
                     }) 
             }
             else {
-                updateCompany(company)
+                updateTrainingTimeSlot(trainingTimeSlot)
                     .then((response)=> {
                         showToast(response?.data?.responseMessage,"success")
-                        navigate('/companies')
+                        navigate('/trainingtimeslots')
                     })
                     .catch((error) => {
                         showToast(error?.data?.errorMessage,"error")
-                        navigate('/companies')
-                    })
+                        navigate('/trainingtimeslots')
+                    })                    
             }
          }
   
-   function validate(values) {
+    function validate(values) {
         let errors = { }
   
-        if(values.comp_name.length<2) {
-            errors.comp_name = 'Please Enter at least 2 Characters'
+        if(values.training_time_slot.length<2) {
+            errors.training_time_slot = 'Please Enter at least 2 Characters'
         }
         return errors
    }
 
+//     return (
+//      <LocalizationProvider dateAdapter={AdapterDayjs}>
+//       <DemoContainer
+//         components={['MultiInputTimeRangeField', 'SingleInputTimeRangeField']}
+//       >
+//         <MultiInputTimeRangeField
+//           slotProps={{
+//             textField: ({ position }) => ({
+//               label: position === 'start' ? 'From' : 'To',
+//             }),
+//           }}
+//         />
+//         <SingleInputTimeRangeField label="From - To" />
+//       </DemoContainer>
+//     </LocalizationProvider>
+   
+//   );
      return (
         <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-            <Formik initialValues={ { company_id,comp_name} }
+            <Formik initialValues={ { training_time_slot_id,training_time_slot} }
                 enableReinitialize={true}
                 onSubmit={onSubmit}
                 validate={validate}
@@ -97,20 +119,20 @@ export default function CompanyComponent () {
                                 noValidate
                                 autoComplete="off"
                                 >
-                                <TextField  id="comp_name"
-                                            name="comp_name"
-                                            label="Company Name"
+                                <TextField  id="training_time_slot"
+                                            name="training_time_slot"
+                                            label="Time Slot"
                                             variant="standard"
-                                            placeholder="Enter Company Name"
-                                            value={props.values.comp_name}
+                                            placeholder="Enter Time Slot"
+                                            value={props.values.training_time_slot}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
-                                            error={props.touched.comp_name && Boolean(props.errors.comp_name)}
-                                            helperText={<ErrorMessage name="comp_name" />}
+                                            error={props.touched.training_time_slot && Boolean(props.errors.training_time_slot)}
+                                            helperText={<ErrorMessage name="training_time_slot" />}
                                             fullWidth />
                                
                         </Box>
-                      
+
                          <Box className="btnvalue">
                                     <Button
                                         type="submit"
@@ -119,8 +141,7 @@ export default function CompanyComponent () {
                                         color="primary"                                   
                                     >
                                     {btnValue}
-                                    </Button>
-                                    
+                                    </Button>                                    
                          </Box>
                     </Form>
                   )

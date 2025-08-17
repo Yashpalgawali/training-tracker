@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import { getTrainingsByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
+import { getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
 
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import $, { data, error } from 'jquery'; // jQuery is required for DataTables to work
-import { Button } from "@mui/material";
-import dayjs from "dayjs";
+import $ from 'jquery'; // jQuery is required for DataTables to work
+import { Button, Typography } from "@mui/material"; 
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -19,18 +18,29 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CircularProgress, Box } from '@mui/material';
+
 import  EditIcon from '@mui/icons-material/Edit';
+import DownloadIcon from '@mui/icons-material/Download';
+import {
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
+} from "recharts";
+import { getCompetency } from "../api/EmployeeApiService";
 
 export default function ViewEmployeeTrainings() {
 
     const [traininglist,setTrainingList] = useState([]);
-const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const {id} = useParams();
     const navigate = useNavigate()
     const didFetchRef = useRef(false)
     const tableRef = useRef(false)
- const dtInstanceRef = useRef(null); // to store DataTable instance
+    const dtInstanceRef = useRef(null); // to store DataTable instance
+    
+    const [data, setData] = useState([]); 
+        
+       
+
     const [employee,setEmployee] = useState({
         emp_name : '',
         emp_code : '',
@@ -41,7 +51,13 @@ const [loading, setLoading] = useState(false);
             desig_name : ''
         }
     })
-      
+
+     useEffect(()=> {
+          getCompetency().then((response)=>{ 
+            setData(response.data)
+          })
+        } , [])
+
     useEffect(() => {
            if (tableRef.current && traininglist.length > 0) {
             // Destroy old instance before reinitializing
@@ -67,7 +83,9 @@ const [loading, setLoading] = useState(false);
          const  getUpdatedTrainingsByEmpId = () => {
            
                 getTrainingsByEmployeeId(id).then((response) => {
+                    
                    setEmployee(response.data[0].employee)
+                
                     setTrainingList(response.data)
                 });
         };
@@ -75,7 +93,7 @@ const [loading, setLoading] = useState(false);
     function getTrainingsByEmpId() {
         setLoading(true);
         getTrainingsByEmployeeId(id).then((response) => {
-             
+                   console.log("Training list of employee is ",response.data)
                 setEmployee(response.data[0].employee)
                 setTrainingList(response.data)
        })
@@ -87,11 +105,6 @@ const [loading, setLoading] = useState(false);
             setLoading(false);
         });
     }
-
-    // function updateCompletionTime(hist_id) {
-    //     sessionStorage.setItem('hist_id',hist_id)
-        
-    // }
 
     const [open, setOpen] = useState(false);
 
@@ -112,22 +125,42 @@ const [loading, setLoading] = useState(false);
        
         const completion_date = formJson.completion_date;
         const histid = sessionStorage.getItem('hist_id')
-        
+       
         updateCompletionDate(histid,completion_date).then((response)=> {
             getUpdatedTrainingsByEmpId() 
-            showToast(response.data.responseMessage,"success")
+            
+             showToast(response.data.responseMessage,"success")
             navigate(`/training/employee/${id}`)
         }).catch((error) => {
-            showToast(error.response.data.errorMessage,"error")
+             
+             showToast(error.response.data.errorMessage,"error")
         })
         handleClose();
     };
 
+    function downloadTrainingHistory(id) { 
+     
+            getTrainingsHistoryByEmployeeId(id).then((response)=> {
+                // Convert the array buffer to a Blob
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                // Create a link element to trigger download
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'Training History - '+employee.emp_name+'.xlsx';
+                link.click();
+        })
+    }
 
     return (
       <div className="container">
         <div>
-            <h3 className="text-center">View Employee Trainings</h3>
+            <Box>
+                <Typography variant="h4" gutterBottom>View Employee Trainings
+                    <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                </Typography>
+            </Box>
+            
             <div>
                 <div style={{ float : 'left' }}  className="mb-3">
                     <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
@@ -154,6 +187,8 @@ const [loading, setLoading] = useState(false);
                         <th>Training</th>
                         <th>Start Date</th>
                         <th>Complete Date</th>
+                        <th>Time Slot</th>
+                        <th>Competency Scoreeeeeee</th>
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -173,8 +208,11 @@ const [loading, setLoading] = useState(false);
                                                 <td>{training.training.training_name}</td>
                                                 <td>{training?.training_date}</td>
                                                 <td>{training.completion_date ? (training.completion_date): (<span style={{ color : 'red'}}> Not Completed</span>)} </td>
+                                                <td>{training?.trainingTimeSlot.training_time_slot}</td>
+                                                <td>{training.competency.score}</td>
                                                 <td> 
                                                     <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_hist_id)}> <EditIcon /> Update</Button>
+                                                    
                                                 </td>
                                             </tr>
                             )
@@ -185,6 +223,32 @@ const [loading, setLoading] = useState(false);
             </table>
             )}
         </div>
+
+<div style={{ textAlign: "center"  }}>
+                <h2>Competency Chart</h2>
+                <RadarChart
+                  cx={300}
+                  cy={250}
+                  outerRadius={150}
+                  width={600}
+                  height={500}
+                  data={data}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="Company"
+                    dataKey="score"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.6}
+                  />
+                  <Tooltip />
+                  <Legend />
+                </RadarChart>
+              </div>
+
          <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Update Completion Time</DialogTitle>
         <DialogContent sx={{ paddingBottom: 0 }}>

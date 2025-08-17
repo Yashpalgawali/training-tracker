@@ -1,45 +1,47 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
+import { retrieveCategoryById, saveCategory, updateCategory } from "../api/CategoryApiService"
 import { ErrorMessage, Field, Formik,Form } from "formik"
 import { Box, Button, Stack, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
-
-export default function CompanyComponent () {
+ 
+export default function CategoryComponent () {
 
     const {id} =  useParams()
-    const [comp_name , setCompName] = useState('')
-    const [company_id ,setCompId] = useState('')
+    const [category , setCategory] = useState('')
+    const [category_id ,setCategoryId] = useState('')
+
     const navigate = useNavigate()
+    
     const [isDisabled, setIsDisabled] = useState(false)
-    const [btnValue, setBtnValue] = useState('Add Company')
+    const [btnValue, setBtnValue] = useState('Add Category')
 
     useEffect(()=> {
-        const getCompanyById = async() => {
+        const getCategoryById = async() => {
              
             if(id != -1) {
-                setBtnValue('Update Company')         
-                retrieveCompanyById(id).then((response) => {
-                    setCompName(response.data.comp_name)
-                    setCompId(response.data.company_id)
+                setBtnValue('Update category')         
+                retrieveCategoryById(id).then((response) => {
+                    setCategory(response.data.category)
+                    setCategoryId(response.data.category_id)
                 })
                 .catch((error)=> { 
                     sessionStorage.setItem('reserr',error.response.data.errorMessage)
-                    navigate(`/companies`)
+                    navigate(`/viewcategories`)
                 })
         }
         };
 
         if(id){
-            getCompanyById()
+            getCategoryById()
         }
     }, [id] ) 
        
 
     function onSubmit(values) {
         setIsDisabled(true)
-            const company = {
-                company_id : id , comp_name: values.comp_name
+            const category = {
+                category_id : id , category: values.category
             }
 
             setTimeout(() => {
@@ -47,25 +49,25 @@ export default function CompanyComponent () {
             }, 1000);
 
             if(id == -1) {
-                saveCompany(company)
+                saveCategory(category)
                     .then((response)=> {
                         showToast(response?.data?.responseMessage,"success")
-                        navigate('/companies')
+                        navigate('/viewcategories')
                         })
                     .catch((error) => {   
                         showToast(error?.data?.errorMessage,"error")
-                        navigate('/companies')
+                        navigate('/viewcategories')
                     }) 
             }
             else {
-                updateCompany(company)
+                updateCategory(category)
                     .then((response)=> {
                         showToast(response?.data?.responseMessage,"success")
-                        navigate('/companies')
+                        navigate('/viewcategories')
                     })
                     .catch((error) => {
                         showToast(error?.data?.errorMessage,"error")
-                        navigate('/companies')
+                        navigate('/viewcategories')
                     })
             }
          }
@@ -73,8 +75,8 @@ export default function CompanyComponent () {
    function validate(values) {
         let errors = { }
   
-        if(values.comp_name.length<2) {
-            errors.comp_name = 'Please Enter at least 2 Characters'
+        if(values.category.length<2) {
+            errors.category = 'Please Enter at least 2 Characters'
         }
         return errors
    }
@@ -82,7 +84,7 @@ export default function CompanyComponent () {
      return (
         <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-            <Formik initialValues={ { company_id,comp_name} }
+            <Formik initialValues={ { category_id,category} }
                 enableReinitialize={true}
                 onSubmit={onSubmit}
                 validate={validate}
@@ -97,16 +99,16 @@ export default function CompanyComponent () {
                                 noValidate
                                 autoComplete="off"
                                 >
-                                <TextField  id="comp_name"
-                                            name="comp_name"
-                                            label="Company Name"
+                                <TextField  id="category"
+                                            name="category"
+                                            label="Category"
                                             variant="standard"
-                                            placeholder="Enter Company Name"
+                                            placeholder="Enter Category"
                                             value={props.values.comp_name}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
-                                            error={props.touched.comp_name && Boolean(props.errors.comp_name)}
-                                            helperText={<ErrorMessage name="comp_name" />}
+                                            error={props.touched.category && Boolean(props.errors.category)}
+                                            helperText={<ErrorMessage name="category" />}
                                             fullWidth />
                                
                         </Box>

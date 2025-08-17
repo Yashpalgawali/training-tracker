@@ -10,8 +10,7 @@ export const apiClient = axios.create({
     baseURL : 'http://localhost:7878/trainingtrackerrest/'
 })
 
-// For Local Tomcat
+// For Tomcat 10
 // export const apiClient = axios.create({
-//     baseURL : 'http://43.204.227.39:8080/trainingtrackerrest/'
+//     baseURL : 'http://13.201.226.149:8080/trainingtrackerrest/'
 // })
- 

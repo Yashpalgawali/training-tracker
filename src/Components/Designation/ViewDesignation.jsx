@@ -9,7 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 
-import { Button, Tooltip } from "@mui/material"
+import { Box, Button, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast";
 
 export default function ViewDesignation() {
@@ -55,9 +55,10 @@ export default function ViewDesignation() {
     
    return(
         <div className="container">
-            <h2 className="text-center m-4">View Designation 
-                <Button type="submit" variant="contained" color="primary" style={ { float: 'right  ' } } className="m-2" onClick={addNewDesignation} >Add Designation</Button>    
-            </h2>
+            <Box>
+                <Typography variant="h4" gutterBottom>View Designation <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewDesignation} > <Tooltip title="Add Designation" arrow> Add Designation</Tooltip></Button>    </Typography>
+            </Box>
+        
             <table ref={tableRef} className="table table-striped table-hover display">
                 <thead>
                     <tr >

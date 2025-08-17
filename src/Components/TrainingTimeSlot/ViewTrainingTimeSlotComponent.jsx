@@ -7,46 +7,47 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styl
 import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
+import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 
 
-export default function ViewCompanyComponent() {
+export default function ViewTrainingTimeSlotComponent() {
 
-    const [complist,setCompList] = useState([])
+    const [trainingTimeSlotList,setTrainingTimeSlotList] = useState([])
 
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()
 
-    useEffect(()=> refreshCompanies() , [] )
+    useEffect(()=> refreshTrainingTimeSlots() , [] )
     
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
-        if (tableRef.current && complist.length > 0 ) {
+        if (tableRef.current && trainingTimeSlotList.length > 0 ) {
           $(tableRef.current).DataTable(); // Initialize DataTables
         }
-      }, [complist]); // Re-initialize DataTables when activities data changes
+      }, [trainingTimeSlotList]); // Re-initialize DataTables when activities data changes
    
 
-    function refreshCompanies() {
+    function refreshTrainingTimeSlots() {
      
-        retrieveAllCompanies().then((response)=> {
-            setCompList(response.data)
+        retrieveAllTrainingTimeSlots().then((response)=> {
+            setTrainingTimeSlotList(response.data)
         })
     }  
 
-    function addNewCompany() {
-        navigate(`/company/-1`)
+    function addNewTrainingTimeSlot() {
+        navigate(`/trainingtimeslot/-1`)
     }
 
-    function updateCompany(id) {
-        navigate(`/company/${id}`)
+    function updateTrainingTimeSlot(id) {
+        navigate(`/trainingtimeslot/${id}`)
     }
 
     return(
         <div className="container">
             <Box>
-                <Typography variant="h4" gutterBottom>View Companies <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompany} > <Tooltip title="Add Company" arrow> Add Company</Tooltip></Button>    </Typography>
+                <Typography variant="h4" gutterBottom>View Training Time Slots <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewTrainingTimeSlot} > <Tooltip title="Add Training Time Slots" arrow> Add Training Time Slots</Tooltip></Button>    </Typography>
             </Box>
-
+ 
         {/* <DataTable  
             data={complist}
             columns={[
@@ -70,24 +71,24 @@ export default function ViewCompanyComponent() {
                 <thead>
                     <tr >
                         <th>Sr No.</th>
-                        <th>Company</th>
+                        <th>Training Time Slot</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                  {complist.length === 0 ? (
+                  {trainingTimeSlotList.length === 0 ? (
                         <tr>
                             <td colSpan="3" style={{ textAlign: 'center' }}>
                                 No data available
                             </td>
                         </tr>
                         ) : (
-                        complist.map((comp,index) => (
-                            <tr key={comp.company_id}>
+                        trainingTimeSlotList.map((training,index) => (
+                            <tr key={training.training_time_slot_id}>
                             <td>{index+1}</td>
-                            <td>{comp.comp_name}</td>
+                            <td>{training.training_time_slot}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompany(comp.company_id)} > <Tooltip title="Update Company" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateTrainingTimeSlot(training.training_time_slot_id)} > <Tooltip title="Update Company" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

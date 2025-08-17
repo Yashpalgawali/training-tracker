@@ -4,7 +4,7 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import { Button } from "@mui/material";
+import { Box, Button, Tooltip, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import EditIcon from '@mui/icons-material/Edit';
 import { showToast } from "../SharedComponent/showToast"
@@ -50,9 +50,9 @@ export default function ViewTrainingComponent() {
     }
     return(                                                                                         
         <div className="container">
-            <div>
-                <h2 className="text-center">View Trainings<Button type="submit" variant="contained" color="primary" style={ { float : 'right' } } className="m-2" onClick={addTraining}>Add Training</Button></h2>
-            </div>
+            <Box>
+                <Typography variant="h4" gutterBottom>View Trainings <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addTraining} > <Tooltip title="Add Training" arrow> Add Training</Tooltip></Button>    </Typography>
+            </Box>
 
             <table ref={tableRef} className="table table-striped table-hover">
                 <thead>

@@ -7,46 +7,47 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styl
 import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
+import { retrieveAllCategories } from "../api/CategoryApiService";
 
 
-export default function ViewCompanyComponent() {
+export default function ViewCategoriesComponent() {
 
-    const [complist,setCompList] = useState([])
+    const [categorylist,setCategoryList] = useState([])
 
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()
 
-    useEffect(()=> refreshCompanies() , [] )
+    useEffect(()=> refreshCategories() , [] )
     
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
-        if (tableRef.current && complist.length > 0 ) {
+        if (tableRef.current && categorylist.length > 0 ) {
           $(tableRef.current).DataTable(); // Initialize DataTables
         }
-      }, [complist]); // Re-initialize DataTables when activities data changes
+      }, [categorylist]); // Re-initialize DataTables when activities data changes
    
 
-    function refreshCompanies() {
-     
-        retrieveAllCompanies().then((response)=> {
-            setCompList(response.data)
+    function refreshCategories() {     
+        
+        retrieveAllCategories().then((response)=> {
+            setCategoryList(response.data)
         })
     }  
 
-    function addNewCompany() {
-        navigate(`/company/-1`)
+    function addNewCategory() {
+        navigate(`/category/-1`)
     }
 
-    function updateCompany(id) {
-        navigate(`/company/${id}`)
+    function updateCategory(id) {
+        navigate(`/category/${id}`)
     }
 
     return(
         <div className="container">
             <Box>
-                <Typography variant="h4" gutterBottom>View Companies <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompany} > <Tooltip title="Add Company" arrow> Add Company</Tooltip></Button>    </Typography>
+                <Typography variant="h4" gutterBottom>View Categories <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCategory} > <Tooltip title="Add Category" arrow> Add Category</Tooltip></Button>    </Typography>
             </Box>
-
+          
         {/* <DataTable  
             data={complist}
             columns={[
@@ -70,24 +71,24 @@ export default function ViewCompanyComponent() {
                 <thead>
                     <tr >
                         <th>Sr No.</th>
-                        <th>Company</th>
+                        <th>Category</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                  {complist.length === 0 ? (
+                  {categorylist.length === 0 ? (
                         <tr>
                             <td colSpan="3" style={{ textAlign: 'center' }}>
                                 No data available
                             </td>
                         </tr>
                         ) : (
-                        complist.map((comp,index) => (
-                            <tr key={comp.company_id}>
+                        categorylist.map((category,index) => (
+                            <tr key={category.category_id}>
                             <td>{index+1}</td>
-                            <td>{comp.comp_name}</td>
+                            <td>{category.category}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompany(comp.company_id)} > <Tooltip title="Update Company" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateCategory(category.category_id)} > <Tooltip title="Update Category" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))
