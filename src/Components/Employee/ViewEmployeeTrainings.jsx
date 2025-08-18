@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import { getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
+import { getCompetency, getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
 
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
-import $ from 'jquery'; // jQuery is required for DataTables to work
-import { Button, Typography } from "@mui/material"; 
+import $, { error } from 'jquery'; // jQuery is required for DataTables to work
+import { Button, Divider, Typography } from "@mui/material"; 
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -24,7 +24,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
 } from "recharts";
-import { getCompetency } from "../api/EmployeeApiService";
+ 
 
 export default function ViewEmployeeTrainings() {
 
@@ -53,10 +53,14 @@ export default function ViewEmployeeTrainings() {
     })
 
      useEffect(()=> {
-          getCompetency().then((response)=>{ 
+         
+          getCompetency(id).then((response)=>{ 
             setData(response.data)
+          }).catch((error) => {
+            alert('failed')
+            console.log(error)
           })
-        } , [])
+        } , [id])
 
     useEffect(() => {
            if (tableRef.current && traininglist.length > 0) {
@@ -84,8 +88,7 @@ export default function ViewEmployeeTrainings() {
            
                 getTrainingsByEmployeeId(id).then((response) => {
                     
-                   setEmployee(response.data[0].employee)
-                
+                    setEmployee(response.data[0].employee)                
                     setTrainingList(response.data)
                 });
         };
@@ -154,14 +157,14 @@ export default function ViewEmployeeTrainings() {
 
     return (
       <div className="container">
-        <div>
+        <div className="mb-2">
             <Box>
                 <Typography variant="h4" gutterBottom>View Employee Trainings
                     <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
                 </Typography>
             </Box>
             
-            <div>
+            <div >
                 <div style={{ float : 'left' }}  className="mb-3">
                     <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
                 </div>
@@ -173,6 +176,32 @@ export default function ViewEmployeeTrainings() {
                 </div>
             </div>
         </div>
+        <div><Divider></Divider>
+            </div>
+        <div style={{ textAlign: "center"  }} className="mb-5">
+                <Typography variant="h5" gutterBottom>Competency Chart</Typography>
+                <RadarChart
+                  cx={300}
+                  cy={250}
+                  outerRadius={150}
+                  width={600}
+                  height={400}
+                  data={data}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="Training"
+                    dataKey="score"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.7}
+                  />
+                  <Tooltip />
+                  <Legend /> 
+                </RadarChart>
+              </div>
         <div>
             {
                 loading ? (
@@ -188,7 +217,7 @@ export default function ViewEmployeeTrainings() {
                         <th>Start Date</th>
                         <th>Complete Date</th>
                         <th>Time Slot</th>
-                        <th>Competency Scoreeeeeee</th>
+                        <th>Competency Score</th>
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -224,30 +253,7 @@ export default function ViewEmployeeTrainings() {
             )}
         </div>
 
-<div style={{ textAlign: "center"  }}>
-                <h2>Competency Chart</h2>
-                <RadarChart
-                  cx={300}
-                  cy={250}
-                  outerRadius={150}
-                  width={600}
-                  height={500}
-                  data={data}
-                >
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="name" />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                  <Radar
-                    name="Company"
-                    dataKey="score"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    fillOpacity={0.6}
-                  />
-                  <Tooltip />
-                  <Legend />
-                </RadarChart>
-              </div>
+
 
          <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Update Completion Time</DialogTitle>

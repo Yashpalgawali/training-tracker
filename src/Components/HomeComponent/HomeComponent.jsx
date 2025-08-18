@@ -1,35 +1,29 @@
-import { Link } from "react-router-dom";
-import "./Homecomponent.css" 
-import EmployeeComponent from "../Employee/EmployeeComponent";
-import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import Button from '@mui/material/Button';
+ 
+import "./Homecomponent.css"  
+import Box from '@mui/material/Box'; 
 import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
-import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
-} from "recharts";
-import { useEffect, useState } from "react"; 
-import { getCompetency } from "../api/EmployeeApiService";
+ 
+import { useState } from "react"; 
+
 import { Typography } from "@mui/material";
  
 
 export default function HomeComponent() {
     const [open, setOpen] = useState(false);
 
-    const [data, setData] = useState([]); 
+    // const [data, setData] = useState([]); 
     
-    useEffect(()=> {
-      getCompetency().then((response)=>{ 
-        setData(response.data)
-      })
-    } , [])
+    // useEffect(()=> {
+    //   getCompetency().then((response)=>{ 
+    //     setData(response.data)
+    //   })
+    // } , [])
 
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
@@ -92,7 +86,7 @@ export default function HomeComponent() {
                     {DrawerList}
                 </Drawer>
              </div> */}
-              <div style={{ textAlign: "center"  }}>
+              {/* <div style={{ textAlign: "center"  }}>
                 <h2>Competency Chart</h2>
                 <RadarChart
                   cx={300}
@@ -115,7 +109,7 @@ export default function HomeComponent() {
                   <Tooltip />
                   <Legend />
                 </RadarChart>
-              </div>
+              </div> */}
             
         </div>
     )

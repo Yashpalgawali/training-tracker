@@ -10,8 +10,6 @@ export const updateEmployee = (employee) => apiClient.put(`employee/`,employee)
 
 export const getEmployeeByEmpCode = (empcode) => apiClient.get(`employee/${empcode}`)
 
-export const getCompetency = () => apiClient.get(`/api/competencies`)
-
 export const uploadEmployeeList = (empListExcel) => apiClient.post(`employee/upload`,empListExcel,{ headers : { "Content-Type":"multipart/form-data" }})
 
 export const downAllEmployeesList =
