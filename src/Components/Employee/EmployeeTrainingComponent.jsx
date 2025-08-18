@@ -20,8 +20,7 @@ export default function EmployeeTrainingComponent(){
 
     const [trainingList,setTrainingList] = useState([])
     const [trainingTimeSlotList,setTrainingTimeSlotList] = useState([])
-    const [empList,setEmployeeList] = useState([])
-    const [emp_train_hist_id,setEmpTrainHistId] = useState('')
+    const [empList,setEmployeeList] = useState([]) 
     const [training_date , setTrainingDate] = useState('')
     const [completion_date , setCompletionDate] = useState('')
     const [employee,setEmployee ] = useState('')
@@ -46,7 +45,7 @@ export default function EmployeeTrainingComponent(){
 
     useEffect(  ()=> {
         if(id != -1) {
-           alert(id)
+           
             setDisabled(true)
             setBtnValue('Update Training')
              getEmployeeById(id).then((response) => { 
@@ -67,7 +66,7 @@ export default function EmployeeTrainingComponent(){
             setTrainingTimeSlotList(response.data)
         })
         retrieveAllCompetencies().then((response) => {
-            console.log('competency ',response.data)
+             
             setScoreList(response.data)
         })
     }
@@ -102,7 +101,6 @@ export default function EmployeeTrainingComponent(){
 
     async function onSubmit(values) {
 
-        console.log("VALUES ARE ",values)
         let employeeObject = {
             emp_id : parseInt(values.employee)
         }
@@ -123,8 +121,7 @@ export default function EmployeeTrainingComponent(){
             competency : competencyObj,
             completion_date : formattedCompletionDate
         }
-
-        console.log("emptrain obj ",employeeTraining)
+       
         saveEmployeeTraining(employeeTraining).then((response) => {             
             showToast(response?.data?.responseMessage,"success")
             navigate(`/viewemployees`)
@@ -135,9 +132,24 @@ export default function EmployeeTrainingComponent(){
         })
     }
 
+    const customStyles = {
+            menu  : (provided) => ({
+                ...provided,
+                backgroundColor : "White",   // solid background
+                zIndex : 9999                // keeps it above other elements
+            }),
+            option :(provided,state) => ({
+                ...provided,
+                backgroundColor : state.isFocused ? "#f0f0f0" : "White", // hover effect
+                color : "black"
+            })
+    }
    return(
            <div className="container">
-               <Typography variant="h4" gutterBottom>{btnValue}</Typography>
+                <Typography variant="h4" gutterBottom>
+                    {btnValue}
+
+                </Typography>
                <div>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Formik                       
@@ -159,7 +171,10 @@ export default function EmployeeTrainingComponent(){
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Employee</Typography>
                                 
-                                     <Select              
+                                     <Select
+                                     styles={customStyles}
+                                        
+                                        hideSelectedOptions={true}
                                         isDisabled={disabled}                                    
                                         name="employee"
                                         options={empList.map(emp => ({

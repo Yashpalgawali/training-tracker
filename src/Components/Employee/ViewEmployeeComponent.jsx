@@ -118,7 +118,7 @@ export default function ViewEmployeeComponent() {
             })
     }
      
-    const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
 
   const handleFileChange = (e) => {
@@ -129,7 +129,7 @@ export default function ViewEmployeeComponent() {
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select an Excel file first");
+      alert("Please Select an Excel file first");
       return;
     }
 
@@ -140,7 +140,7 @@ export default function ViewEmployeeComponent() {
       const res = await  uploadEmployeeList(formData)
       alert(res.data);
        // 🔥 Refresh employee list after successful upload
-    retriveAllEmployeeList();
+        retriveAllEmployeeList();
            
     } catch (err) {
       console.error(err);
@@ -168,10 +168,10 @@ function downloadAllEmployees() {
                 <Typography variant="h4">View Employees
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="success" onClick={downloadAllTrainings}><DownloadIcon /> Download  </Button>
+                                <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="info" onClick={downloadAllTrainings}><DownloadIcon /> Download  </Button>
                         </BootstrapTooltip> 
                         <BootstrapTooltip title="Download Employee List">
-                            <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="warning" onClick={downloadAllEmployees}><DownloadIcon /> Download  </Button>
+                            <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><DownloadIcon /> Download  </Button>
                         </BootstrapTooltip>                     
                 </Typography>                
             </Box>
@@ -274,8 +274,8 @@ function downloadAllEmployees() {
                 </table>
                  <div>
        
-    </div>
-            </div>
+           </div>
         </div>
+      </div>
     )
 }

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { executeJwtAuthentication , logoutFunction } from "../api/LoginApiService";
 import { jwtDecode } from "jwt-decode";
 import { apiClient } from "../api/apiClient";
+import { error } from "jquery";
 
 
 export const AuthContext = createContext()
@@ -31,11 +32,35 @@ const [loading, setLoading] = useState(true); // 👈 new
 
       // re-attach axios interceptor
       apiClient.interceptors.request.use((config) => {
+         
         config.headers.Authorization = storedToken;
         return config;
       });
     }
+
+    const respInterceptor = apiClient.interceptors.response.use(
+        (response) => response,
+        (error) => {
+           
+            if(error.response && error.response.status===401) {
+                console.log(error.response)
+                logout()    
+                // 🔑 Hard refresh to login page
+                window.location.href = "/login";
+                // 🔑 Prevent the error from bubbling to UI
+                return new Promise(() => { sessionStorage.setItem("reserr","You are not Authorized. Please Login to Continue")}); 
+                // or: return Promise.resolve(); (if you want caller to get a "valid" empty response)        
+            }
+            return Promise.reject(error)
+        }
+
+    )
+
       setLoading(false); // 👈 auth check done
+
+      return ()=> {
+        apiClient.interceptors.response.eject(respInterceptor)
+      };
   }, []);
 
     async function login(username,password) {
@@ -91,6 +116,7 @@ const [loading, setLoading] = useState(true); // 👈 new
        
         sessionStorage.clear()
         localStorage.clear()
+
         return result
     }
 

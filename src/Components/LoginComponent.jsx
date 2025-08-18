@@ -57,7 +57,7 @@ export default function LoginComponent() {
             <Box>
                 <Typography variant="h4" gutterBottom>Time To Login!! </Typography>
             </Box>
-
+            
             <div>
                 <Formik
                     enableReinitialize={true}
@@ -86,12 +86,7 @@ export default function LoginComponent() {
                                             helperText={<ErrorMessage name="username" />}
                                             fullWidth />
                                                               
-                                </Box>
-                                <Box                                
-                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                    >
+                                
                                     <TextField  
                                             type="password"
                                             id="password"
