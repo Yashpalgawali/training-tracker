@@ -44,7 +44,7 @@ export default function EmployeeComponent() {
         })
       
         retrieveAllCategories().then((response) => {
-            console.log(response.data)
+            
             setCategoryList(response.data)
         })
 
@@ -131,6 +131,8 @@ export default function EmployeeComponent() {
             contractor_name : values.contractor_name,
             joining_date : formattedJoiningDate           
         }
+    
+        console.log("Employee Object ",employee)
 
         if(id == -1) {
 

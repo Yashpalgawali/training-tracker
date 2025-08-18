@@ -165,17 +165,18 @@ function downloadAllEmployees() {
     return (
         <div className="container">
             <Box>
-                <Typography variant="h4">View Employees
+                <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
+                            <Button   disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><DownloadIcon /> Employees  </Button>
+                        </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="info" onClick={downloadAllTrainings}><DownloadIcon /> Download  </Button>
+                                <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="info"  onClick={downloadAllTrainings}><DownloadIcon /> Trainings  </Button>
                         </BootstrapTooltip> 
-                        <BootstrapTooltip title="Download Employee List">
-                            <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><DownloadIcon /> Download  </Button>
-                        </BootstrapTooltip>                     
-                </Typography>                
+                                              
+                </Typography>   
+                
             </Box>
-    <Box display="flex" flexDirection="column" alignItems="center" gap={2}>
+    <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>
       {/* Hidden file input */}
       <input
         type="file"

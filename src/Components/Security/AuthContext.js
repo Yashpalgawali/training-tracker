@@ -43,13 +43,13 @@ const [loading, setLoading] = useState(true); // 👈 new
         (error) => {
            
             if(error.response && error.response.status===401) {
-                console.log(error.response)
+                
                 logout()    
                 // 🔑 Hard refresh to login page
-                window.location.href = "/login";
+                window.location.href = "/trainingtracker/login";
                 // 🔑 Prevent the error from bubbling to UI
                 return new Promise(() => { sessionStorage.setItem("reserr","You are not Authorized. Please Login to Continue")}); 
-                // or: return Promise.resolve(); (if you want caller to get a "valid" empty response)        
+               
             }
             return Promise.reject(error)
         }
@@ -91,14 +91,12 @@ const [loading, setLoading] = useState(true); // 👈 new
                 )
                 return true
             }
-            else {
-                 
+            else {                 
                  logout()
                  return false
             }
         }
-        catch(error) {
-            
+        catch(error) {            
             logout()
             return false
         }
