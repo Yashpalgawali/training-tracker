@@ -178,14 +178,14 @@ export default function ViewEmployeeTrainings() {
         </div>
         <div><Divider></Divider>
             </div>
-        <div style={{ textAlign: "center"  }} className="mb-5">
+        <div   className="mb-5">
                 <Typography variant="h5" gutterBottom>Competency Chart</Typography>
                 <RadarChart
                   cx={300}
                   cy={250}
                   outerRadius={150}
-                  width={600}
-                  height={400}
+                  width={1320}
+                  height={500}
                   data={data}
                 >
                   <PolarGrid />
@@ -202,7 +202,7 @@ export default function ViewEmployeeTrainings() {
                   <Legend /> 
                 </RadarChart>
               </div>
-        <div>
+        <div  >
             {
                 loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" height="200px">
