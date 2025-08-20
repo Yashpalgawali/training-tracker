@@ -1,36 +1,55 @@
 import { useEffect, useRef, useState } from "react"
 import { retrieveAllCompanies } from "../api/CompanyApiService"
 import { useNavigate } from "react-router-dom"
-import $ from 'jquery'; // jQuery is required for DataTables to work
+import $, { error } from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import { retrieveAllCategories } from "../api/CategoryApiService";
+import { showToast } from "../SharedComponent/showToast";
 
 
 export default function ViewCategoriesComponent() {
 
     const [categorylist,setCategoryList] = useState([])
 
-    const tableRef = useRef(null); // Ref for the table
+    const didFetchRef = useRef(false)
+    const tableRef = useRef(false); // Ref for the table
     const navigate = useNavigate()
 
-    useEffect(()=> refreshCategories() , [] )
+    useEffect(()=> { 
+        if (!didFetchRef.current) {
+                didFetchRef.current = true;  
+            refreshCategories()
+        }
+    } , [] )
     
     useEffect(() => {
-        // Initialize DataTable only after the component has mounted
-        if (tableRef.current && categorylist.length > 0 ) {
-          $(tableRef.current).DataTable(); // Initialize DataTables
+      if (tableRef.current) {
+        // 🔴 Destroy old DataTable if exists
+        if ($.fn.DataTable.isDataTable(tableRef.current)) {
+          $(tableRef.current).DataTable().destroy();
         }
-      }, [categorylist]); // Re-initialize DataTables when activities data changes
+
+        // ✅ Initialize only when data exists
+        if (categorylist.length > 0) {
+          $(tableRef.current).DataTable({
+            responsive: true,
+            destroy: true // <-- Important, allows re-init
+          });
+        }
+      }
+    }, [categorylist]);
    
 
     function refreshCategories() {     
         
         retrieveAllCategories().then((response)=> {
             setCategoryList(response.data)
+        }).catch((error)=> {             
+             showToast(error.response.data.errorMessage, "error")
         })
     }  
 

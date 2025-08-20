@@ -1,11 +1,11 @@
-import $ from 'jquery'; // jQuery is required for DataTables to work
+import $, { error } from 'jquery'; // jQuery is required for DataTables to work
 import { useEffect, useRef, useState } from "react"
 import { downAllEmployeesList, retrieveAllEmployees, uploadEmployeeList } from "../api/EmployeeApiService"
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,7 +17,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
-import { getAllTrainingHistory } from "../api/EmployeeTrainingApiService";
+import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 
@@ -41,6 +41,9 @@ export default function ViewEmployeeComponent() {
     const tableRef = useRef(false)
     const [disabled,setDisabled] = useState(false)
 
+    const [loading, setLoading] = useState(false);
+
+
     useEffect(
     () => 
         {               
@@ -50,41 +53,32 @@ export default function ViewEmployeeComponent() {
             }
         },[])
 
-    // useEffect(() => {
-    //     if(tableRef.current && empList.length>0) {
-    //         // 🔴 Destroy old DataTable if exists
-    //         if ($.fn.DataTable.isDataTable(tableRef.current)) {
-    //             alert('destoyed')
-    //         $(tableRef.current).DataTable().destroy();
-    //         }
-    //         $(tableRef.current).DataTable({
-    //             responsive: true,
-    //              destroy: true // <-- Important, allows re-init
-    //         })
-    //     }
-    // }, [empList] )
     useEffect(() => {
-  if (tableRef.current) {
-    // 🔴 Destroy old DataTable if exists
-    if ($.fn.DataTable.isDataTable(tableRef.current)) {
-      $(tableRef.current).DataTable().destroy();
-    }
- 
-    // ✅ Initialize only when data exists
-    if (empList.length > 0) {
-      $(tableRef.current).DataTable({
-        responsive: true,
-        destroy: true // <-- Important, allows re-init
-      });
-    }
-  }
-}, [empList]);
+      if (tableRef.current) {
+        // 🔴 Destroy old DataTable if exists
+        if ($.fn.DataTable.isDataTable(tableRef.current)) {
+          $(tableRef.current).DataTable().destroy();
+        }
+
+        // ✅ Initialize only when data exists
+        if (empList.length > 0) {
+          $(tableRef.current).DataTable({
+            responsive: true,
+            destroy: true // <-- Important, allows re-init
+          });
+        }
+      }
+    }, [empList]);
 
     function retriveAllEmployeeList() {
+      
         retrieveAllEmployees().then((response) => {
             setEmpList(response.data)
+            getTrainingsByEmployeeId(response.data[0].emp_id).catch((error) =>{
+              setDisabled(true)
+            })
         }).catch((error)=>{      
-            setDisabled(true)      
+             setDisabled(true)      
              showToast(error.response.data.errorMessage, "error")
         })
     }
@@ -128,6 +122,7 @@ export default function ViewEmployeeComponent() {
   };
 
   const handleUpload = async () => {
+    setLoading(true)
     if (!file) {
       alert("Please Select an Excel file first");
       return;
@@ -139,7 +134,9 @@ export default function ViewEmployeeComponent() {
     try {
       const res = await  uploadEmployeeList(formData)
       alert(res.data);
-       // 🔥 Refresh employee list after successful upload
+      setFile(null)
+      setLoading(false);
+      // 🔥 Refresh employee list after successful upload
         retriveAllEmployeeList();
            
     } catch (err) {
@@ -209,9 +206,13 @@ function downloadAllEmployees() {
         variant="contained"
         color="success"
         onClick={handleUpload}
-        disabled={!file}
+        disabled={!file || loading}
+        
+        startIcon={
+          loading ? <CircularProgress size={20} color="teal" /> : null
+        }
       >
-        Upload to Server
+        {loading ? "Uploading..." : "Upload to Server"}
       </Button>
     </Box>
             <div>
@@ -220,7 +221,8 @@ function downloadAllEmployees() {
                         <tr>
                             <th>Sr</th>
                             <th>Name</th>
-                            <th>Code</th>                          
+                            <th>Code</th>     
+                            <th>Joininig Date</th>                     
                             <th>Designation</th>
                             <th>Department</th>
                             <th>Company</th>
@@ -241,7 +243,8 @@ function downloadAllEmployees() {
                                     <tr key={emp.emp_id}>
                                         <td>{index+1}</td>
                                         <td>{emp.emp_name}</td>
-                                        <td>{emp.emp_code}</td>    
+                                        <td>{emp.emp_code}</td>
+                                        <td>{emp.joining_date}</td>    
                                         <td>{emp.designation}</td>                                       
                                         <td>{emp.department}</td>
                                         <td>{emp.company}</td>

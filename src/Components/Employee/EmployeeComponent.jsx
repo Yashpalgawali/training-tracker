@@ -34,6 +34,8 @@ export default function EmployeeComponent() {
     const [deptlist , setDeptList] = useState([])
     const [categorylist , setCategoryList] = useState([])
 
+    const [loading,setLoading] = useState(false)
+
     const {id} = useParams()
     const navigate = useNavigate()
 
@@ -43,47 +45,59 @@ export default function EmployeeComponent() {
             setDesigList(response.data)
         })
       
-        retrieveAllCategories().then((response) => {
-            
+        retrieveAllCategories().then((response) => {            
             setCategoryList(response.data)
         })
-
         retrieveAllCompanies().then((response) => {
-            setCompList(response.data)
+                            setCompList(response.data)
         })
+      
         if(id != -1) {
             setBtnValue('Update Employee') 
             
             getEmployeeById(id).then((response) => {
-
+                console.log(response.data)
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
                 setContractorName(response.data?.contractor_name)
-                setDesignations(response.data.designation?.desig_id)
-                setCompany(response.data.department.company?.company_id)
-                setCategory(response.data.category?.category_id)
+                setDesignations(response.data.designation?.desig_id)                
                 
-                    // ✅ format joining_date for Formik initialValues
-                if (response.data?.joining_date) {
-                    const formattedDate = dayjs(response.data.joining_date).format("DD/MM/YYYY");
-                    // setJoiningDate(formattedDate); // this will flow into Formik's initialValues
-                    setJoiningDate(dayjs(formattedDate));
-                }           
-   
-                let comp_id = response.data.department.company?.company_id
+              
+                  
+                    setCompany(response.data.department.company?.company_id)
+                    let comp_id = response.data.department.company?.company_id
 
-                getDepartmentByCompanyId(comp_id).then((response)=> {
-                    setDepartment(response.data.department?.dept_id);
-                    setDeptList(response.data)                    
-                })                
+                    getDepartmentByCompanyId(comp_id).then((response)=> {
+                        setDepartment(response.data.department?.dept_id);
+                        setDeptList(response.data)                    
+                    })
+               
+                     
+                 
+                
+                setCategory(response.data.category?.category_id)
+                setJoiningDate(response.data?.joining_date);
+
+                // ✅ format joining_date for Formik initialValues
+                // if (response.data?.joining_date) {
+                //     alert(response.data?.joining_date)
+                //     const formattedDate = dayjs(response.data.joining_date).format("DD/MM/YYYY");
+                //     // setJoiningDate(formattedDate); // this will flow into Formik's initialValues
+                //     setJoiningDate(dayjs(formattedDate));
+                // }
+  
             })
         }
     },[id] )
 
      const handleCompanyChange = async (event, setFieldValue) => {
+       
         const compId = event.target.value;
         setFieldValue("company", compId);
       
+        setDeptList([]);
+          setFieldValue("department", "");
+
         if (compId) {
           await getDepartmentByCompanyId(compId).then((response)=>{
                  setDeptList(response.data);

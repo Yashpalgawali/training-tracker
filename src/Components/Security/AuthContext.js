@@ -1,8 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react"; 
 import { executeJwtAuthentication , logoutFunction } from "../api/LoginApiService";
 import { jwtDecode } from "jwt-decode";
-import { apiClient } from "../api/apiClient";
-import { error } from "jquery";
+import { apiClient } from "../api/apiClient"; 
 
 
 export const AuthContext = createContext()

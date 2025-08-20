@@ -15,6 +15,7 @@ import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
+import { error } from "jquery";
 
 export default function EmployeeTrainingComponent(){
 
@@ -39,7 +40,7 @@ export default function EmployeeTrainingComponent(){
     useEffect(() => {
        
         if(!didFetchRun.current) {
-            didFetchRun.current = false
+            didFetchRun.current = true
             getAllDetails()
         }        
     },[])
@@ -65,9 +66,7 @@ export default function EmployeeTrainingComponent(){
                         setEmployee(response.data)
                     })
                 }
-            }) 
-
-            
+            })            
         } 
     }, [id] )
 
@@ -75,16 +74,24 @@ export default function EmployeeTrainingComponent(){
         
         retrieveAllEmployees().then((response) => {
             setEmployeeList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllTrainingTimeSlots().then((response) => {
             setTrainingTimeSlotList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllCompetencies().then((response) => {
              
             setScoreList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
     }
 
@@ -149,7 +156,7 @@ export default function EmployeeTrainingComponent(){
                 emp_id : parseInt(id)
             }
         }
-         
+
 
         let employeeTraining = {
                 employee : employeeObject,
@@ -157,37 +164,29 @@ export default function EmployeeTrainingComponent(){
                 training_date : formattedTrainingDate,
                 training_ids : values.training_ids,
                 competency : competencyObj,
-                completion_date : formattedCompletionDate
+                completion_date : formattedTrainingDate
             }
  
             getTrainingById(values.training_ids).then((result) => {
                 console.log('result is ',result)
-                setTrainingFound(result.data.training_id)
+                alert(result.data.training_id)
+                setTrainingFound(parseInt(result.data.training_id))
             })
             
+                        
             if(training_found!=values.training_ids) { 
-                alert('No training found')
+                alert('No training found Calling save method')
+                    saveEmployeeTraining(employeeTraining).then((response) => {             
+                        showToast(response?.data?.responseMessage,"success")
+                        navigate(`/viewemployees`)
+                    })
+                    .catch((error) => {
+                        showToast(error?.data?.errorMessage,"error")
+                        navigate(`/viewemployees`)
+                    })
             }
             else {
-                alert('training Found')
-            }
-            // if(training_found!=values.training_ids) {            
-                
-            //     console.log("Employee Training Object ",employeeTraining)
-            
-            //     saveEmployeeTraining(employeeTraining).then((response) => {             
-            //         showToast(response?.data?.responseMessage,"success")
-            //         navigate(`/viewemployees`)
-            //     })
-            //     .catch((error) => {
-            //         showToast(error?.data?.errorMessage,"error")
-            //         navigate(`/viewemployees`)
-            //     })
-            // }
-            // else {
-                
-            //     console.log("Update Employee Training Object ",employeeTraining)
-
+                alert('training Found calling updated method')
                 updateEmployeeTraining(employeeTraining).then((response) => {             
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
@@ -196,7 +195,8 @@ export default function EmployeeTrainingComponent(){
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 })
-            // }
+            }
+            
 
     }
     
@@ -254,14 +254,34 @@ export default function EmployeeTrainingComponent(){
                             {/* Training MultiSelect */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Select Trainings</Typography>
-                                <TrainingMultiSelect
+                                <Select   
+                                        styles={customStyles}                                     
+                                        name="training_ids"
+                                        options={trainingList.map(training => ({
+                                            value: training.training_id,
+                                            label: training.training_name
+                                        }))}
+                                        value={
+                                            trainingList
+                                                .map(training => ({ value: training.training_id, label: training.training_name }))
+                                                .find(option => option.value === values.training_ids) || null
+                                        }
+                                            onChange={(option) => setFieldValue('training_ids', option ? option.value : '')}
+                                            placeholder="Select Training"
+                                    /> 
+                                
+                                <FormHelperText error={touched.score && Boolean(errors.score)}>
+                                <ErrorMessage name="score" />
+                                </FormHelperText>  
+                                {/* <TrainingMultiSelect
                                
-                                options={options}
-                                value={values.training_ids}
-                                onChange={(value) => setFieldValue('training_ids', value)}
+                                    options={options}
+                                    value={values.training_ids}
+                                    onChange={(value) => setFieldValue('training_ids', value)}
                                 />
-                                <FormHelperText><ErrorMessage name="training_ids" /></FormHelperText>
+                                <FormHelperText><ErrorMessage name="training_ids" /></FormHelperText> */}
                             </Box>
+
                             {/* Competency Score */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Competency Score</Typography>
@@ -273,13 +293,13 @@ export default function EmployeeTrainingComponent(){
                                             value: scores.competency_id,
                                             label: scores.score
                                         }))}
-                                    value={
-                                        scoreList
-                                        .map(scores => ({ value: scores.competency_id, label: scores.score }))
-                                        .find(option => option.value === values.score) || null
-                                    }
-                                    onChange={(option) => setFieldValue('score', option ? option.value : '')}
-                                    placeholder="Select Score"
+                                        value={
+                                            scoreList
+                                                .map(scores => ({ value: scores.competency_id, label: scores.score }))
+                                                .find(option => option.value === values.score) || null
+                                        }
+                                            onChange={(option) => setFieldValue('score', option ? option.value : '')}
+                                            placeholder="Select Score"
                                     /> 
                                 
                                 <FormHelperText error={touched.score && Boolean(errors.score)}>
@@ -291,6 +311,7 @@ export default function EmployeeTrainingComponent(){
                               {/* Training Date Picker */}
                                 <Box mb={2}  >
                                 <DatePicker
+                                    
                                     format="DD/MM/YYYY"
                                     label="Training Date"
                                     value={values.training_date}
@@ -303,7 +324,7 @@ export default function EmployeeTrainingComponent(){
                                     }}
                                 />
                                 
-                                <DatePicker 
+                                {/* <DatePicker 
                                     label="Completion Date"
                                     format="DD/MM/YYYY"
                                     value={values.completion_date}
@@ -314,7 +335,7 @@ export default function EmployeeTrainingComponent(){
                                         helperText: <ErrorMessage name="completion_date" />
                                     }
                                     }}
-                                />
+                                /> */}
                                 </Box>
                                 
                                 {/* Completion Date Picker */}
