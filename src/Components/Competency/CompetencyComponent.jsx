@@ -35,7 +35,6 @@ export default function CompetencyComponent () {
             getCompetencyById()
         }
     }, [id] ) 
-       
 
     function onSubmit(values) {
         setIsDisabled(true)
