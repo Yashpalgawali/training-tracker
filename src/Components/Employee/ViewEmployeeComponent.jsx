@@ -19,6 +19,7 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { convertFieldResponseIntoMuiTextFieldProps } from '@mui/x-date-pickers/internals';
 
 
  const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -40,9 +41,9 @@ export default function ViewEmployeeComponent() {
     const didFetchRef = useRef(false)
     const tableRef = useRef(false)
     const [disabled,setDisabled] = useState(false)
+    const [disabledDownloadTraining,setDownloadTrainingDisabled] = useState(false)
 
     const [loading, setLoading] = useState(false);
-
 
     useEffect(
     () => 
@@ -73,12 +74,18 @@ export default function ViewEmployeeComponent() {
     function retriveAllEmployeeList() {
       
         retrieveAllEmployees().then((response) => {
-            setEmpList(response.data)
-            getTrainingsByEmployeeId(response.data[0].emp_id).catch((error) =>{
-              setDisabled(true)
+            setEmpList(response.data) 
+           
+            getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
+               if(response.data=='')
+               {
+                setDownloadTrainingDisabled(true)
+               }
             })
+
         }).catch((error)=>{      
-             setDisabled(true)      
+             setDisabled(true)   
+              setDownloadTrainingDisabled(true)   
              showToast(error.response.data.errorMessage, "error")
         })
     }
@@ -133,14 +140,15 @@ export default function ViewEmployeeComponent() {
 
     try {
       const res = await  uploadEmployeeList(formData)
-      alert(res.data);
+      
       setFile(null)
       setLoading(false);
+      setFileName('')
       // 🔥 Refresh employee list after successful upload
         retriveAllEmployeeList();
            
     } catch (err) {
-      console.error(err);
+      
       alert("Upload failed");
     }
   };
@@ -167,7 +175,7 @@ function downloadAllEmployees() {
                         </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button style={ { float : 'left' } } disabled={disabled} variant="contained" color="info"  onClick={downloadAllTrainings}><DownloadIcon /> Trainings  </Button>
+                                <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><DownloadIcon /> Trainings  </Button>
                         </BootstrapTooltip> 
                                               
                 </Typography>   
@@ -221,7 +229,7 @@ function downloadAllEmployees() {
                         <tr>
                             <th>Sr</th>
                             <th>Name</th>
-                            <th>Code</th>     
+                            <th>Employee Code</th>     
                             <th>Joininig Date</th>                     
                             <th>Designation</th>
                             <th>Department</th>
