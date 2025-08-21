@@ -8,14 +8,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs  from "dayjs";
-import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, TextField, Typography } from "@mui/material";
+import { Box, Button, FormHelperText,  Typography } from "@mui/material";
 
-import { getTrainingsByEmployeeId, getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
+import {  getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
-import { error } from "jquery";
 
 export default function EmployeeTrainingComponent(){
 
@@ -30,15 +29,13 @@ export default function EmployeeTrainingComponent(){
     const [score,setScore] =useState('')
     const [scoreList,setScoreList] =  useState([])
     const didFetchRun = useRef(false)
-    const [training_found,setTrainingFound] = useState([])
     
     const navigate = useNavigate()
     const {id} = useParams()
 
     const [disabled,setDisabled] = useState(false)
     
-    const [loading, setLoading] = useState(false);
-
+    
     useEffect(() => {
        
         if(!didFetchRun.current) {
@@ -55,23 +52,6 @@ export default function EmployeeTrainingComponent(){
                 getEmployeeById(id).then((response) => {
                         setEmployee(response.data)
                 })
-            // getTrainingsByEmployeeId(id).then((response) => {
-            //    if(response.data!='')
-            //     {
-            //         let obj = response.data
-            //         // obj.map((training) => {
-            //         //     console.log("TRAINING IDs Are ",training.training.training_id)
-            //         //     setTrainingFound(training.training.training_id)
-            //         // })
-                
-            //         setEmployee(response.data[0].employee)
-            //     }
-            //     else {
-            //         getEmployeeById(id).then((response) => {
-            //             setEmployee(response.data)
-            //         })
-            //     }
-            // })            
         } 
     }, [id] )
 
@@ -176,8 +156,6 @@ export default function EmployeeTrainingComponent(){
             }
 
            await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
-                console.log("Result is ",result.data)
-                alert('getTrainingById result '+result.data.training.training_id)     
                 
                 employeeTraining = {
                         employee : employeeObject,
@@ -190,17 +168,11 @@ export default function EmployeeTrainingComponent(){
                 }
 
                 sessionStorage.setItem('training_id',result.data.training.training_id)
-            }).catch((error)=>{
-                console.log("error ",error)
-                alert('training not given to employee')
             })
 
-            alert("Id to be saved/updated is "+values.training_ids)
-            alert("Id found is "+sessionStorage.getItem('training_id'))
+           
             if(sessionStorage.getItem('training_id')!=null) {
                 let trainId  = parseInt(sessionStorage.getItem('training_id'))
-                alert('training id to be updated '+trainId)
-                console.log('Training to be updated ',employeeTraining)
                 
                 updateEmployeeTraining(employeeTraining).then((response) => {
                       sessionStorage.removeItem('training_id')
@@ -213,9 +185,6 @@ export default function EmployeeTrainingComponent(){
                 })
             }
             else {
-
-                alert('Training needs to be saved '+values.training_ids )
-                console.log('Training to be SAVED ',employeeTraining)
                     saveEmployeeTraining(employeeTraining).then((response) => {             
                         showToast(response?.data?.responseMessage,"success")
                         navigate(`/viewemployees`)
@@ -225,39 +194,12 @@ export default function EmployeeTrainingComponent(){
                         navigate(`/viewemployees`)
                     })
             }
-            // alert('training Found with id '+sessionStorage.getItem('training_id'))  
-
-            // if(parseInt(sessionStorage.getItem('training_id'))!=values.training_ids) { 
-            //     alert('No training found Calling save method')
-            //         // saveEmployeeTraining(employeeTraining).then((response) => {             
-            //         //     showToast(response?.data?.responseMessage,"success")
-            //         //     navigate(`/viewemployees`)
-            //         // })
-            //         // .catch((error) => {
-            //         //     showToast(error?.data?.errorMessage,"error")
-            //         //     navigate(`/viewemployees`)
-            //         // })
-            // }
-            // else {
-            //     alert('training Found calling updated method')
-            //     // updateEmployeeTraining(employeeTraining).then((response) => {             
-            //     //     showToast(response?.data?.responseMessage,"success")
-            //     //     navigate(`/viewemployees`)
-            //     // })
-            //     // .catch((error) => {
-            //     //     showToast(error?.data?.errorMessage,"error")
-            //     //     navigate(`/viewemployees`)
-            //     // })
-            // }
-            
-
     }
     
    return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
                     {btnValue} {employee.emp_name}
-
                 </Typography>
                 <div>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>

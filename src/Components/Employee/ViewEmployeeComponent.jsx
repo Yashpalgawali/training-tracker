@@ -113,7 +113,7 @@ export default function ViewEmployeeComponent() {
                 // Create a link element to trigger download
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = 'All Employees Training History .xlsx';
+                link.download = 'All Employees Training.xlsx';
                 link.click();
             })
     }
@@ -155,15 +155,15 @@ export default function ViewEmployeeComponent() {
 function downloadAllEmployees() {
     downAllEmployeesList().then((response)=> {
                 
-                // Convert the array buffer to a Blob
-                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            // Convert the array buffer to a Blob
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-                // Create a link element to trigger download
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'All Employees List.xlsx';
-                link.click();
-            })
+            // Create a link element to trigger download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'All Employees List.xlsx';
+            link.click();
+        })
     }
 
     return (
