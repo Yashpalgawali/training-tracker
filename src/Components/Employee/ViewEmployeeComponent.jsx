@@ -19,7 +19,6 @@ import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { convertFieldResponseIntoMuiTextFieldProps } from '@mui/x-date-pickers/internals';
 
 
  const BootstrapTooltip = styled(({ className, ...props }) => (

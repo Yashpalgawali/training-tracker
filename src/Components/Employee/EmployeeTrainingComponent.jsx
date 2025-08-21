@@ -10,7 +10,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs  from "dayjs";
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, TextField, Typography } from "@mui/material";
 
-import { getTrainingsByEmployeeId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
+import { getTrainingsByEmployeeId, getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
@@ -37,6 +37,8 @@ export default function EmployeeTrainingComponent(){
 
     const [disabled,setDisabled] = useState(false)
     
+    const [loading, setLoading] = useState(false);
+
     useEffect(() => {
        
         if(!didFetchRun.current) {
@@ -48,25 +50,28 @@ export default function EmployeeTrainingComponent(){
     useEffect( ()=> {
       
         if(id != -1) {           
-            setDisabled(true)            
+            setDisabled(true)
             setBtnValue('Update Training')
-            getTrainingsByEmployeeId(id).then((response) => {
-               if(response.data!='')
-                {
-                    let obj = response.data
-                    obj.map((training) => {
-                        console.log("TRAINING IDs Are ",training.training.training_id)
-                        setTrainingFound(training.training.training_id)
-                    })
-                
-                    setEmployee(response.data[0].employee)
-                }
-                else {
-                    getEmployeeById(id).then((response) => {
+                getEmployeeById(id).then((response) => {
                         setEmployee(response.data)
-                    })
-                }
-            })            
+                })
+            // getTrainingsByEmployeeId(id).then((response) => {
+            //    if(response.data!='')
+            //     {
+            //         let obj = response.data
+            //         // obj.map((training) => {
+            //         //     console.log("TRAINING IDs Are ",training.training.training_id)
+            //         //     setTrainingFound(training.training.training_id)
+            //         // })
+                
+            //         setEmployee(response.data[0].employee)
+            //     }
+            //     else {
+            //         getEmployeeById(id).then((response) => {
+            //             setEmployee(response.data)
+            //         })
+            //     }
+            // })            
         } 
     }, [id] )
 
@@ -87,9 +92,9 @@ export default function EmployeeTrainingComponent(){
         }).catch((error)=> {
              showToast(error.response.data.errorMessage, "error")
         })
+
         retrieveAllCompetencies().then((response) => {
-             
-            setScoreList(response.data)
+           setScoreList(response.data)
         }).catch((error)=> {
              showToast(error.response.data.errorMessage, "error")
         })
@@ -146,17 +151,19 @@ export default function EmployeeTrainingComponent(){
             training_time_slot_id : parseInt(values.trainingTimeSlot)
         }
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
-        const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
-    
-        let employeeObject = {
-                emp_id : parseInt(values.employee)
-            }
+       
+        let employeeObject = null
+        
         if(id!= -1) {
             employeeObject = {
                 emp_id : parseInt(id)
+            }            
+        }
+        else {
+            employeeObject = {
+                emp_id : parseInt(values.employee)
             }
         }
-
 
         let employeeTraining = {
                 employee : employeeObject,
@@ -164,18 +171,51 @@ export default function EmployeeTrainingComponent(){
                 training_date : formattedTrainingDate,
                 training_ids : values.training_ids,
                 competency : competencyObj,
-                completion_date : formattedTrainingDate
+                completion_date : formattedTrainingDate,
+                emp_train_id : 0
             }
- 
-            getTrainingById(values.training_ids).then((result) => {
-                console.log('result is ',result)
-                alert(result.data.training_id)
-                setTrainingFound(parseInt(result.data.training_id))
+
+           await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
+                console.log("Result is ",result.data)
+                alert('getTrainingById result '+result.data.training.training_id)     
+                
+                employeeTraining = {
+                        employee : employeeObject,
+                        trainingTimeSlot : timeSlotObj,
+                        training_date : formattedTrainingDate,
+                        training_ids : values.training_ids,
+                        competency : competencyObj,
+                        completion_date : formattedTrainingDate,
+                        emp_train_id : result.data.emp_train_id
+                }
+
+                sessionStorage.setItem('training_id',result.data.training.training_id)
+            }).catch((error)=>{
+                console.log("error ",error)
+                alert('training not given to employee')
             })
-            
-                        
-            if(training_found!=values.training_ids) { 
-                alert('No training found Calling save method')
+
+            alert("Id to be saved/updated is "+values.training_ids)
+            alert("Id found is "+sessionStorage.getItem('training_id'))
+            if(sessionStorage.getItem('training_id')!=null) {
+                let trainId  = parseInt(sessionStorage.getItem('training_id'))
+                alert('training id to be updated '+trainId)
+                console.log('Training to be updated ',employeeTraining)
+                
+                updateEmployeeTraining(employeeTraining).then((response) => {
+                      sessionStorage.removeItem('training_id')
+                    showToast(response?.data?.responseMessage,"success")
+                    navigate(`/viewemployees`)
+                })
+                .catch((error) => {
+                    showToast(error?.data?.errorMessage,"error")
+                    navigate(`/viewemployees`)
+                })
+            }
+            else {
+
+                alert('Training needs to be saved '+values.training_ids )
+                console.log('Training to be SAVED ',employeeTraining)
                     saveEmployeeTraining(employeeTraining).then((response) => {             
                         showToast(response?.data?.responseMessage,"success")
                         navigate(`/viewemployees`)
@@ -185,17 +225,30 @@ export default function EmployeeTrainingComponent(){
                         navigate(`/viewemployees`)
                     })
             }
-            else {
-                alert('training Found calling updated method')
-                updateEmployeeTraining(employeeTraining).then((response) => {             
-                    showToast(response?.data?.responseMessage,"success")
-                    navigate(`/viewemployees`)
-                })
-                .catch((error) => {
-                    showToast(error?.data?.errorMessage,"error")
-                    navigate(`/viewemployees`)
-                })
-            }
+            // alert('training Found with id '+sessionStorage.getItem('training_id'))  
+
+            // if(parseInt(sessionStorage.getItem('training_id'))!=values.training_ids) { 
+            //     alert('No training found Calling save method')
+            //         // saveEmployeeTraining(employeeTraining).then((response) => {             
+            //         //     showToast(response?.data?.responseMessage,"success")
+            //         //     navigate(`/viewemployees`)
+            //         // })
+            //         // .catch((error) => {
+            //         //     showToast(error?.data?.errorMessage,"error")
+            //         //     navigate(`/viewemployees`)
+            //         // })
+            // }
+            // else {
+            //     alert('training Found calling updated method')
+            //     // updateEmployeeTraining(employeeTraining).then((response) => {             
+            //     //     showToast(response?.data?.responseMessage,"success")
+            //     //     navigate(`/viewemployees`)
+            //     // })
+            //     // .catch((error) => {
+            //     //     showToast(error?.data?.errorMessage,"error")
+            //     //     navigate(`/viewemployees`)
+            //     // })
+            // }
             
 
     }

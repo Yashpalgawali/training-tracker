@@ -38,8 +38,6 @@ export default function ViewEmployeeTrainings() {
     const dtInstanceRef = useRef(null); // to store DataTable instance
     
     const [data, setData] = useState([]); 
-        
-       
 
     const [employee,setEmployee] = useState({
         emp_name : '',
@@ -160,7 +158,9 @@ export default function ViewEmployeeTrainings() {
         <div className="mb-2">
             <Box>
                 <Typography variant="h4" gutterBottom>View Employee Trainings
-                    <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                    
+                        <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                     
                 </Typography>
             </Box>
             
