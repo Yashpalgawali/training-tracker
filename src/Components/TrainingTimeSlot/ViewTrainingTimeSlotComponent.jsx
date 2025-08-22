@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react"
-import { retrieveAllCompanies } from "../api/CompanyApiService"
 import { useNavigate } from "react-router-dom"
 import $ from 'jquery'; // jQuery is required for DataTables to work
   
@@ -25,7 +24,6 @@ export default function ViewTrainingTimeSlotComponent() {
           $(tableRef.current).DataTable(); // Initialize DataTables
         }
       }, [trainingTimeSlotList]); // Re-initialize DataTables when activities data changes
-   
 
     function refreshTrainingTimeSlots() {
      

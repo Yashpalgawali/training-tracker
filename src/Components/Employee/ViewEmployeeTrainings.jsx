@@ -81,7 +81,7 @@ export default function ViewEmployeeTrainings() {
             setData(response.data)
           }).catch((error) => {
             alert('failed')
-            console.log(error)
+            
           })
         } , [id])
 
@@ -119,9 +119,7 @@ export default function ViewEmployeeTrainings() {
     function getTrainingsByEmpId() {
         setLoading(true);
         getTrainingsByEmployeeId(id).then((response) => {
-                   console.log("Training list of employee is ",response.data)
-                setEmployee(response.data[0].employee)
-                
+                setEmployee(response.data[0].employee)                
                 setTrainingList(response.data)
        })
        .catch((error) => {
@@ -136,7 +134,7 @@ export default function ViewEmployeeTrainings() {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (id) => {
-        alert(id)
+
           sessionStorage.setItem('hist_id',id)
         setOpen(true);
     };
@@ -157,20 +155,13 @@ export default function ViewEmployeeTrainings() {
 
         const histid = sessionStorage.getItem('hist_id')
 
-        alert(training_date)
-       
-        // updateCompletionDate(histid,training_date).then((response)=> {
-        //     getUpdatedTrainingsByEmpId()
-        //     showToast(response.data.responseMessage,"success")
-        //     navigate(`/training/employee/${id}`)
-        // }).catch((error) => {
-        //      showToast(error.response.data.errorMessage,"error")
-        // })
-
         updateTrainingDateAndCompetency(histid,training_date,competency_id,training_time_id).then(
             (response) => {
                         getUpdatedTrainingsByEmpId()
                         showToast(response.data.responseMessage,"success")
+                        setSelectedCompetency(null)
+                        setSelectedTimeSlot(null)
+                        sessionStorage.removeItem('hist_id')
                         navigate(`/training/employee/${id}`)
             }
         ).catch((error) => {
@@ -194,11 +185,12 @@ export default function ViewEmployeeTrainings() {
     }
 
      const handleChange = (event) => {
-        alert(event.target.value)
+        
             setScore(event.target.value); // sets competency_id
         };
 const [selectedCompetency, setSelectedCompetency] = useState("");
 const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+
 const handleCompetencyChange = (event) => {
   setSelectedCompetency(event.target.value);
 };

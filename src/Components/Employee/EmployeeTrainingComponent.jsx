@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { getEmployeeById, retrieveAllEmployees } from "../api/EmployeeApiService"
-import { getTrainingById, retrieveAllTraining } from "../api/TrainingApiService"
-import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik"
+import { retrieveAllTraining } from "../api/TrainingApiService"
+import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';

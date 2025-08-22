@@ -56,36 +56,23 @@ export default function EmployeeComponent() {
             setBtnValue('Update Employee') 
             
             getEmployeeById(id).then((response) => {
-                console.log(response.data)
+                
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
                 setContractorName(response.data?.contractor_name)
                 setDesignations(response.data.designation?.desig_id)                
-                
-              
                   
-                    setCompany(response.data.department.company?.company_id)
-                    let comp_id = response.data.department.company?.company_id
+                setCompany(response.data.department.company?.company_id)
+                let comp_id = response.data.department.company?.company_id
 
-                    getDepartmentByCompanyId(comp_id).then((response)=> {
-                        setDepartment(response.data.department?.dept_id);
-                        setDeptList(response.data)                    
-                    })
-               
-                     
-                 
+                getDepartmentByCompanyId(comp_id).then((response)=> {
+                    setDepartment(response.data.department?.dept_id);
+                    setDeptList(response.data)                    
+                })
                 
                 setCategory(response.data.category?.category_id)
                 setJoiningDate(response.data?.joining_date);
-
-                // ✅ format joining_date for Formik initialValues
-                // if (response.data?.joining_date) {
-                //     alert(response.data?.joining_date)
-                //     const formattedDate = dayjs(response.data.joining_date).format("DD/MM/YYYY");
-                //     // setJoiningDate(formattedDate); // this will flow into Formik's initialValues
-                //     setJoiningDate(dayjs(formattedDate));
-                // }
-  
+                
             })
         }
     },[id] )
@@ -104,8 +91,7 @@ export default function EmployeeComponent() {
                  setFieldValue("department", ""); // Reset department selection on company change
           }).catch((error) => {
             
-            let cnf = window.confirm("No Departments in this company. Do you want to add Department(s)")
-            
+            let cnf = window.confirm("No Departments in this company. Do you want to add Department")            
             if(cnf) {
                 navigate(`/department/-1`)
             }
@@ -145,8 +131,6 @@ export default function EmployeeComponent() {
             contractor_name : values.contractor_name,
             joining_date : formattedJoiningDate           
         }
-    
-        console.log("Employee Object ",employee)
 
         if(id == -1) {
 

@@ -17,14 +17,6 @@ import { Typography } from "@mui/material";
 export default function HomeComponent() {
     const [open, setOpen] = useState(false);
 
-    // const [data, setData] = useState([]); 
-    
-    // useEffect(()=> {
-    //   getCompetency().then((response)=>{ 
-    //     setData(response.data)
-    //   })
-    // } , [])
-
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
@@ -33,16 +25,7 @@ export default function HomeComponent() {
      console.log( text)
      let val = Object.values(text) 
      alert(val)
-    //  if(val=="Companies") {
-    //   alert('Companuies called')
-    //  }
-
-    //   if(text=='Departments') {
-    //   alert('Departments called')
-    //  }
-    //   if(text=='Trainings') {
-    //   alert('Trainings called')
-    //  }
+  
     }
     
     const DrawerList = (
@@ -59,19 +42,7 @@ export default function HomeComponent() {
           </ListItem>
         ))}
       </List>
-      {/* <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List> */}
+       
     </Box>
   );
     return (
@@ -79,37 +50,7 @@ export default function HomeComponent() {
           <Box>
             <Typography gutterBottom variant="h4">Welcome</Typography>
           </Box>
-             {/* <div className="sidebar">
-               
-                <Button onClick={toggleDrawer(true)} variant="contained" color="secondary" size="130px">Menu</Button>
-                <Drawer open={open} onClose={toggleDrawer(false)}>
-                    {DrawerList}
-                </Drawer>
-             </div> */}
-              {/* <div style={{ textAlign: "center"  }}>
-                <h2>Competency Chart</h2>
-                <RadarChart
-                  cx={300}
-                  cy={250}
-                  outerRadius={150}
-                  width={600}
-                  height={500}
-                  data={data}
-                >
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="name" />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                  <Radar
-                    name="Company"
-                    dataKey="score"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    fillOpacity={0.6}
-                  />
-                  <Tooltip />
-                  <Legend />
-                </RadarChart>
-              </div> */}
+              
             
         </div>
     )
