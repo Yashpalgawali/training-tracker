@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "./Security/AuthContext";
 import "../../src/Components/LogonComponent.css";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,12 @@ export default function LoginComponent() {
         setPos({ x: e.clientX, y: e.clientY });
     };
 
+    useEffect(()=> {
+        if(authContext.isAuthenticated==true)
+        {
+            navigate("/viewemployees")
+        }
+    })
     async function handleSubmit(values) {
         const res =  await authContext.login(values.username,values.password)
    
@@ -57,7 +63,7 @@ export default function LoginComponent() {
             <Box>
                 <Typography variant="h4" gutterBottom>Time To Login!! </Typography>
             </Box>
-
+            
             <div>
                 <Formik
                     enableReinitialize={true}
@@ -86,12 +92,7 @@ export default function LoginComponent() {
                                             helperText={<ErrorMessage name="username" />}
                                             fullWidth />
                                                               
-                                </Box>
-                                <Box                                
-                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                    >
+                                
                                     <TextField  
                                             type="password"
                                             id="password"

@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react"
 import { getEmployeeById, retrieveAllEmployees } from "../api/EmployeeApiService"
 import { retrieveAllTraining } from "../api/TrainingApiService"
-import { ErrorMessage, Field, Form, Formik, useFormikContext } from "formik"
+import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs  from "dayjs";
-import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, TextField, Typography } from "@mui/material";
+import { Box, Button, FormHelperText,  Typography } from "@mui/material";
 
-import { saveEmployeeTraining } from "../api/EmployeeTrainingApiService";
+import {  getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
@@ -20,8 +20,7 @@ export default function EmployeeTrainingComponent(){
 
     const [trainingList,setTrainingList] = useState([])
     const [trainingTimeSlotList,setTrainingTimeSlotList] = useState([])
-    const [empList,setEmployeeList] = useState([])
-    const [emp_train_hist_id,setEmpTrainHistId] = useState('')
+    const [empList,setEmployeeList] = useState([]) 
     const [training_date , setTrainingDate] = useState('')
     const [completion_date , setCompletionDate] = useState('')
     const [employee,setEmployee ] = useState('')
@@ -30,28 +29,29 @@ export default function EmployeeTrainingComponent(){
     const [score,setScore] =useState('')
     const [scoreList,setScoreList] =  useState([])
     const didFetchRun = useRef(false)
-
+    
     const navigate = useNavigate()
     const {id} = useParams()
 
     const [disabled,setDisabled] = useState(false)
     
+    
     useEffect(() => {
        
         if(!didFetchRun.current) {
-            didFetchRun.current = false
+            didFetchRun.current = true
             getAllDetails()
         }        
     },[])
 
-    useEffect(  ()=> {
-        if(id != -1) {
-           alert(id)
+    useEffect( ()=> {
+      
+        if(id != -1) {           
             setDisabled(true)
             setBtnValue('Update Training')
-             getEmployeeById(id).then((response) => { 
-                setEmployee(response.data)
-            })
+                getEmployeeById(id).then((response) => {
+                        setEmployee(response.data)
+                })
         } 
     }, [id] )
 
@@ -59,17 +59,38 @@ export default function EmployeeTrainingComponent(){
         
         retrieveAllEmployees().then((response) => {
             setEmployeeList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllTrainingTimeSlots().then((response) => {
             setTrainingTimeSlotList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
+
         retrieveAllCompetencies().then((response) => {
-            console.log('competency ',response.data)
-            setScoreList(response.data)
+           setScoreList(response.data)
+        }).catch((error)=> {
+             showToast(error.response.data.errorMessage, "error")
         })
+    }
+
+    const customStyles = {
+            menu  : (provided) => ({
+                ...provided,
+                backgroundColor : "White",   // solid background
+                zIndex : 9999                // keeps it above other elements
+            }),
+            option :(provided,state) => ({
+                ...provided,
+                backgroundColor : state.isFocused ? "#f0f0f0" : "White", // hover effect
+                color : "black"
+            })
     }
 
      function TrainingMultiSelect({ options }) {
@@ -77,7 +98,8 @@ export default function EmployeeTrainingComponent(){
 
         return (
             
-            <Select               
+            <Select          
+                styles={customStyles}
                 name="training_ids"
                 isMulti
                 options={options}
@@ -101,11 +123,7 @@ export default function EmployeeTrainingComponent(){
             }) );
 
     async function onSubmit(values) {
-
-        console.log("VALUES ARE ",values)
-        let employeeObject = {
-            emp_id : parseInt(values.employee)
-        }
+            
         let competencyObj = {
             competency_id : parseInt(values.score)
         }
@@ -113,34 +131,79 @@ export default function EmployeeTrainingComponent(){
             training_time_slot_id : parseInt(values.trainingTimeSlot)
         }
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
-        const formattedCompletionDate =  values.completion_date ? dayjs(values.completion_date).format('DD-MM-YYYY') : '';
        
-        let employeeTraining = {
-            employee : employeeObject,
-            trainingTimeSlot : timeSlotObj,
-            training_date : formattedTrainingDate,
-            training_ids : values.training_ids,
-            competency : competencyObj,
-            completion_date : formattedCompletionDate
+        let employeeObject = null
+        
+        if(id!= -1) {
+            employeeObject = {
+                emp_id : parseInt(id)
+            }            
+        }
+        else {
+            employeeObject = {
+                emp_id : parseInt(values.employee)
+            }
         }
 
-        console.log("emptrain obj ",employeeTraining)
-        saveEmployeeTraining(employeeTraining).then((response) => {             
-            showToast(response?.data?.responseMessage,"success")
-            navigate(`/viewemployees`)
-        })
-        .catch((error) => {             
-            showToast(error?.data?.errorMessage,"error")
-            navigate(`/viewemployees`)
-        })
-    }
+        let employeeTraining = {
+                employee : employeeObject,
+                trainingTimeSlot : timeSlotObj,
+                training_date : formattedTrainingDate,
+                training_ids : values.training_ids,
+                competency : competencyObj,
+                completion_date : formattedTrainingDate,
+                emp_train_id : 0
+            }
 
+           await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
+                
+                employeeTraining = {
+                        employee : employeeObject,
+                        trainingTimeSlot : timeSlotObj,
+                        training_date : formattedTrainingDate,
+                        training_ids : values.training_ids,
+                        competency : competencyObj,
+                        completion_date : formattedTrainingDate,
+                        emp_train_id : result.data.emp_train_id
+                }
+
+                sessionStorage.setItem('training_id',result.data.training.training_id)
+            })
+
+           
+            if(sessionStorage.getItem('training_id')!=null) {
+                let trainId  = parseInt(sessionStorage.getItem('training_id'))
+                
+                updateEmployeeTraining(employeeTraining).then((response) => {
+                      sessionStorage.removeItem('training_id')
+                    showToast(response?.data?.responseMessage,"success")
+                    navigate(`/viewemployees`)
+                })
+                .catch((error) => {
+                    showToast(error?.data?.errorMessage,"error")
+                    navigate(`/viewemployees`)
+                })
+            }
+            else {
+                    saveEmployeeTraining(employeeTraining).then((response) => {             
+                        showToast(response?.data?.responseMessage,"success")
+                        navigate(`/viewemployees`)
+                    })
+                    .catch((error) => {
+                        showToast(error?.data?.errorMessage,"error")
+                        navigate(`/viewemployees`)
+                    })
+            }
+    }
+    
    return(
            <div className="container">
-               <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-               <div>
+                <Typography variant="h4" gutterBottom>
+                    {btnValue} {employee.emp_name}
+                </Typography>
+                <div>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Formik                       
+                   <Formik                       
                         initialValues={{
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
@@ -156,48 +219,82 @@ export default function EmployeeTrainingComponent(){
                         {({ setFieldValue, values, handleChange, handleBlur,  touched, errors }) => (
                             <Form>
                             {/* Employee Dropdown */}
-                            <Box mb={2}>
-                                <Typography variant="subtitle1">Employee</Typography>
+                            <Box mb={2}>                              
+                                   
+                                     <Typography variant="subtitle1">Employee</Typography>
+                                          <Select
+                                            styles={customStyles}                                            
+                                            hideSelectedOptions={true}
+                                            isDisabled={disabled}                                    
+                                            name="employee"
+                                            options={empList.map(emp => ({
+                                                value: emp.emp_id,
+                                                label: emp.emp_name
+                                            }))}
+                                            value= {
+                                                empList
+                                                .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
+                                                .find(option => option.value === values.employee) || null
+                                            }
+                                            onChange={(option) => setFieldValue('employee', option ? option.value : '')}
+                                            placeholder="Select Employee"
+                                        /> 
                                 
-                                     <Select              
-                                        isDisabled={disabled}                                    
-                                        name="employee"
-                                        options={empList.map(emp => ({
-                                            value: emp.emp_id,
-                                            label: emp.emp_name
+                                        <FormHelperText error={touched.employee && Boolean(errors.employee)}>
+                                        <ErrorMessage name="employee" />
+                                        </FormHelperText>   
+                                  
+                            </Box>
+
+                            {/* Training MultiSelect */}
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Select Trainings</Typography>
+                                <Select   
+                                        styles={customStyles}                                     
+                                        name="training_ids"
+                                        options={trainingList.map(training => ({
+                                            value: training.training_id,
+                                            label: training.training_name
                                         }))}
-                                    value={
-                                        empList
-                                        .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
-                                        .find(option => option.value === values.employee) || null
-                                    }
-                                    onChange={(option) => setFieldValue('employee', option ? option.value : '')}
-                                    placeholder="Select Employee"
+                                        value={
+                                            trainingList
+                                                .map(training => ({ value: training.training_id, label: training.training_name }))
+                                                .find(option => option.value === values.training_ids) || null
+                                        }
+                                            onChange={(option) => setFieldValue('training_ids', option ? option.value : '')}
+                                            placeholder="Select Training"
                                     /> 
                                 
-                                <FormHelperText error={touched.employee && Boolean(errors.employee)}>
-                                <ErrorMessage name="employee" />
+                                <FormHelperText error={touched.score && Boolean(errors.score)}>
+                                <ErrorMessage name="score" />
                                 </FormHelperText>  
-                                  
+                                {/* <TrainingMultiSelect
+                               
+                                    options={options}
+                                    value={values.training_ids}
+                                    onChange={(value) => setFieldValue('training_ids', value)}
+                                />
+                                <FormHelperText><ErrorMessage name="training_ids" /></FormHelperText> */}
                             </Box>
 
                             {/* Competency Score */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Competency Score</Typography>
                                 
-                                    <Select                                        
+                                    <Select   
+                                        styles={customStyles}                                     
                                         name="score"
                                         options={scoreList.map(scores => ({
                                             value: scores.competency_id,
                                             label: scores.score
                                         }))}
-                                    value={
-                                        scoreList
-                                        .map(scores => ({ value: scores.competency_id, label: scores.score }))
-                                        .find(option => option.value === values.score) || null
-                                    }
-                                    onChange={(option) => setFieldValue('score', option ? option.value : '')}
-                                    placeholder="Select Score"
+                                        value={
+                                            scoreList
+                                                .map(scores => ({ value: scores.competency_id, label: scores.score }))
+                                                .find(option => option.value === values.score) || null
+                                        }
+                                            onChange={(option) => setFieldValue('score', option ? option.value : '')}
+                                            placeholder="Select Score"
                                     /> 
                                 
                                 <FormHelperText error={touched.score && Boolean(errors.score)}>
@@ -209,6 +306,7 @@ export default function EmployeeTrainingComponent(){
                               {/* Training Date Picker */}
                                 <Box mb={2}  >
                                 <DatePicker
+                                    
                                     format="DD/MM/YYYY"
                                     label="Training Date"
                                     value={values.training_date}
@@ -221,7 +319,7 @@ export default function EmployeeTrainingComponent(){
                                     }}
                                 />
                                 
-                                <DatePicker 
+                                {/* <DatePicker 
                                     label="Completion Date"
                                     format="DD/MM/YYYY"
                                     value={values.completion_date}
@@ -232,7 +330,7 @@ export default function EmployeeTrainingComponent(){
                                         helperText: <ErrorMessage name="completion_date" />
                                     }
                                     }}
-                                />
+                                /> */}
                                 </Box>
                                 
                                 {/* Completion Date Picker */}
@@ -253,7 +351,8 @@ export default function EmployeeTrainingComponent(){
                             
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Training Time Slot</Typography>
-                                <Select                                                                     
+                                <Select  
+                                    styles={customStyles}                                                                   
                                     name="trainingTimeSlot"
                                     options={trainingTimeSlotList.map(timeslot => ({
                                         value: timeslot.training_time_slot_id,
@@ -271,16 +370,7 @@ export default function EmployeeTrainingComponent(){
                                 <ErrorMessage name="trainingTimeSlot" />
                                 </FormHelperText>
                             </Box>
-                            {/* Training MultiSelect */}
-                            <Box mb={2}>
-                                <Typography variant="subtitle1">Select Trainings</Typography>
-                                <TrainingMultiSelect
-                                options={options}
-                                value={values.training_ids}
-                                onChange={(value) => setFieldValue('training_ids', value)}
-                                />
-                                <FormHelperText><ErrorMessage name="training_ids" /></FormHelperText>
-                            </Box>
+                            
 
                             {/* Submit Button */}
                             <Box mt={2}>

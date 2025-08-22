@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
-import { getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate } from "../api/EmployeeTrainingApiService";
+import { getCompetency, getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate, updateTrainingDateAndCompetency } from "../api/EmployeeTrainingApiService";
 
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import $ from 'jquery'; // jQuery is required for DataTables to work
-import { Button, Typography } from "@mui/material"; 
+import { Button, Divider, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"; 
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -24,12 +24,30 @@ import DownloadIcon from '@mui/icons-material/Download';
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
 } from "recharts";
-import { getCompetency } from "../api/EmployeeApiService";
+import { retrieveAllCompetencies } from "../api/CompetencyApiService";
+import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
+ 
+
+const customStyles = {
+            menu  : (provided) => ({
+                ...provided,
+                backgroundColor : "White",   // solid background
+                zIndex : 9999                // keeps it above other elements
+            }),
+            option :(provided,state) => ({
+                ...provided,
+                backgroundColor : state.isFocused ? "#f0f0f0" : "White", // hover effect
+                color : "black"
+            })
+    }
 
 export default function ViewEmployeeTrainings() {
 
     const [traininglist,setTrainingList] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [scoreList ,setScoreList] = useState([])
+    const [score,setScore] = useState('')
+    const [trainTimeSlot,setTrainTimeSlot]  = useState([])
 
     const {id} = useParams();
     const navigate = useNavigate()
@@ -38,8 +56,6 @@ export default function ViewEmployeeTrainings() {
     const dtInstanceRef = useRef(null); // to store DataTable instance
     
     const [data, setData] = useState([]); 
-        
-       
 
     const [employee,setEmployee] = useState({
         emp_name : '',
@@ -53,10 +69,21 @@ export default function ViewEmployeeTrainings() {
     })
 
      useEffect(()=> {
-          getCompetency().then((response)=>{ 
+        retrieveAllTrainingTimeSlots().then((response) => {
+            setTrainTimeSlot(response.data)
+        })
+        
+         retrieveAllCompetencies().then((response) => {
+            setScoreList(response.data)
+         })
+
+          getCompetency(id).then((response)=>{ 
             setData(response.data)
+          }).catch((error) => {
+            alert('failed')
+            
           })
-        } , [])
+        } , [id])
 
     useEffect(() => {
            if (tableRef.current && traininglist.length > 0) {
@@ -73,7 +100,7 @@ export default function ViewEmployeeTrainings() {
  
     useEffect(
     () => 
-        {               
+        {
             if (!didFetchRef.current) {
                 didFetchRef.current = true;                            
                 getTrainingsByEmpId()
@@ -84,8 +111,7 @@ export default function ViewEmployeeTrainings() {
            
                 getTrainingsByEmployeeId(id).then((response) => {
                     
-                   setEmployee(response.data[0].employee)
-                
+                    setEmployee(response.data[0].employee)                
                     setTrainingList(response.data)
                 });
         };
@@ -93,8 +119,7 @@ export default function ViewEmployeeTrainings() {
     function getTrainingsByEmpId() {
         setLoading(true);
         getTrainingsByEmployeeId(id).then((response) => {
-                   console.log("Training list of employee is ",response.data)
-                setEmployee(response.data[0].employee)
+                setEmployee(response.data[0].employee)                
                 setTrainingList(response.data)
        })
        .catch((error) => {
@@ -109,6 +134,7 @@ export default function ViewEmployeeTrainings() {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (id) => {
+
           sessionStorage.setItem('hist_id',id)
         setOpen(true);
     };
@@ -118,29 +144,35 @@ export default function ViewEmployeeTrainings() {
     };
 
     const handleSubmit = (event) => {
-        
+
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const formJson = Object.fromEntries(formData.entries());
-       
-        const completion_date = formJson.completion_date;
+
+        const training_date = formJson.training_date;
+        const competency_id = formJson.competency_id;
+        const training_time_id = formJson.training_time_slot_id;
+
         const histid = sessionStorage.getItem('hist_id')
-       
-        updateCompletionDate(histid,completion_date).then((response)=> {
-            getUpdatedTrainingsByEmpId() 
-            
-             showToast(response.data.responseMessage,"success")
-            navigate(`/training/employee/${id}`)
-        }).catch((error) => {
-             
+
+        updateTrainingDateAndCompetency(histid,training_date,competency_id,training_time_id).then(
+            (response) => {
+                        getUpdatedTrainingsByEmpId()
+                        showToast(response.data.responseMessage,"success")
+                        setSelectedCompetency(null)
+                        setSelectedTimeSlot(null)
+                        sessionStorage.removeItem('hist_id')
+                        navigate(`/training/employee/${id}`)
+            }
+        ).catch((error) => {
              showToast(error.response.data.errorMessage,"error")
         })
         handleClose();
     };
 
     function downloadTrainingHistory(id) { 
-     
-            getTrainingsHistoryByEmployeeId(id).then((response)=> {
+
+            getTrainingsHistoryByEmployeeId(id).then((response) => {
                 // Convert the array buffer to a Blob
                 const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
@@ -152,16 +184,32 @@ export default function ViewEmployeeTrainings() {
         })
     }
 
+     const handleChange = (event) => {
+        
+            setScore(event.target.value); // sets competency_id
+        };
+const [selectedCompetency, setSelectedCompetency] = useState("");
+const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+
+const handleCompetencyChange = (event) => {
+  setSelectedCompetency(event.target.value);
+};
+
+const handleTimeSlotChange = (event) => {
+  setSelectedTimeSlot(event.target.value);
+};
     return (
       <div className="container">
-        <div>
+        <div className="mb-2">
             <Box>
                 <Typography variant="h4" gutterBottom>View Employee Trainings
-                    <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                    
+                        <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                     
                 </Typography>
             </Box>
             
-            <div>
+            <div >
                 <div style={{ float : 'left' }}  className="mb-3">
                     <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
                 </div>
@@ -173,7 +221,33 @@ export default function ViewEmployeeTrainings() {
                 </div>
             </div>
         </div>
-        <div>
+        <div><Divider></Divider>
+            </div>
+        <div   className="mb-5">
+                <Typography variant="h5" gutterBottom>Competency Chart</Typography>
+                <RadarChart
+                  cx={300}
+                  cy={250}
+                  outerRadius={150}
+                  width={1320}
+                  height={500}
+                  data={data}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="name" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="Training"
+                    dataKey="score"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.7}
+                  />
+                  <Tooltip />
+                  <Legend /> 
+                </RadarChart>
+              </div>
+        <div  >
             {
                 loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" height="200px">
@@ -188,7 +262,7 @@ export default function ViewEmployeeTrainings() {
                         <th>Start Date</th>
                         <th>Complete Date</th>
                         <th>Time Slot</th>
-                        <th>Competency Scoreeeeeee</th>
+                        <th>Competency Score</th>
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -203,7 +277,7 @@ export default function ViewEmployeeTrainings() {
                     (
                         traininglist.map(
                             (training,index) => (
-                                            <tr key={training.emp_train_hist_id}>
+                                            <tr key={training.emp_train_id}>
                                                 <td>{index+1}</td>
                                                 <td>{training.training.training_name}</td>
                                                 <td>{training?.training_date}</td>
@@ -211,7 +285,7 @@ export default function ViewEmployeeTrainings() {
                                                 <td>{training?.trainingTimeSlot.training_time_slot}</td>
                                                 <td>{training.competency.score}</td>
                                                 <td> 
-                                                    <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_hist_id)}> <EditIcon /> Update</Button>
+                                                    <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_id)}>{training.emp_train_hist_id} <EditIcon /> Update</Button>
                                                     
                                                 </td>
                                             </tr>
@@ -224,43 +298,54 @@ export default function ViewEmployeeTrainings() {
             )}
         </div>
 
-<div style={{ textAlign: "center"  }}>
-                <h2>Competency Chart</h2>
-                <RadarChart
-                  cx={300}
-                  cy={250}
-                  outerRadius={150}
-                  width={600}
-                  height={500}
-                  data={data}
-                >
-                  <PolarGrid />
-                  <PolarAngleAxis dataKey="name" />
-                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                  <Radar
-                    name="Company"
-                    dataKey="score"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                    fillOpacity={0.6}
-                  />
-                  <Tooltip />
-                  <Legend />
-                </RadarChart>
-              </div>
-
          <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Update Completion Time</DialogTitle>
         <DialogContent sx={{ paddingBottom: 0 }}>
           <DialogContentText>
                 Update completion date of the Training 
           </DialogContentText>
-          <form onSubmit={handleSubmit}>
+          
+          <form onSubmit={handleSubmit} >
                        
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker']}>
-                <DatePicker label="Completion Date" format="DD-MM-YYYY" closeOnSelect={true} name="completion_date" />
+                <DatePicker label="Training Date" format="DD-MM-YYYY" closeOnSelect={true} name="training_date" />
+
             </DemoContainer>
+             <DemoContainer components={['Select']}>
+                  <InputLabel id="demo-simple-select-competency-label">Competency</InputLabel>
+                        <Select
+                            fullWidth
+                            name="competency_id"
+                            labelId="competency-select-label"
+                            value={selectedCompetency}
+                            onChange={handleCompetencyChange}
+                        >
+                            {scoreList.map((item) => (
+                            <MenuItem key={item.competency_id} value={item.competency_id}>
+                                {item.score}
+                            </MenuItem>
+                            ))}
+                        </Select>
+            </DemoContainer>
+                    {/* Time Slot Select */}
+                <DemoContainer components={['Select']}>
+                    <InputLabel id="time-slot-select-label">Time Slot</InputLabel>
+                        <Select
+                            fullWidth
+                             name="training_time_slot_id"
+                            labelId="time-slot-select-label"
+                            value={selectedTimeSlot}
+                            onChange={handleTimeSlotChange}
+                        >
+                            {trainTimeSlot.map((time) => (
+                            <MenuItem key={time.training_time_slot_id} value={time.training_time_slot_id}>
+                                {time.training_time_slot}
+                            </MenuItem>
+                            ))}
+                    </Select>
+                </DemoContainer>
+            
             </LocalizationProvider>
 
                 
@@ -269,6 +354,7 @@ export default function ViewEmployeeTrainings() {
               <Button type="submit">Update Completion Date</Button>
             </DialogActions>
           </form>
+           
         </DialogContent>
       </Dialog>
       </div>

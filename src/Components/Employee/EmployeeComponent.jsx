@@ -34,6 +34,8 @@ export default function EmployeeComponent() {
     const [deptlist , setDeptList] = useState([])
     const [categorylist , setCategoryList] = useState([])
 
+    const [loading,setLoading] = useState(false)
+
     const {id} = useParams()
     const navigate = useNavigate()
 
@@ -43,55 +45,53 @@ export default function EmployeeComponent() {
             setDesigList(response.data)
         })
       
-        retrieveAllCategories().then((response) => {
-            console.log(response.data)
+        retrieveAllCategories().then((response) => {            
             setCategoryList(response.data)
         })
-
         retrieveAllCompanies().then((response) => {
-            setCompList(response.data)
+                            setCompList(response.data)
         })
+      
         if(id != -1) {
             setBtnValue('Update Employee') 
             
             getEmployeeById(id).then((response) => {
-
+                
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
                 setContractorName(response.data?.contractor_name)
-                setDesignations(response.data.designation?.desig_id)
+                setDesignations(response.data.designation?.desig_id)                
+                  
                 setCompany(response.data.department.company?.company_id)
-                setCategory(response.data.category?.category_id)
-                
-                    // ✅ format joining_date for Formik initialValues
-                if (response.data?.joining_date) {
-                    const formattedDate = dayjs(response.data.joining_date).format("DD/MM/YYYY");
-                    // setJoiningDate(formattedDate); // this will flow into Formik's initialValues
-                    setJoiningDate(dayjs(formattedDate));
-                }           
-   
                 let comp_id = response.data.department.company?.company_id
 
                 getDepartmentByCompanyId(comp_id).then((response)=> {
                     setDepartment(response.data.department?.dept_id);
                     setDeptList(response.data)                    
-                })                
+                })
+                
+                setCategory(response.data.category?.category_id)
+                setJoiningDate(response.data?.joining_date);
+                
             })
         }
     },[id] )
 
      const handleCompanyChange = async (event, setFieldValue) => {
+       
         const compId = event.target.value;
         setFieldValue("company", compId);
       
+        setDeptList([]);
+          setFieldValue("department", "");
+
         if (compId) {
           await getDepartmentByCompanyId(compId).then((response)=>{
                  setDeptList(response.data);
                  setFieldValue("department", ""); // Reset department selection on company change
           }).catch((error) => {
             
-            let cnf = window.confirm("No Departments in this company. Do you want to add Department(s)")
-            
+            let cnf = window.confirm("No Departments in this company. Do you want to add Department")            
             if(cnf) {
                 navigate(`/department/-1`)
             }
@@ -175,16 +175,16 @@ export default function EmployeeComponent() {
                 <Box mb={2}>
                     <Typography variant="subtitle1">Employee Name</Typography>
                     <TextField
-                    fullWidth
-                    id="emp_name"
-                    name="emp_name"
-                    value={values.emp_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter Employee Name"
-                    variant="standard"
-                    error={touched.emp_name && Boolean(errors.emp_name)}
-                    helperText={<ErrorMessage name="emp_name" />}
+                        fullWidth
+                        id="emp_name"
+                        name="emp_name"
+                        value={values.emp_name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Enter Employee Name"
+                        variant="standard"
+                        error={touched.emp_name && Boolean(errors.emp_name)}
+                        helperText={<ErrorMessage name="emp_name" />}
                     />
                 </Box>
 
@@ -192,32 +192,32 @@ export default function EmployeeComponent() {
                 <Box mb={2}>
                     <Typography variant="subtitle1">Employee Code</Typography>
                     <TextField
-                    fullWidth
-                    id="emp_code"
-                    name="emp_code"
-                    value={values.emp_code}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter Employee Code"
-                    variant="standard"
-                    error={touched.emp_code && Boolean(errors.emp_code)}
-                    helperText={<ErrorMessage name="emp_code" />}
+                        fullWidth
+                        id="emp_code"
+                        name="emp_code"
+                        value={values.emp_code}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Enter Employee Code"
+                        variant="standard"
+                        error={touched.emp_code && Boolean(errors.emp_code)}
+                        helperText={<ErrorMessage name="emp_code" />}
                     />
                 </Box>
                   {/* Contractor Name */}
                 <Box mb={2}>
                     <Typography variant="subtitle1">Contractor Name</Typography>
                     <TextField
-                    fullWidth
-                    id="contractor_name"
-                    name="contractor_name"
-                    value={values.contractor_name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="Enter Contractor Name"
-                    variant="standard"
-                    error={touched.contractor_name && Boolean(errors.contractor_name)}
-                    helperText={<ErrorMessage name="contractor_name" />}
+                        fullWidth
+                        id="contractor_name"
+                        name="contractor_name"
+                        value={values.contractor_name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        placeholder="Enter Contractor Name"
+                        variant="standard"
+                        error={touched.contractor_name && Boolean(errors.contractor_name)}
+                        helperText={<ErrorMessage name="contractor_name" />}
                     />
                 </Box>
                   {/* Joining Date Picker */}
@@ -227,13 +227,13 @@ export default function EmployeeComponent() {
                         label="Joining Date"
                         // value={values.joining_date ? dayjs(values.joining_date, "DD/MM/YYYY") : null}
                         value={values.joining_date}
-                       onChange={(date) => setFieldValue("joining_date", date)}
+                        onChange={(date) => setFieldValue("joining_date", date)}
                         slotProps={{
                         textField: {
-                            fullWidth: true,
-                            error: touched.joining_date && Boolean(errors.joining_date),
-                            helperText: <ErrorMessage name="joining_date" />
-                        }
+                                fullWidth: true,
+                                error: touched.joining_date && Boolean(errors.joining_date),
+                                helperText: <ErrorMessage name="joining_date" />
+                            }
                         }}
                     />
                     </Box>

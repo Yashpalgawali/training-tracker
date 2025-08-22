@@ -6,46 +6,47 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styl
 import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
-import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
+import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 
 
-export default function ViewTrainingTimeSlotComponent() {
+export default function ViewCompetenciesComponent() {
 
-    const [trainingTimeSlotList,setTrainingTimeSlotList] = useState([])
+    const [competencylist,setCompetencyList] = useState([])
 
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()
 
-    useEffect(()=> refreshTrainingTimeSlots() , [] )
+    useEffect(()=> refreshCompanies() , [] )
     
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
-        if (tableRef.current && trainingTimeSlotList.length > 0 ) {
+        if (tableRef.current && competencylist.length > 0 ) {
           $(tableRef.current).DataTable(); // Initialize DataTables
         }
-      }, [trainingTimeSlotList]); // Re-initialize DataTables when activities data changes
+      }, [competencylist]); // Re-initialize DataTables when activities data changes
+   
 
-    function refreshTrainingTimeSlots() {
+    function refreshCompanies() {
      
-        retrieveAllTrainingTimeSlots().then((response)=> {
-            setTrainingTimeSlotList(response.data)
+        retrieveAllCompetencies().then((response)=> {
+            setCompetencyList(response.data)
         })
     }  
 
-    function addNewTrainingTimeSlot() {
-        navigate(`/trainingtimeslot/-1`)
+    function addNewCompetency() {
+        navigate(`/competency/-1`)
     }
 
-    function updateTrainingTimeSlot(id) {
-        navigate(`/trainingtimeslot/${id}`)
+    function updateCompetency(id) {
+        navigate(`/competency/${id}`)
     }
 
     return(
         <div className="container">
             <Box>
-                <Typography variant="h4" gutterBottom>View Training Time Slots <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewTrainingTimeSlot} > <Tooltip title="Add Training Time Slots" arrow> Add Training Time Slots</Tooltip></Button>    </Typography>
+                <Typography variant="h4" gutterBottom>View Competencies <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompetency} > <Tooltip title="Add Company" arrow> Add Competency </Tooltip></Button>    </Typography>
             </Box>
- 
+
         {/* <DataTable  
             data={complist}
             columns={[
@@ -69,24 +70,24 @@ export default function ViewTrainingTimeSlotComponent() {
                 <thead>
                     <tr >
                         <th>Sr No.</th>
-                        <th>Training Time Slot</th>
+                        <th>Competecny</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                  {trainingTimeSlotList.length === 0 ? (
+                  {competencylist.length === 0 ? (
                         <tr>
                             <td colSpan="3" style={{ textAlign: 'center' }}>
                                 No data available
                             </td>
                         </tr>
                         ) : (
-                        trainingTimeSlotList.map((training,index) => (
-                            <tr key={training.training_time_slot_id}>
+                        competencylist.map((comp,index) => (
+                            <tr key={comp.competency_id}>
                             <td>{index+1}</td>
-                            <td>{training.training_time_slot}</td>
+                            <td>{comp.score}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateTrainingTimeSlot(training.training_time_slot_id)} > <Tooltip title="Update Company" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompetency(comp.competency_id)} > <Tooltip title="Update Competecny" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

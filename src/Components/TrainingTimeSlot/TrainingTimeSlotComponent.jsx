@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
-import { ErrorMessage, Field, Formik,Form } from "formik"
-import { Box, Button, Stack, TextField, Typography } from "@mui/material"
+import { ErrorMessage,  Formik,Form } from "formik"
+import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 import { retrieveTrainingTimeSlotById, saveTrainingTimeSlot, updateTrainingTimeSlot } from "../api/TrainingTimeSlotApiService"
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider"
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo" 
-
 
 export default function TrainingTimeSlotComponent () {
 

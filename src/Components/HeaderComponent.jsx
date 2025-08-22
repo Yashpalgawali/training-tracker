@@ -25,9 +25,9 @@ export default function HeaderComponent() {
                     {/* <a className="navbar-brand ms-2 fs-2 fw-bold text-black" href="https://www.in28minutes.com">in28minutes</a> */}
                     <div className="collapse navbar-collapse">
                         <ul className="navbar-nav">
-                        <li className="nav-item fs-5">
+                        {/* <li className="nav-item fs-5">
                         { isAuthenticated && <Link className="nav-link" to="/home">Home</Link> }
-                        </li>
+                        </li> */}
                         <li className="nav-item fs-5">
                         { isAuthenticated &&
                              <Link className="nav-link" to="/companies">Companies</Link>
@@ -68,6 +68,12 @@ export default function HeaderComponent() {
                         <li className="nav-item fs-5">
                         { isAuthenticated &&
                              <Link className="nav-link" to="/trainingtimeslots">Training Slots</Link>
+                        }
+                        </li>
+
+                         <li className="nav-item fs-5">
+                        { isAuthenticated &&
+                             <Link className="nav-link" to="/competencies">Competency Scores</Link>
                         }
                         </li>
                         

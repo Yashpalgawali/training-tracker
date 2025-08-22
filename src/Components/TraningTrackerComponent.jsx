@@ -21,6 +21,8 @@ import CategoryComponent from './Category/CategoryComponent';
 import ViewCategoriesComponent from './Category/ViewCategoriesComponent';
 import TrainingTimeSlotComponent from './TrainingTimeSlot/TrainingTimeSlotComponent';
 import ViewTrainingTimeSlotComponent from './TrainingTimeSlot/ViewTrainingTimeSlotComponent';
+import ViewCompetenciesComponent from './Competency/ViewCompetenciesComponent';
+import CompetencyComponent from './Competency/CompetencyComponent';
 
 
 function AuthenticateRoute({children}) {
@@ -48,20 +50,19 @@ export default function TrainingTrackerComponent() {
                       <CompanyComponent /> 
                    </AuthenticateRoute>
                   }>
-                 </Route>
-                
+                 </Route>                
                 <Route path='/companies' element={ <AuthenticateRoute> <ViewCompanyComponent /> </AuthenticateRoute> }> </Route>
 
-                <Route path='/designation/:id' element={ <AuthenticateRoute><DesignationComponent /> </AuthenticateRoute>}> </Route>
+                <Route path='/competency/:id' element={  <AuthenticateRoute>  <CompetencyComponent />  </AuthenticateRoute> }> </Route>                
+                <Route path='/competencies' element={ <AuthenticateRoute> <ViewCompetenciesComponent /> </AuthenticateRoute> }> </Route>
 
+                <Route path='/designation/:id' element={ <AuthenticateRoute><DesignationComponent /> </AuthenticateRoute>}> </Route>
                 <Route path='/viewdesignations' element={ <AuthenticateRoute><ViewDesignation /> </AuthenticateRoute>}> </Route>
 
                 <Route path='/department/:id' element={ <AuthenticateRoute><DepartmentComponent /> </AuthenticateRoute>}> </Route>
-
                 <Route path='/viewdepartments' element={ <AuthenticateRoute><ViewDepartmentComponent /></AuthenticateRoute> }></Route>
                 
                 <Route path='/training/:id' element={<AuthenticateRoute> <TrainingComponent /> </AuthenticateRoute>}> </Route>
-
                 <Route path='/viewtraining' element={ <AuthenticateRoute><ViewTrainingComponent /> </AuthenticateRoute>}> </Route>
                 
                 <Route path='/employee/:id' element={ <AuthenticateRoute><EmployeeComponent /></AuthenticateRoute> }> </Route>
