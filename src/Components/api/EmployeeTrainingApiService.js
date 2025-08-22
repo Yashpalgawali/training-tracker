@@ -10,6 +10,8 @@ export const updateEmployeeTraining = (emptrain) => apiClient.put(`employee-trai
 
 export const updateCompletionDate = (emphistid,completion_date) => apiClient.patch(`employee-training/training/${emphistid}`,{completion_date: completion_date})
 
+export const updateTrainingDateAndCompetency = (emphistid,training_date,competency_id,training_time_id) => apiClient.patch(`employee-training/training/${emphistid}`,{training_date: training_date, competency_id: competency_id,training_time_id:training_time_id})
+
 export const getCompetency = (empid) => apiClient.get(`employee-training/competencies/${empid}`)
 
 export const getTrainingsHistoryByEmployeeId = 
