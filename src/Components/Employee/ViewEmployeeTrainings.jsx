@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getCompetency, getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate, updateTrainingDateAndCompetency } from "../api/EmployeeTrainingApiService";
 
 import { showToast } from "../SharedComponent/showToast"
@@ -57,6 +57,8 @@ export default function ViewEmployeeTrainings() {
     
     const [data, setData] = useState([]); 
 
+    const location = useLocation();
+    
     const [employee,setEmployee] = useState({
         emp_name : '',
         emp_code : '',
@@ -81,9 +83,8 @@ export default function ViewEmployeeTrainings() {
             setData(response.data)
           }).catch((error) => {
             alert('failed')
-            
           })
-        } , [id])
+        } , [id,location.key])
 
     useEffect(() => {
            if (tableRef.current && traininglist.length > 0) {
@@ -187,7 +188,7 @@ export default function ViewEmployeeTrainings() {
      const handleChange = (event) => {        
             setScore(event.target.value); // sets competency_id
         };
-        
+
 const [selectedCompetency, setSelectedCompetency] = useState("");
 const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
@@ -225,7 +226,7 @@ const handleTimeSlotChange = (event) => {
             </div>
         <div   className="mb-5">
                 <Typography variant="h5" gutterBottom>Competency Chart</Typography>
-                <RadarChart
+                <RadarChart key={data.length + JSON.stringify(data)}
                   cx={300}
                   cy={250}
                   outerRadius={150}

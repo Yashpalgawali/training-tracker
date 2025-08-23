@@ -12,7 +12,7 @@ import { Box, Button, FormHelperText,  Typography } from "@mui/material";
 
 import {  getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 
@@ -35,7 +35,6 @@ export default function EmployeeTrainingComponent(){
 
     const [disabled,setDisabled] = useState(false)
     
-    
     useEffect(() => {
        
         if(!didFetchRun.current) {
@@ -45,7 +44,7 @@ export default function EmployeeTrainingComponent(){
     },[])
 
     useEffect( ()=> {
-      
+     
         if(id != -1) {           
             setDisabled(true)
             setBtnValue('Update Training')
