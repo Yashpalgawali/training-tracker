@@ -154,7 +154,7 @@ export default function ViewEmployeeTrainings() {
         const training_time_id = formJson.training_time_slot_id;
 
         const histid = sessionStorage.getItem('hist_id')
-
+         
         updateTrainingDateAndCompetency(histid,training_date,competency_id,training_time_id).then(
             (response) => {
                         getUpdatedTrainingsByEmpId()
@@ -184,10 +184,10 @@ export default function ViewEmployeeTrainings() {
         })
     }
 
-     const handleChange = (event) => {
-        
+     const handleChange = (event) => {        
             setScore(event.target.value); // sets competency_id
         };
+        
 const [selectedCompetency, setSelectedCompetency] = useState("");
 const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 

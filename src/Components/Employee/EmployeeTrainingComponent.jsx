@@ -151,11 +151,12 @@ export default function EmployeeTrainingComponent(){
                 training_date : formattedTrainingDate,
                 training_ids : values.training_ids,
                 competency : competencyObj,
-                completion_date : formattedTrainingDate,
-                emp_train_id : 0
+                completion_date : formattedTrainingDate 
             }
 
-           await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
+            alert('employee ID = '+employeeObject.emp_id+'\n Training ID= '+values.training_ids)
+
+           await getTrainingsByEmployeeIdAndTrainingId(employeeObject.emp_id,values.training_ids).then((result) => {
                 
                 employeeTraining = {
                         employee : employeeObject,
@@ -166,25 +167,47 @@ export default function EmployeeTrainingComponent(){
                         completion_date : formattedTrainingDate,
                         emp_train_id : result.data.emp_train_id
                 }
-
-                sessionStorage.setItem('training_id',result.data.training.training_id)
+                alert('TRAINING FOUND ')
+                sessionStorage.setItem('training_id',values.training_ids)
+            }).catch((error)=>{
+                alert('No training given to the employee ')
             })
-
-           
+            console.log("to be updated ",employeeTraining)
+           if(sessionStorage.getItem('training_id')!=null) {
+            alert('Training ID '+sessionStorage.getItem('training_id'))
+           }
+           else {
+            alert('no training given with Id '+values.training_ids)
+           }
             if(sessionStorage.getItem('training_id')!=null) {
                 let trainId  = parseInt(sessionStorage.getItem('training_id'))
                 
+                console.log('Employee Training to be updated ',employeeTraining)
+
+                alert('call to UPDATE')
                 updateEmployeeTraining(employeeTraining).then((response) => {
-                      sessionStorage.removeItem('training_id')
+
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
                 })
                 .catch((error) => {
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
-                })
+                }).finally(()=>{
+                    sessionStorage.removeItem('training_id')
+                })                
             }
             else {
+                employeeTraining = {
+                employee : employeeObject,
+                trainingTimeSlot : timeSlotObj,
+                training_date : formattedTrainingDate,
+                training_ids : values.training_ids,
+                competency : competencyObj,
+                completion_date : formattedTrainingDate 
+                 
+            }
+            
                     saveEmployeeTraining(employeeTraining).then((response) => {             
                         showToast(response?.data?.responseMessage,"success")
                         navigate(`/viewemployees`)
