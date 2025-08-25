@@ -184,18 +184,18 @@ function downloadAllEmployees() {
         <div className="container">
             <Box>
                 <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
-                            <Button   disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><CloudDownloadIcon /> Employees  </Button>
+                            <Button  disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><CloudDownloadIcon /> Employees  </Button>
                         </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
                                 <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon /> Trainings  </Button>
                         </BootstrapTooltip> 
-                                              
+
                 </Typography>   
                  <BootstrapTooltip title="Download Sample excel To upload Employees">
                                 <Button style={ { float : 'left' } }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon /> Sample  </Button>
                         </BootstrapTooltip> 
-                
+
             </Box>
     <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>
       {/* Hidden file input */}
@@ -285,13 +285,15 @@ function downloadAllEmployees() {
                                                     <EditIcon />
                                                 </BootstrapTooltip>                                                
                                             </Fab>
-
-                                            <Fab  size="medium" color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
+                                             
+                                                <Fab  size="medium" disabled={disabledDownloadTraining} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
                                                 <BootstrapTooltip title="View Training">
                                                     <VisibilityIcon />
                                                 </BootstrapTooltip>
                                                 
                                             </Fab>
+                                              
+                                             
                                         </td>
                                     </tr>
                                 )
