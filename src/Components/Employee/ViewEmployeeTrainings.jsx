@@ -199,11 +199,20 @@ const handleCompetencyChange = (event) => {
 const handleTimeSlotChange = (event) => {
   setSelectedTimeSlot(event.target.value);
 };
+
+function addTrainingToEmployee(id) {
+    navigate(`/train/employee/${id}`)
+
+}
+
     return (
       <div className="container">
         <div className="mb-2">
             <Box>
-                <Typography variant="h4" gutterBottom>View Employee Trainings
+                <Typography variant="h4" gutterBottom>
+                    
+                      <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> <DownloadIcon /> Add Training</Button>
+                    View Employee Trainings
                     
                         <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
                      

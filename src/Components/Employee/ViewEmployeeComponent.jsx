@@ -1,6 +1,6 @@
-import $, { error } from 'jquery'; // jQuery is required for DataTables to work
+import $ from 'jquery'; // jQuery is required for DataTables to work
 import { useEffect, useRef, useState } from "react"
-import { downAllEmployeesList, retrieveAllEmployees, uploadEmployeeList } from "../api/EmployeeApiService"
+import { downAllEmployeesList, downSampleEmployeesList, retrieveAllEmployees, uploadEmployeeList } from "../api/EmployeeApiService"
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
@@ -12,13 +12,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-
 import DownloadIcon from '@mui/icons-material/Download';
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 
 
  const BootstrapTooltip = styled(({ className, ...props }) => (
@@ -117,6 +118,19 @@ export default function ViewEmployeeComponent() {
                 link.click();
             })
     }
+
+     function downloadSampleToUploadEmployee() {
+        downSampleEmployeesList().then((response)=> {
+                // Convert the array buffer to a Blob
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                // Create a link element to trigger download
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'Sample To upload Employees.xlsx';
+                link.click();
+            })
+    }
      
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -170,14 +184,17 @@ function downloadAllEmployees() {
         <div className="container">
             <Box>
                 <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
-                            <Button   disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><DownloadIcon /> Employees  </Button>
+                            <Button   disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><CloudDownloadIcon /> Employees  </Button>
                         </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><DownloadIcon /> Trainings  </Button>
+                                <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon /> Trainings  </Button>
                         </BootstrapTooltip> 
                                               
                 </Typography>   
+                 <BootstrapTooltip title="Download Sample excel To upload Employees">
+                                <Button style={ { float : 'left' } }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon /> Sample  </Button>
+                        </BootstrapTooltip> 
                 
             </Box>
     <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>

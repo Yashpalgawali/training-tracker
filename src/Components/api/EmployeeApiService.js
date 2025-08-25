@@ -16,3 +16,7 @@ export const downAllEmployeesList =
                         () => apiClient.get(`employee/export/employee/list`, {
                             responseType : 'arraybuffer'
                         })
+
+export const downSampleEmployeesList = () => apiClient.get(`employee/export/sample/employeelist`, {
+                                            responseType : 'arraybuffer'
+                                        })

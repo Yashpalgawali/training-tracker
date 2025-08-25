@@ -116,7 +116,7 @@ export default function TrainingComponent() {
                      )
                 }
                </Formik>
-               <br></br>  <br></br>  <br></br>  <br></br>  <br></br>
+              
             </div>
         </div>
     )

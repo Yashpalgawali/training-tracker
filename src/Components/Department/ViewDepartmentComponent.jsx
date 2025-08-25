@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from "react"
-import { getAllDepartments } from "../api/DepartmentApiService"
+import { downAllDepartmentList, getAllDepartments } from "../api/DepartmentApiService"
 import { useNavigate } from "react-router-dom"
 
 import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
+import { showToast } from "../SharedComponent/showToast";
+
 import { Box, Button, Tooltip, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
-import { showToast } from "../SharedComponent/showToast";
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 
 export default function ViewDepartmentComponent() {
@@ -69,11 +71,28 @@ export default function ViewDepartmentComponent() {
         navigate(`/department/-1`)
     }
 
+    function downloadAllDepartmentsList() {
+        downAllDepartmentList().then((response)=> {
+                    
+                // Convert the array buffer to a Blob
+                const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+                // Create a link element to trigger download
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'All Departments And Company List.xlsx';
+                link.click();
+            })
+        }
+
+
     return(
         <div className="container">
             
             <Box>
-                <Typography variant="h4" gutterBottom>View Departments <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewDepartment} > <Tooltip title="Add Department" arrow> Add Department</Tooltip></Button>    </Typography>
+                <Typography variant="h4" gutterBottom>View Departments 
+                     <Button type="submit" variant="contained" color="info" style={ { float: 'left' } } className="m-2" onClick={downloadAllDepartmentsList} > <Tooltip title="Download Department List" arrow> <CloudDownloadIcon /> Download </Tooltip></Button> 
+                    <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewDepartment} > <Tooltip title="Add Department" arrow> Add Department</Tooltip></Button>    </Typography>
             </Box>
             
             <table className="table table-striped table-hover" ref={tableRef}>
