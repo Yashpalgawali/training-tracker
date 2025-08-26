@@ -1,5 +1,5 @@
 import HeaderComponent from './HeaderComponent';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
+import { BrowserRouter, Routes, Route, Navigate, HashRouter } from 'react-router-dom'; 
 import DesignationComponent from './Designation/DesignationComponent';
 import ViewDesignation from './Designation/ViewDesignation';
 import CompanyComponent from './Company/CompanyComponent';
@@ -42,6 +42,7 @@ export default function TrainingTrackerComponent() {
     return(
       <AuthProvider>
        <BrowserRouter basename="/trainingtracker">
+       {/* <HashRouter> */}
         <HeaderComponent />
           <ToastContainer position="top-center" autoClose={2500} />
             <Routes>
@@ -86,6 +87,7 @@ export default function TrainingTrackerComponent() {
 
             </Routes>
           </BrowserRouter>
+          {/* </HashRouter> */}
           
           <footer className='footer' style={{ marginTop : '50px' }}   >
             <p><strong>&copy;</strong> All Rights Reserved @<strong>Tidycasa Pvt. Ltd</strong></p>

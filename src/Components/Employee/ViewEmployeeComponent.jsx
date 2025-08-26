@@ -15,6 +15,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
@@ -73,8 +74,7 @@ export default function ViewEmployeeComponent() {
 
     function retriveAllEmployeeList() {
       
-        retrieveAllEmployees().then((response) => {
-          console.log('All employees list ',response.data)
+        retrieveAllEmployees().then((response) => {          
             setEmpList(response.data) 
            
             getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
@@ -186,7 +186,7 @@ function downloadAllEmployees() {
                marginBlockEnd : '10px'
             }}>
                 <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
-                            <Button  disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
+                            <Button  disabled={disabled} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
                         </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
@@ -286,7 +286,7 @@ function downloadAllEmployees() {
                                                     <EditIcon />
                                                 </BootstrapTooltip>                                                
                                             </Fab>
-                                             {
+                                             {   
                                               emp.trainings != '' ? (
                                                  <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
                                                     <BootstrapTooltip title="View Training">
@@ -296,7 +296,7 @@ function downloadAllEmployees() {
                                               ) : (
                                                  <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
                                                     <BootstrapTooltip title="View Training">
-                                                        <VisibilityOffIcon />
+                                                        <DisabledVisibleIcon />
                                                     </BootstrapTooltip>
                                                   </Fab>
                                               )

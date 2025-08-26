@@ -101,7 +101,7 @@ export default function ViewEmployeeTrainings() {
  
     useEffect(
     () => 
-        { alert(id)
+        {
             if (!didFetchRef.current) {
                 didFetchRef.current = true;                            
                 getTrainingsByEmpId()
