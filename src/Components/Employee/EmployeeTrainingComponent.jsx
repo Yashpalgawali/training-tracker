@@ -10,9 +10,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs  from "dayjs";
 import { Box, Button, FormHelperText,  Typography } from "@mui/material";
 
-import {  getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
+import { getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 
@@ -153,8 +153,6 @@ export default function EmployeeTrainingComponent(){
                 completion_date : formattedTrainingDate 
             }
 
-            alert('employee ID = '+employeeObject.emp_id+'\n Training ID= '+values.training_ids)
-
            await getTrainingsByEmployeeIdAndTrainingId(employeeObject.emp_id,values.training_ids).then((result) => {
                 
                 employeeTraining = {
@@ -169,7 +167,7 @@ export default function EmployeeTrainingComponent(){
                 
                 sessionStorage.setItem('training_id',values.training_ids)
             }).catch((error)=>{
-                alert('No training given to the employee ')
+               console.log()
             })
 
             if(sessionStorage.getItem('training_id')!=null) {

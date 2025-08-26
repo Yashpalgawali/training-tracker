@@ -12,7 +12,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import DownloadIcon from '@mui/icons-material/Download';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
@@ -46,8 +46,8 @@ export default function ViewEmployeeComponent() {
     const [loading, setLoading] = useState(false);
 
     useEffect(
-    () => 
-        {               
+    () =>
+        {
             if (!didFetchRef.current) {
                 didFetchRef.current = true;                            
                 retriveAllEmployeeList()
@@ -74,6 +74,7 @@ export default function ViewEmployeeComponent() {
     function retriveAllEmployeeList() {
       
         retrieveAllEmployees().then((response) => {
+          console.log('All employees list ',response.data)
             setEmpList(response.data) 
            
             getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
@@ -160,9 +161,8 @@ export default function ViewEmployeeComponent() {
       // 🔥 Refresh employee list after successful upload
         retriveAllEmployeeList();
            
-    } catch (err) {
-      
-      alert("Upload failed");
+    } catch (err) {      
+        alert("File Upload failed");
     }
   };
 
@@ -182,21 +182,22 @@ function downloadAllEmployees() {
 
     return (
         <div className="container">
-            <Box>
+            <Box sx={ {
+               marginBlockEnd : '10px'
+            }}>
                 <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
-                            <Button  disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><CloudDownloadIcon /> Employees  </Button>
+                            <Button  disabled={disabled} variant="contained" color="success" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
                         </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon /> Trainings  </Button>
+                                <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
                         </BootstrapTooltip> 
-
-                </Typography>   
-                 <BootstrapTooltip title="Download Sample excel To upload Employees">
-                                <Button style={ { float : 'left' } }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon /> Sample  </Button>
-                        </BootstrapTooltip> 
-
+                    <BootstrapTooltip title="Download Sample excel To upload Employees">
+                          <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
+                    </BootstrapTooltip> 
+                </Typography>
             </Box>
+            <hr />
     <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>
       {/* Hidden file input */}
       <input
@@ -285,15 +286,22 @@ function downloadAllEmployees() {
                                                     <EditIcon />
                                                 </BootstrapTooltip>                                                
                                             </Fab>
-                                             
-                                                <Fab  size="medium" disabled={disabledDownloadTraining} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
-                                                <BootstrapTooltip title="View Training">
-                                                    <VisibilityIcon />
-                                                </BootstrapTooltip>
-                                                
-                                            </Fab>
-                                              
-                                             
+                                             {
+                                              emp.trainings != '' ? (
+                                                 <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
+                                                    <BootstrapTooltip title="View Training">
+                                                        <VisibilityIcon />
+                                                    </BootstrapTooltip>
+                                                  </Fab>
+                                              ) : (
+                                                 <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
+                                                    <BootstrapTooltip title="View Training">
+                                                        <VisibilityOffIcon />
+                                                    </BootstrapTooltip>
+                                                  </Fab>
+                                              )
+                                             }
+
                                         </td>
                                     </tr>
                                 )
