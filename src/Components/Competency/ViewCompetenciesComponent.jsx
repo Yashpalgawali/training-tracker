@@ -43,9 +43,14 @@ export default function ViewCompetenciesComponent() {
 
     return(
         <div className="container">
-            <Box>
-                <Typography variant="h4" gutterBottom>View Competencies <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompetency} > <Tooltip title="Add Company" arrow> Add Competency </Tooltip></Button>    </Typography>
-            </Box>
+    <Box>
+        <Typography variant="h4" gutterBottom>View Competencies 
+          
+            <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompetency} > 
+                <Tooltip title="Add Competency" arrow> Add Competency </Tooltip></Button>    
+         
+        </Typography>
+    </Box>
 
         {/* <DataTable  
             data={complist}
