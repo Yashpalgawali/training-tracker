@@ -86,7 +86,7 @@ export default function ViewTrainingTimeSlotComponent() {
                             <td>{index+1}</td>
                             <td>{training.training_time_slot}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateTrainingTimeSlot(training.training_time_slot_id)} > <Tooltip title="Update Company" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateTrainingTimeSlot(training.training_time_slot_id)} > <Tooltip title="Update Training Time Slot" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

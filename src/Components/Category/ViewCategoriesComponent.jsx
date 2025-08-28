@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react"
-import { retrieveAllCompanies } from "../api/CompanyApiService"
+import { useEffect, useRef, useState } from "react" 
 import { useNavigate } from "react-router-dom"
-import $, { error } from 'jquery'; // jQuery is required for DataTables to work
+import $ from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
@@ -107,7 +106,7 @@ export default function ViewCategoriesComponent() {
                             <td>{index+1}</td>
                             <td>{category.category}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateCategory(category.category_id)} > <Tooltip title="Update Category" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateCategory(category.category_id)} > <Tooltip title={`Update ${category.category}`} placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

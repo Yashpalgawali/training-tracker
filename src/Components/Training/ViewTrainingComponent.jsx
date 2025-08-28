@@ -74,7 +74,7 @@ export default function ViewTrainingComponent() {
                                 <td> {index+1} </td>
                                 <td>{train.training_name}</td>
                                 <td>
-                                    <Button variant="contained" color="success" className="m-2"  onClick={()=> updateTraining(train.training_id)}> <EditIcon /> UPDATE</Button>
+                                    <Button variant="contained" color="success" className="m-2"  onClick={()=> updateTraining(train.training_id)}> <Tooltip title={`Update ${train.training_name}`} placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                                 </td>
                             </tr>
                         ))

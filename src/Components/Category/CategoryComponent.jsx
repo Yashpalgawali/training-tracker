@@ -104,7 +104,7 @@ export default function CategoryComponent () {
                                             label="Category"
                                             variant="standard"
                                             placeholder="Enter Category"
-                                            value={props.values.comp_name}
+                                            value={props.values.category}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
                                             error={props.touched.category && Boolean(props.errors.category)}
