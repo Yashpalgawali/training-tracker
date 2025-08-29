@@ -37,9 +37,10 @@
     "build": "cross-env CI=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject ",
+     "add-webxml": "xcopy public\\WEB-INF build\\WEB-INF /E /I /Y",
+    "create-war": "cd build && jar -cvf ..\\trainingtracker.war *",
     "compile": "npm run build && npm run add-webxml && npm run create-war",
-    "add-webxml": "xcopy public\\\\WEB-INF build\\\\WEB-INF /E /I /Y",
-    "create-war": "cd build && jar -cvf ..\\\\trainingtracker.war *"
+    "deploy": "xcopy /Y trainingtracker.war \"G:\\user\\apache-tomcat-10.1.41\\webapps\\trainingtracker.war\""
   },
   "eslintConfig": {
     "extends": [
