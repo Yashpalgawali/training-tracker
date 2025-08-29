@@ -36,7 +36,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build:war": "npm run build && npx war create --dir build --name trainingtracker --webxml web.xml",
+    "deploy:war": "npm run build:war && copy /Y trainingtracker.war \"G:\\Yahpal\\apache-tomcat-10.1.31\\webapps\\trainingtracker.war\""
   },
   "eslintConfig": {
     "extends": [
@@ -55,5 +57,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "war": "^0.0.3"
   }
 }
