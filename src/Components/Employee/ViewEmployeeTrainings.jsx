@@ -39,7 +39,7 @@ import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService"
 //                 backgroundColor : state.isFocused ? "#f0f0f0" : "White", // hover effect
 //                 color : "black"
 //             })
-//     }
+//     }  
 
 export default function ViewEmployeeTrainings() {
 
