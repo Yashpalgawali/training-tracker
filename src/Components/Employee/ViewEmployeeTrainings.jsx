@@ -28,18 +28,18 @@ import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
  
 
-const customStyles = {
-            menu  : (provided) => ({
-                ...provided,
-                backgroundColor : "White",   // solid background
-                zIndex : 9999                // keeps it above other elements
-            }),
-            option :(provided,state) => ({
-                ...provided,
-                backgroundColor : state.isFocused ? "#f0f0f0" : "White", // hover effect
-                color : "black"
-            })
-    }
+// const customStyles = {
+//             menu  : (provided) => ({
+//                 ...provided,
+//                 backgroundColor : "White",   // solid background
+//                 zIndex : 9999                // keeps it above other elements
+//             }),
+//             option :(provided,state) => ({
+//                 ...provided,
+//                 backgroundColor : state.isFocused ? "#f0f0f0" : "White", // hover effect
+//                 color : "black"
+//             })
+//     }
 
 export default function ViewEmployeeTrainings() {
 
