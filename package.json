@@ -38,7 +38,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:war": "npm run build && npx war create --dir build --name trainingtracker --webxml web.xml",
-    "deploy:war": "npm run build:war && copy /Y trainingtracker.war \"G:\\Yahpal\\apache-tomcat-10.1.31\\webapps\\trainingtracker.war\""
+    "deploy:war": "npm run build:war && copy /Y trainingtracker.war \"G:\\Yashpal\\apache-tomcat-10.1.41\\webapps\\trainingtracker.war\""
   },
   "eslintConfig": {
     "extends": [
