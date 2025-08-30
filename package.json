@@ -38,6 +38,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject ",
     "add-webxml": "xcopy public\\WEB-INF build\\WEB-INF /E /I /Y",
+     "undeploy": "if exist %TOMCAT_HOME%\\webapps\\appname.war del /Q %TOMCAT_HOME%\\webapps\\trainingtracker.war && if exist %TOMCAT_HOME%\\webapps\\trainingtracker rmdir /S /Q %TOMCAT_HOME%\\webapps\\trainingtracker",
     "create-war": "cd build && jar -cvf \"G:\\Yashpal\\apache-tomcat-10.1.41\\webapps\\trainingtracker.war\" *",
     "deploy": "npm run build && npm run add-webxml && npm run create-war"
   },
