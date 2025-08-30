@@ -187,7 +187,7 @@ function downloadAllEmployees() {
                marginBlockEnd : '10px'
             }}>
                 <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
-                            <Button  disabled={disabled} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
+                            <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
                         </BootstrapTooltip>
                     <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
                         <BootstrapTooltip title="Download Trainings given to Employees">
