@@ -42,7 +42,7 @@ export default function EmployeeTrainingComponent(){
     
     useEffect(() => {
         
-             setEmpDisabled(false)
+        
         if(!didFetchRun.current) {
             didFetchRun.current = true
             getAllDetails()
@@ -63,12 +63,12 @@ export default function EmployeeTrainingComponent(){
     function getAllDetails() {
         
         retrieveAllEmployees().then((response) => {
-           
+           setEmpDisabled(false)
             setEmployeeList(response.data)
         }).catch((error)=> {
-            alert('no EMP')
+             
             setEmpDisabled(true)
-             showToast(error.response.data.errorMessage, "error")
+            showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
@@ -218,9 +218,23 @@ export default function EmployeeTrainingComponent(){
         let errors = {}
 
         if(values.employee=='') {
-           errors.employee='No employee selected'
-
+           errors.employee='No Employee Selected'
         }
+        
+        if(values.training_ids=='') {
+           errors.training_ids='No Training is Selected'
+        }
+ 
+        if(values.competency=='') {
+           errors.competency='No Competency Score is Selected'
+        }
+        if(values.trainingTimeSlot=='') {
+           errors.trainingTimeSlot='No Training Time Slot is Selected'
+        }
+        if(values.training_date==null) {
+           errors.training_date='No Training Date is Selected'
+        }
+        
         return errors
     }
    return(
@@ -278,14 +292,15 @@ export default function EmployeeTrainingComponent(){
                                                 }
                                                 onChange={(option) => setFieldValue('employee', option ? option.value : '')}
                                                 placeholder="Select Employee"
+                                               
                                             />                                
                                             <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                             <ErrorMessage name="employee" />
                                             </FormHelperText>   
                                         </>
                                    )
-                                }  
-                                  
+                                }
+
                             </Box>
 
                             {/* Training MultiSelect */}
@@ -307,8 +322,8 @@ export default function EmployeeTrainingComponent(){
                                             placeholder="Select Training"
                                     /> 
                                 
-                                <FormHelperText error={touched.score && Boolean(errors.score)}>
-                                <ErrorMessage name="score" />
+                                <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
+                                <ErrorMessage name="training_ids" />
                                 </FormHelperText>  
                                 {/* <TrainingMultiSelect
                                
@@ -339,8 +354,8 @@ export default function EmployeeTrainingComponent(){
                                             placeholder="Select Score"
                                     /> 
                                 
-                                <FormHelperText error={touched.score && Boolean(errors.score)}>
-                                <ErrorMessage name="score" />
+                                <FormHelperText error={touched.competency && Boolean(errors.competency)}>
+                                <ErrorMessage name="competency" />
                                 </FormHelperText>  
                                   
                             </Box>
@@ -416,7 +431,7 @@ export default function EmployeeTrainingComponent(){
 
                             {/* Submit Button */}
                             <Box mt={2}>
-                                <Button type="submit" variant="contained" isDisabled={setEmpDisabled}  color="primary">
+                                <Button type="submit" variant="contained" disabled={!empList || empList.length === 0}  color="primary">
                                 {btnValue}
                                 </Button>
                             </Box>
