@@ -155,6 +155,7 @@ export default function ViewEmployeeComponent() {
     try {
       const res = await  uploadEmployeeList(formData)
       
+      setDisabled(false)
       setFile(null)
       setLoading(false);
       setFileName('')
