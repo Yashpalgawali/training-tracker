@@ -28,12 +28,17 @@ export default function EmployeeTrainingComponent(){
     const [btnValue,setBtnValue] = useState('Train Employee')
     const [score,setScore] =useState('')
     const [scoreList,setScoreList] =  useState([])
+
+    const [disabled,setDisabled] = useState(false)
+
+    const [empListDisabled,setEmpDisabled] = useState(false)
+
     const didFetchRun = useRef(false)
     
     const navigate = useNavigate()
     const {id} = useParams()
 
-    const [disabled,setDisabled] = useState(false)
+    
     
     useEffect(() => {
        
@@ -59,6 +64,7 @@ export default function EmployeeTrainingComponent(){
         retrieveAllEmployees().then((response) => {
             setEmployeeList(response.data)
         }).catch((error)=> {
+            setEmpDisabled(true)
              showToast(error.response.data.errorMessage, "error")
         })
         retrieveAllTraining().then((response) => {
@@ -232,7 +238,13 @@ export default function EmployeeTrainingComponent(){
                             <Box mb={2}>                              
                                    
                                      <Typography variant="subtitle1">Employee</Typography>
-                                          <Select
+                                        {
+                                            empListDisabled ? (
+                                                <input type="text" disabled="true" placeholder="No Employees Present" />
+                                            ) : (
+                                            <>
+                                                <Select
+                                            
                                             styles={customStyles}                                            
                                             hideSelectedOptions={true}
                                             isDisabled={disabled}                                    
@@ -253,6 +265,10 @@ export default function EmployeeTrainingComponent(){
                                         <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                         <ErrorMessage name="employee" />
                                         </FormHelperText>   
+                                      </>
+                                   )
+                                }
+                                          
                                   
                             </Box>
 
