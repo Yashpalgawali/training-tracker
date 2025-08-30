@@ -8,7 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs  from "dayjs";
-import { Box, Button, FormHelperText,  Typography } from "@mui/material";
+import { Box, Button, FormHelperText,  TextField,  Typography } from "@mui/material";
 
 import { getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
@@ -41,7 +41,8 @@ export default function EmployeeTrainingComponent(){
     
     
     useEffect(() => {
-       
+        
+             setEmpDisabled(false)
         if(!didFetchRun.current) {
             didFetchRun.current = true
             getAllDetails()
@@ -62,8 +63,10 @@ export default function EmployeeTrainingComponent(){
     function getAllDetails() {
         
         retrieveAllEmployees().then((response) => {
+           
             setEmployeeList(response.data)
         }).catch((error)=> {
+            alert('no EMP')
             setEmpDisabled(true)
              showToast(error.response.data.errorMessage, "error")
         })
@@ -211,7 +214,15 @@ export default function EmployeeTrainingComponent(){
                 })
             }
     }
-    
+    function validate(values) {
+        let errors = {}
+
+        if(values.employee=='') {
+           errors.employee='No employee selected'
+
+        }
+        return errors
+    }
    return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
@@ -228,6 +239,8 @@ export default function EmployeeTrainingComponent(){
                             training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
+
+                        validate={validate}
                         validateOnBlur={false}
                         validateOnChange={false}
                         onSubmit={onSubmit}
@@ -240,35 +253,38 @@ export default function EmployeeTrainingComponent(){
                                      <Typography variant="subtitle1">Employee</Typography>
                                         {
                                             empListDisabled ? (
-                                                <input type="text" disabled="true" placeholder="No Employees Present" />
+                                                <>
+                                                <TextField 
+                                                    fullWidth
+                                                    disabled="true"
+                                                    placeholder="No Employees Present"
+                                                />
+                                                </>
                                             ) : (
                                             <>
-                                                <Select
-                                            
-                                            styles={customStyles}                                            
-                                            hideSelectedOptions={true}
-                                            isDisabled={disabled}                                    
-                                            name="employee"
-                                            options={empList.map(emp => ({
-                                                value: emp.emp_id,
-                                                label: emp.emp_name
-                                            }))}
-                                            value= {
-                                                empList
-                                                .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
-                                                .find(option => option.value === values.employee) || null
-                                            }
-                                            onChange={(option) => setFieldValue('employee', option ? option.value : '')}
-                                            placeholder="Select Employee"
-                                        /> 
-                                
-                                        <FormHelperText error={touched.employee && Boolean(errors.employee)}>
-                                        <ErrorMessage name="employee" />
-                                        </FormHelperText>   
-                                      </>
+                                            <Select
+                                                styles={customStyles}                                            
+                                                hideSelectedOptions={true}
+                                                isDisabled={disabled}                                    
+                                                name="employee"
+                                                options={empList.map(emp => ({
+                                                    value: emp.emp_id,
+                                                    label: emp.emp_name
+                                                }))}
+                                                value= {
+                                                    empList
+                                                    .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
+                                                    .find(option => option.value === values.employee) || null
+                                                }
+                                                onChange={(option) => setFieldValue('employee', option ? option.value : '')}
+                                                placeholder="Select Employee"
+                                            />                                
+                                            <FormHelperText error={touched.employee && Boolean(errors.employee)}>
+                                            <ErrorMessage name="employee" />
+                                            </FormHelperText>   
+                                        </>
                                    )
-                                }
-                                          
+                                }  
                                   
                             </Box>
 
@@ -400,7 +416,7 @@ export default function EmployeeTrainingComponent(){
 
                             {/* Submit Button */}
                             <Box mt={2}>
-                                <Button type="submit" variant="contained" color="primary">
+                                <Button type="submit" variant="contained" isDisabled={setEmpDisabled}  color="primary">
                                 {btnValue}
                                 </Button>
                             </Box>
