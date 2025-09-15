@@ -203,10 +203,18 @@ export default function EmployeeTrainingComponent(){
                 competency : competencyObj,
                 completion_date : formattedTrainingDate
             }
-            
+
+            console.log("Employee Training ",employeeTraining)
+
                 saveEmployeeTraining(employeeTraining).then((response) => {             
                     showToast(response?.data?.responseMessage,"success")
-                    navigate(`/viewemployees`)
+                    if(id!= -1)
+                    {
+                        navigate(`/training/employee/${id}`)
+                    }
+                    else {
+                        navigate(`/viewemployees`)
+                    }
                 })
                 .catch((error) => {
                     showToast(error?.data?.errorMessage,"error")
@@ -216,25 +224,24 @@ export default function EmployeeTrainingComponent(){
     }
     function validate(values) {
         let errors = {}
-
-        if(values.employee=='') {
-           errors.employee='No Employee Selected'
+        if(id == -1)
+        {
+            if(values.employee=='') {
+                errors.employee='No Employee Selected'
+            }
         }
         
         if(values.training_ids=='') {
            errors.training_ids='No Training is Selected'
         }
- 
-        if(values.competency=='') {
-           errors.competency='No Competency Score is Selected'
-        }
+      
         if(values.trainingTimeSlot=='') {
            errors.trainingTimeSlot='No Training Time Slot is Selected'
         }
         if(values.training_date==null) {
            errors.training_date='No Training Date is Selected'
         }
-        
+
         return errors
     }
    return(
@@ -350,7 +357,9 @@ export default function EmployeeTrainingComponent(){
                                                 .map(scores => ({ value: scores.competency_id, label: scores.score }))
                                                 .find(option => option.value === values.score) || null
                                         }
-                                            onChange={(option) => setFieldValue('score', option ? option.value : '')}
+                                            onChange={(option) => {
+                                                
+                                                setFieldValue('score', option ? option.value : '') }}
                                             placeholder="Select Score"
                                     /> 
                                 
@@ -427,7 +436,6 @@ export default function EmployeeTrainingComponent(){
                                 <ErrorMessage name="trainingTimeSlot" />
                                 </FormHelperText>
                             </Box>
-                            
 
                             {/* Submit Button */}
                             <Box mt={2}>
@@ -439,7 +447,7 @@ export default function EmployeeTrainingComponent(){
                         )}
                         </Formik>
                 </LocalizationProvider>
-                   
+
                </div>
            </div>
        )

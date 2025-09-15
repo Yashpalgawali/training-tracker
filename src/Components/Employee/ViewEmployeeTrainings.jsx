@@ -21,12 +21,16 @@ import { CircularProgress, Box } from '@mui/material';
  
 import  EditIcon from '@mui/icons-material/Edit';
 import DownloadIcon from '@mui/icons-material/Download';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
 } from "recharts";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
- 
+
+import { tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@mui/material/styles';
 
 // const customStyles = {
 //             menu  : (provided) => ({
@@ -41,6 +45,7 @@ import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService"
 //             })
 //     }  
 
+ 
 export default function ViewEmployeeTrainings() {
 
     const [traininglist,setTrainingList] = useState([]);
@@ -210,11 +215,11 @@ function addTrainingToEmployee(id) {
         <div className="mb-2">
             <Box>
                 <Typography variant="h4" gutterBottom>
-                    
-                      <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> <DownloadIcon /> Add Training</Button>
+
+                   <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
                     View Employee Trainings
-                    
-                        <Button variant="contained" color="success" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <DownloadIcon /> Download</Button>
+                     <Button variant="contained" color="info" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <CloudDownloadIcon /> Download</Button>
+                          {/* <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button> */}
                      
                 </Typography>
             </Box>

@@ -58,6 +58,14 @@ export default function TrainingComponent() {
         }
     }
 
+    function validate(values) {
+
+        let errors = {} 
+        if(values.training_name == '') {
+            errors.training_name = 'Please Enter training name'
+        }
+        return errors
+    }
     return(
         <div className="container">
             
@@ -71,6 +79,7 @@ export default function TrainingComponent() {
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={onSubmit}
+                    validate={validate}
                >
                 {
                      (props) => (
