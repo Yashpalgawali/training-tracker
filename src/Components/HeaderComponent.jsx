@@ -21,13 +21,23 @@ export default function HeaderComponent() {
     <header className="border-bottom border-light border-5 p-2 ">
         <div className="container-fluid">
             <div className="row">
-                <nav className="navbar navbar-expand-lg">
-                    {/* <a className="navbar-brand ms-2 fs-2 fw-bold text-black" href="https://www.in28minutes.com">in28minutes</a> */}
-                    <div className="collapse navbar-collapse">
-                        <ul className="navbar-nav">
-                        {/* <li className="nav-item fs-5">
-                        { isAuthenticated && <Link className="nav-link" to="/home">Home</Link> }
-                        </li> */}
+                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                   {/* Toggler button (hamburger) */}
+                    <button
+                         className="navbar-toggler"
+                         type="button"
+                         data-bs-toggle="collapse"
+                         data-bs-target="#navbarNav"
+                         aria-controls="navbarNav"
+                         aria-expanded="false"
+                         aria-label="Toggle navigation"
+                    >
+                         <span className="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div className="collapse navbar-collapse"  id="navbarNav">
+                        <ul className="navbar-nav ms-auto">
+
                         <li className="nav-item fs-5">
                         { isAuthenticated &&
                              <Link className="nav-link" to="/companies">Companies</Link>

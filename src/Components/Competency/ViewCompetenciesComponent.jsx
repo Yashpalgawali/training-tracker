@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import $ from 'jquery'; // jQuery is required for DataTables to work
+import $, { error } from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
+import { showToast } from "../SharedComponent/showToast";
 
 
 export default function ViewCompetenciesComponent() {
@@ -30,6 +31,8 @@ export default function ViewCompetenciesComponent() {
      
         retrieveAllCompetencies().then((response)=> {
             setCompetencyList(response.data)
+        }).catch((error) => {
+             showToast(error.response.data.errorMessage, "error")
         })
     }  
 

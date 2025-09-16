@@ -7,6 +7,7 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styl
 import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
+import { showToast } from "../SharedComponent/showToast";
 
 
 export default function ViewCompanyComponent() {
@@ -30,6 +31,8 @@ export default function ViewCompanyComponent() {
      
         retrieveAllCompanies().then((response)=> {
             setCompList(response.data)
+        }).catch((error)=>{
+             showToast(error.response.data.errorMessage, "error")
         })
     }  
 

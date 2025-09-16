@@ -7,6 +7,7 @@ import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
+import { showToast } from "../SharedComponent/showToast";
 
 
 export default function ViewTrainingTimeSlotComponent() {
@@ -29,6 +30,8 @@ export default function ViewTrainingTimeSlotComponent() {
      
         retrieveAllTrainingTimeSlots().then((response)=> {
             setTrainingTimeSlotList(response.data)
+        }).catch((error) => {
+             showToast(error.response.data.errorMessage, "error")
         })
     }  
 

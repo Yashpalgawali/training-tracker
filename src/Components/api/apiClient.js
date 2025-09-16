@@ -12,5 +12,5 @@ import axios from 'axios';
 
 // For Tomcat 10
 export const apiClient = axios.create({
-    baseURL : 'http://65.1.85.186:8080/trainingtrackerrest/'
+    baseURL : 'http://13.235.13.18:8080/trainingtrackerrest/'
 })

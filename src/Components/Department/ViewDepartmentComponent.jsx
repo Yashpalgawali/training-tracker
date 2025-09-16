@@ -85,13 +85,12 @@ export default function ViewDepartmentComponent() {
             })
         }
 
-
     return(
         <div className="container">
             
             <Box>
                 <Typography variant="h4" gutterBottom>View Departments 
-                     <Button type="submit" variant="contained" color="info" style={ { float: 'left' } } className="m-2" onClick={downloadAllDepartmentsList} > <Tooltip title="Download Department List" arrow> <CloudDownloadIcon /> Download </Tooltip></Button> 
+                     <Button type="submit" variant="contained" color="info" style={ { float: 'left' } } disabled={!deptlist || deptlist.length=== 0} className="m-2" onClick={downloadAllDepartmentsList} > <Tooltip title="Download Department List" arrow> <CloudDownloadIcon /> Download </Tooltip></Button> 
                     <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewDepartment} > <Tooltip title="Add Department" arrow> Add Department</Tooltip></Button>    </Typography>
             </Box>
             
