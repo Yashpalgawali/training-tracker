@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from "./Security/AuthContext";
- 
+import LoginIcon from '@mui/icons-material/Login';
 
 export default function HeaderComponent() {
     
@@ -92,7 +92,7 @@ export default function HeaderComponent() {
                     <ul className="navbar-nav">
                         <li className="nav-item fs-5">
                         { !isAuthenticated &&
-                              <Link className="nav-link" to="/login"> Login</Link>  
+                              <Link className="nav-link" to="/login"><LoginIcon color="success"/> Login</Link>  
                         }
                         </li>
                         <li className="nav-item fs-5">

@@ -5,6 +5,7 @@ import { useAuth } from "./Security/AuthContext";
 import "../../src/Components/LogonComponent.css";
 import { useNavigate } from "react-router-dom";
 
+
 export default function LoginComponent() {
     
     const [username , setUsername] = useState('')
@@ -36,8 +37,20 @@ export default function LoginComponent() {
         // }
     }
 
+    function validate(values) {
+        let errors = {} 
+        
+        if(values.username== '') {
+            errors.username = 'Username cannot be blank'
+        }
+        if(values.password== '') {
+            errors.password = 'Password cannot be blank'
+        }
+        return errors
+    }
+
     return(
-        <div className="container">
+        <div className="container" >
 
             <div  style={{
                 position: "relative",
@@ -63,14 +76,14 @@ export default function LoginComponent() {
             <Box>
                 <Typography variant="h4" gutterBottom>Time To Login!! </Typography>
             </Box>
-            
-            <div>
+            <div >
                 <Formik
                     enableReinitialize={true}
                     initialValues={ { username , password } }
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={handleSubmit}
+                    validate={validate}
                 >
                     {
                         (props) => (

@@ -15,7 +15,8 @@ export default function AuthProvider({children}) {
     const [jwtToken, setJwtToken] = useState('')
     const [userid,setUserId] = useState('')
     const [username, setUsername] = useState('')
-const [loading, setLoading] = useState(true); // 👈 new
+    
+    const [loading, setLoading] = useState(true); // 👈 new
     
   // ✅ Restore auth from localStorage/sessionStorage on refresh
   useEffect(() => {
@@ -42,7 +43,7 @@ const [loading, setLoading] = useState(true); // 👈 new
         (error) => {
            
             if(error.response && error.response.status===401) {
-                
+               
                 logout()    
                 // 🔑 Hard refresh to login page
                 window.location.href = "/trainingtracker/login";
@@ -63,9 +64,10 @@ const [loading, setLoading] = useState(true); // 👈 new
   }, []);
 
     async function login(username,password) {
+       
         try{ 
             const resp = await executeJwtAuthentication(username,password)
-           
+          
             if(resp.status==200) {
               
                 const jwtToken =  resp.data.token
@@ -88,14 +90,16 @@ const [loading, setLoading] = useState(true); // 👈 new
                         return config
                     }
                 )
-                return true
+               return true
             }
-            else {                 
-                 logout()
-                 return false
+            
+            else {
+                logout()
+                return false
             }
         }
-        catch(error) {            
+        catch(error) {
+            
             logout()
             return false
         }
