@@ -6,11 +6,11 @@ import axios from 'axios';
 // })
 
 // For Local Tomcat
-export const apiClient = axios.create({
-    baseURL : 'http://localhost:7878/trainingtrackerrest/'
-})
+// export const apiClient = axios.create({
+//     baseURL : 'http://localhost:7878/trainingtrackerrest/'
+// })
 
 // For Tomcat 10
-// export const apiClient = axios.create({
-//     baseURL : 'http://13.235.13.18:8080/trainingtrackerrest/'
-// })
+export const apiClient = axios.create({
+    baseURL : 'http://13.232.150.127:8080/trainingtrackerrest/'
+})

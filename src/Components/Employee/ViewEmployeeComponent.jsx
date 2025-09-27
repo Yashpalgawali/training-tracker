@@ -4,8 +4,9 @@ import { downAllEmployeesList, downSampleEmployeesList, retrieveAllEmployees, up
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
+import '../Employee/ViewEmployeeComponent.css';
 
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -66,7 +67,8 @@ export default function ViewEmployeeComponent() {
         if (empList.length > 0) {
           $(tableRef.current).DataTable({
             responsive: true,
-            destroy: true // <-- Important, allows re-init
+            destroy: true, // <-- Important, allows re-init
+            scrollX: true // ensures horizontal scroll
           });
         }
       }
@@ -183,20 +185,30 @@ function downloadAllEmployees() {
 
     return (
         <div className="container">
-            <Box sx={ {
+            <Box className="btnblock" sx={ {
                marginBlockEnd : '10px'
             }}>
-                <Typography variant="h4">View Employees  <BootstrapTooltip title="Download Employee List">
+                <Typography variant="h4">View Employees   </Typography>
+                <Stack
+                  direction={{ xs :"column", sm: "row" }}
+                  spacing={  2 }
+                  alignItems={ { xs:'stretch' , sm: 'center' } }
+                 sx={{ alignSelf: {  xs : 'stretch' ,sm: 'center' } }}
+                 
+                >
+                        <BootstrapTooltip title="Download Employee List">
                             <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
                         </BootstrapTooltip>
-                    <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
-                        <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
-                        </BootstrapTooltip> 
-                    <BootstrapTooltip title="Download Sample excel To upload Employees">
-                          <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
-                    </BootstrapTooltip> 
-                </Typography>
+                    
+                      <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
+                          <BootstrapTooltip title="Download Trainings given to Employees">
+                                  <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
+                          </BootstrapTooltip> 
+                      <BootstrapTooltip title="Download Sample excel To upload Employees">
+                            <Button style={ { float : 'left' ,marginLeft : '5px'} } variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
+                      </BootstrapTooltip> 
+                        
+                 </Stack>
             </Box>
             <hr />
     <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>
@@ -241,14 +253,14 @@ function downloadAllEmployees() {
         {loading ? "Uploading..." : "Upload to Server"}
       </Button>
     </Box>
-            <div>
-                <table ref={tableRef} className="table table-striped table-hover">
+            <div className='table-responsive'>
+                <table ref={tableRef} className="table table-striped table-hover nowrap">
                     <thead>
                         <tr>
                             <th>Sr</th>
                             <th>Name</th>
                             <th>Employee Code</th>     
-                            <th>Joininig Date</th>                     
+                            <th>Joining Date</th>                     
                             <th>Designation</th>
                             <th>Department</th>
                             <th>Company</th>

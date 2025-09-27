@@ -71,6 +71,9 @@ export default function EmployeeComponent() {
                 })
                 
                 setCategory(response.data.category?.category_id)
+                
+                alert(response.data?.joining_date)
+
                 setJoiningDate(response.data?.joining_date);
                 
             })
@@ -119,10 +122,10 @@ export default function EmployeeComponent() {
             category_id : values.category,
             category : ''
        }
-    
-       const formattedJoiningDate = dayjs(values.joining_date).format("DD/MM/YYYY")
+   
+    const formattedJoiningDate = dayjs(values.joining_date).format("DD/MM/YYYY")
 
-       let employee = {
+     let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
             designation : designation,
@@ -164,7 +167,9 @@ export default function EmployeeComponent() {
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Formik
             enableReinitialize={true}
-            initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, joining_date: joining_date ? dayjs(joining_date) : null }}
+            initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, 
+                              joining_date: joining_date ? dayjs(joining_date,"DD/MM/YYYY") : null 
+                          }}
             validateOnBlur={false}
             validateOnChange={false}
             onSubmit={onSubmit}
@@ -225,9 +230,9 @@ export default function EmployeeComponent() {
                     <DatePicker
                         format="DD/MM/YYYY"
                         label="Joining Date"
-                        // value={values.joining_date ? dayjs(values.joining_date, "DD/MM/YYYY") : null}
+                        //  value={values.joining_date ? dayjs(values.joining_date, "DD/MM/YYYY") : ""}
                         value={values.joining_date}
-                        onChange={(date) => setFieldValue("joining_date", date)}
+                        onChange={(date) =>  setFieldValue("joining_date", date) }
                         slotProps={{
                         textField: {
                                 fullWidth: true,

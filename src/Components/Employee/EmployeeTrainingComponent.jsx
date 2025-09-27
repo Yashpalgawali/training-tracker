@@ -8,6 +8,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs  from "dayjs";
+
 import { Box, Button, FormHelperText,  TextField,  Typography } from "@mui/material";
 
 import { getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
@@ -37,11 +38,9 @@ export default function EmployeeTrainingComponent(){
     
     const navigate = useNavigate()
     const {id} = useParams()
-
+   
     
-    
-    useEffect(() => {
-        
+    useEffect(() => {        
         
         if(!didFetchRun.current) {
             didFetchRun.current = true
@@ -327,8 +326,7 @@ export default function EmployeeTrainingComponent(){
                                         }
                                             onChange={(option) => setFieldValue('training_ids', option ? option.value : '')}
                                             placeholder="Select Training"
-                                    /> 
-                                
+                                    />
                                 <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
                                 <ErrorMessage name="training_ids" />
                                 </FormHelperText>  
@@ -384,37 +382,9 @@ export default function EmployeeTrainingComponent(){
                                     }
                                     }}
                                 />
+                            </Box>
                                 
-                                {/* <DatePicker 
-                                    label="Completion Date"
-                                    format="DD/MM/YYYY"
-                                    value={values.completion_date}
-                                    onChange={(date) => setFieldValue('completion_date', date)}
-                                    slotProps={{
-                                    textField: {
-                                        error: touched.completion_date && Boolean(errors.completion_date),
-                                        helperText: <ErrorMessage name="completion_date" />
-                                    }
-                                    }}
-                                /> */}
-                                </Box>
                                 
-                                {/* Completion Date Picker */}
-                                {/* <Box mb={2}  >
-                                <DatePicker
-                                    label="Completion Date"
-                                    format="DD/MM/YYYY"
-                                    value={values.completion_date}
-                                    onChange={(date) => setFieldValue('completion_date', date)}
-                                    slotProps={{
-                                    textField: {
-                                        error: touched.completion_date && Boolean(errors.completion_date),
-                                        helperText: <ErrorMessage name="completion_date" />
-                                    }
-                                    }}
-                                />
-                                </Box> */}
-                            
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Training Time Slot</Typography>
                                 <Select  

@@ -18,12 +18,26 @@ export default function ViewCompanyComponent() {
     const navigate = useNavigate()
 
     useEffect(()=> refreshCompanies() , [] )
-    
+
+ 
+
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
-        if (tableRef.current && complist.length > 0 ) {
-          $(tableRef.current).DataTable(); // Initialize DataTables
-        }
+       if (tableRef.current) {
+               // 🔴 Destroy old DataTable if exists
+               if ($.fn.DataTable.isDataTable(tableRef.current)) {
+                 $(tableRef.current).DataTable().destroy();
+               }
+       
+               // ✅ Initialize only when data exists
+               if (complist.length > 0) {
+                 $(tableRef.current).DataTable({
+                   responsive: true,
+                   destroy: true // <-- Important, allows re-init
+                 });
+               }
+             }
+     
       }, [complist]); // Re-initialize DataTables when activities data changes
    
 
@@ -49,26 +63,7 @@ export default function ViewCompanyComponent() {
             <Box>
                 <Typography variant="h4" gutterBottom>View Companies <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewCompany} > <Tooltip title="Add Company" arrow> Add Company</Tooltip></Button>    </Typography>
             </Box>
-
-        {/* <DataTable  
-            data={complist}
-            columns={[
-                {title : 'Sr' , data: 'comp_id'},
-                {title : 'Company Name' , data: 'comp_name'},
-                {title : 'Action' , data: 'comp_id',render : function(data,type ,row){
-                    return `<Button type="submit" variant="contained" color="primary" className="m-3" data-id="${row.id}"><EditSquareIcon /> Update</Button>`
-                    // return `<button className="btn btn-primary" data-id="${row.id}" >Update</button>`
-                } } 
-            ]}
-            options={{
-                searching: true,
-                paging: true,
-                ordering: true,
-                info: true,
-                responsive: true
-            }}
-        /> */}
-
+            <div>
             <table ref={tableRef} className="table table-striped table-hover display">
                 <thead>
                     <tr >
@@ -97,6 +92,7 @@ export default function ViewCompanyComponent() {
                       )}
                 </tbody>
             </table>
+            </div>
         </div>
     )
 }

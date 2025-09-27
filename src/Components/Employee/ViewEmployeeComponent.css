@@ -1,0 +1,17 @@
+ 
+
+@media only screen and (max-width : 768px ) {
+    .btnblock {
+        /* margin-top: 10px; */
+        /* display: grid; */
+
+    }
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  .btnblock  {
+    /* flex-direction: column; Arrange vertically on smaller screens */
+     
+  }
+}

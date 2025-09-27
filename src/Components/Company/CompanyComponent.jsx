@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
-import { ErrorMessage, Field, Formik,Form } from "formik"
-import { Box, Button, Stack, TextField, Typography } from "@mui/material"
+import { ErrorMessage,  Formik,Form } from "formik"
+import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 
 export default function CompanyComponent () {

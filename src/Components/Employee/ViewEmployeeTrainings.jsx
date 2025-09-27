@@ -6,7 +6,7 @@ import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import $ from 'jquery'; // jQuery is required for DataTables to work
-import { Button, Divider, FormControl, InputLabel, MenuItem, Select, Typography } from "@mui/material"; 
+import { Button, Divider, InputLabel, MenuItem, Select, Typography } from "@mui/material"; 
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -24,7 +24,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend,
+  ResponsiveContainer
 } from "recharts";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
@@ -100,6 +101,8 @@ export default function ViewEmployeeTrainings() {
 
             dtInstanceRef.current = $(tableRef.current).DataTable({
                 // You can add options here if needed
+                responsive: true,
+                scrollX: true // ensures horizontal scroll
             });
          }
     }, [traininglist] )
@@ -236,14 +239,18 @@ function addTrainingToEmployee(id) {
                 </div>
             </div>
         </div>
-        <div><Divider></Divider>
-            </div>
-        <div   className="mb-5">
+        <div><Divider></Divider> </div>
+        {/* <div className="mb-5"> */}
+        <div style={{ width: "100%", height: 400 ,marginBottom: "100px"}}  >
                 <Typography variant="h5" gutterBottom>Competency Chart</Typography>
+                <ResponsiveContainer>
                 <RadarChart key={data.length + JSON.stringify(data)}
-                  cx={300}
-                  cy={250}
-                  outerRadius={150}
+                //   cx={300}
+                //   cy={250}
+                // outerRadius={150}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius="70%"
                   width={1320}
                   height={500}
                   data={data}
@@ -261,15 +268,16 @@ function addTrainingToEmployee(id) {
                   <Tooltip />
                   <Legend /> 
                 </RadarChart>
+                </ResponsiveContainer>
               </div>
-        <div  >
+        <div className="table-responsive mt-5 " >
             {
                 loading ? (
                     <Box display="flex" justifyContent="center" alignItems="center" height="200px">
                         <CircularProgress />
                     </Box>
                 ) : (
-            <table ref={tableRef} className="table table-hover table-striped">
+            <table ref={tableRef} className="table table-hover table-striped nowrap">
                 <thead>
                     <tr>
                         <th>Sr</th>
@@ -313,9 +321,9 @@ function addTrainingToEmployee(id) {
             )}
         </div>
 
-         <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose}     >
         <DialogTitle>Update Completion Time</DialogTitle>
-        <DialogContent sx={{ paddingBottom: 0 }}>
+        <DialogContent sx={{ paddingBottom: 2 }}>
           <DialogContentText>
                 Update completion date of the Training 
           </DialogContentText>
@@ -324,11 +332,13 @@ function addTrainingToEmployee(id) {
                        
             <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DemoContainer components={['DatePicker']}>
-                <DatePicker label="Training Date" format="DD-MM-YYYY" closeOnSelect={true} name="training_date" />
+                <DatePicker label="Training Date"  format="DD-MM-YYYY" closeOnSelect={true} name="training_date" />
 
             </DemoContainer>
+             <DialogContentText> Competency  </DialogContentText>
              <DemoContainer components={['Select']}>
-                  <InputLabel id="demo-simple-select-competency-label">Competency</InputLabel>
+                
+                  {/* <InputLabel id="demo-simple-select-competency-label">Competency</InputLabel> */}
                         <Select
                             fullWidth
                             name="competency_id"
@@ -344,11 +354,13 @@ function addTrainingToEmployee(id) {
                         </Select>
             </DemoContainer>
                     {/* Time Slot Select */}
+                    <DialogContentText> Time Slot </DialogContentText>
                 <DemoContainer components={['Select']}>
-                    <InputLabel id="time-slot-select-label">Time Slot</InputLabel>
+                    {/* <InputLabel id="time-slot-select-label">Time Slot</InputLabel> */}
+                         
                         <Select
                             fullWidth
-                             name="training_time_slot_id"
+                            name="training_time_slot_id"
                             labelId="time-slot-select-label"
                             value={selectedTimeSlot}
                             onChange={handleTimeSlotChange}
@@ -363,7 +375,6 @@ function addTrainingToEmployee(id) {
             
             </LocalizationProvider>
 
-                
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
               <Button type="submit">Update Completion Date</Button>
@@ -372,6 +383,6 @@ function addTrainingToEmployee(id) {
            
         </DialogContent>
       </Dialog>
-      </div>
+     </div>
     )
 }

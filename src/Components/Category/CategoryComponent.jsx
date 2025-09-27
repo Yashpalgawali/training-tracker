@@ -100,29 +100,28 @@ export default function CategoryComponent () {
                                 autoComplete="off"
                                 >
                                 <TextField  id="category"
-                                            name="category"
-                                            label="Category"
-                                            variant="standard"
-                                            placeholder="Enter Category"
-                                            value={props.values.category}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            error={props.touched.category && Boolean(props.errors.category)}
-                                            helperText={<ErrorMessage name="category" />}
-                                            fullWidth />
+                                        name="category"
+                                        label="Category"
+                                        variant="standard"
+                                        placeholder="Enter Category"
+                                        value={props.values.category}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        error={props.touched.category && Boolean(props.errors.category)}
+                                        helperText={<ErrorMessage name="category" />}
+                                        fullWidth />
                                
                         </Box>
                       
                          <Box className="btnvalue">
-                                    <Button
-                                        type="submit"
-                                        style={{ float: 'left' }}
-                                        variant="contained"
-                                        color="primary"                                   
-                                    >
-                                    {btnValue}
-                                    </Button>
-                                    
+                            <Button
+                                type="submit"
+                                style={{ float: 'left' }}
+                                variant="contained"
+                                color="primary"                                   
+                            >
+                            {btnValue}
+                            </Button>                                    
                          </Box>
                     </Form>
                   )

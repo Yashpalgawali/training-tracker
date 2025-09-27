@@ -83,7 +83,7 @@ export default function HeaderComponent() {
 
                          <li className="nav-item fs-5">
                         { isAuthenticated &&
-                             <Link className="nav-link" to="/competencies">Competency Scores</Link>
+                             <Link className="nav-link" to="/competencies">Competency</Link>
                         }
                         </li>
                         
