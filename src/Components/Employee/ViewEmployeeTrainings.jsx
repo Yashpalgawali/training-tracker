@@ -143,9 +143,8 @@ export default function ViewEmployeeTrainings() {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (id) => {
-
-          sessionStorage.setItem('hist_id',id)
-        setOpen(true);
+            sessionStorage.setItem('hist_id',id)
+            setOpen(true);
     };
 
     const handleClose = () => {
@@ -223,7 +222,6 @@ function addTrainingToEmployee(id) {
                     View Employee Trainings
                      <Button variant="contained" color="info" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <CloudDownloadIcon /> Download</Button>
                           {/* <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button> */}
-                     
                 </Typography>
             </Box>
             

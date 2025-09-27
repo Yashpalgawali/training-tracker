@@ -71,12 +71,10 @@ export default function EmployeeComponent() {
                 })
                 
                 setCategory(response.data.category?.category_id)
-                
-                alert(response.data?.joining_date)
-
                 setJoiningDate(response.data?.joining_date);
-                
+                 
             })
+           
         }
     },[id] )
 
@@ -123,9 +121,8 @@ export default function EmployeeComponent() {
             category : ''
        }
    
-    const formattedJoiningDate = dayjs(values.joining_date).format("DD/MM/YYYY")
-
-     let employee = {
+    const formattedJoiningDate = dayjs(values.joining_date).format("DD/MM/YYYY") 
+    let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
             designation : designation,
