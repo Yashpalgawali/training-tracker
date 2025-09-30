@@ -60,21 +60,18 @@ export default function EmployeeComponent() {
                 setEmpName(response.data.emp_name)
                 setEmpCode(response.data.emp_code)              
                 setContractorName(response.data?.contractor_name)
-                setDesignations(response.data.designation?.desig_id)                
-                  
+                setDesignations(response.data.designation?.desig_id)                  
                 setCompany(response.data.department.company?.company_id)
+                
                 let comp_id = response.data.department.company?.company_id
 
                 getDepartmentByCompanyId(comp_id).then((response)=> {
                     setDepartment(response.data.department?.dept_id);
                     setDeptList(response.data)                    
-                })
-                
+                })                
                 setCategory(response.data.category?.category_id)
-                setJoiningDate(response.data?.joining_date);
-                 
-            })
-           
+                setJoiningDate(response.data?.joining_date);                 
+            })           
         }
     },[id] )
 
@@ -133,7 +130,6 @@ export default function EmployeeComponent() {
         }
 
         if(id == -1) {
-
             saveEmployee(employee).then((response) => {                
                   showToast(response?.data?.responseMessage,"success")
                   navigate(`/viewemployees`)
@@ -145,7 +141,6 @@ export default function EmployeeComponent() {
         }
         else {
             employee.emp_id = id
-
             updateEmployee(employee).then((response)=>{
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)

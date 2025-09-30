@@ -18,10 +18,10 @@ export default function HeaderComponent() {
     }
 
  return(
-    <header className="border-bottom border-light border-5 p-2 ">
+//     <header className="  p-2 fixed-top top-0">
         <div className="container-fluid">
             <div className="row">
-                <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <nav className="navbar navbar-expand-lg navbar-light fixed-top bg-light">
                    {/* Toggler button (hamburger) */}
                     <button
                          className="navbar-toggler"
@@ -105,6 +105,6 @@ export default function HeaderComponent() {
                 </nav>
             </div>
         </div>
-    </header>
+//     </header>
     )
 }

@@ -24,15 +24,25 @@ import DownloadIcon from '@mui/icons-material/Download';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip, Legend,
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip as RechartsTooltip, Legend,
   ResponsiveContainer
 } from "recharts";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 
-import { tooltipClasses } from '@mui/material/Tooltip';
+import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 
+ const BootstrapTooltip = styled(({ className, ...props }) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+        ))(({ theme }) => ({
+            [`& .${tooltipClasses.arrow}`]: {
+                color: theme.palette.common.black,
+            },
+            [`& .${tooltipClasses.tooltip}`]: {
+                backgroundColor: theme.palette.common.black,
+            },
+    }));
 // const customStyles = {
 //             menu  : (provided) => ({
 //                 ...provided,
@@ -217,8 +227,9 @@ function addTrainingToEmployee(id) {
         <div className="mb-2">
             <Box>
                 <Typography variant="h4" gutterBottom>
-
-                   <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
+                    <BootstrapTooltip title="Give Training to Employee">
+                        <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
+                    </BootstrapTooltip>
                     View Employee Trainings
                      <Button variant="contained" color="info" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <CloudDownloadIcon /> Download</Button>
                           {/* <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button> */}
@@ -263,7 +274,7 @@ function addTrainingToEmployee(id) {
                     fill="#8884d8"
                     fillOpacity={0.7}
                   />
-                  <Tooltip />
+                  <RechartsTooltip />
                   <Legend /> 
                 </RadarChart>
                 </ResponsiveContainer>

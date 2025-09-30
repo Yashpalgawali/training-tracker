@@ -187,30 +187,31 @@ function downloadAllEmployees() {
         <div className="container">
             <Box className="btnblock" sx={ {
                marginBlockEnd : '10px'
-            }}>
+            } }>
                 <Typography variant="h4">View Employees   </Typography>
                 <Stack
                   direction={{ xs :"column", sm: "row" }}
+                  
                   spacing={  2 }
-                  alignItems={ { xs:'stretch' , sm: 'center' } }
-                 sx={{ alignSelf: {  xs : 'stretch' ,sm: 'center' } }}
-                 
+                  alignItems={ { xs:'stretch' , sm: 'flex-end' } }
+                  sx={{ alignSelf: {  xs : 'stretch' ,sm: 'center' }   }}
                 >
-                        <BootstrapTooltip title="Download Employee List">
-                            <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
-                        </BootstrapTooltip>
-                    
-                      <Button style={ { float : 'right'} } variant="contained" color="primary" onClick={addNewEmployee} >Add Employee</Button> 
+                      <BootstrapTooltip title="Download Employee List">
+                          <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
+                      </BootstrapTooltip>
+                      <BootstrapTooltip title="Add Employee">
+                        <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
+                      </BootstrapTooltip>
                           <BootstrapTooltip title="Download Trainings given to Employees">
-                                  <Button style={ { float : 'left' } } disabled={disabledDownloadTraining} variant="contained" color="info"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
+                                  <Button   disabled={disabledDownloadTraining} variant="contained" color="inherit"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
                           </BootstrapTooltip> 
                       <BootstrapTooltip title="Download Sample excel To upload Employees">
-                            <Button style={ { float : 'left' ,marginLeft : '5px'} } variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
+                            <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
                       </BootstrapTooltip> 
                         
                  </Stack>
             </Box>
-            <hr />
+            <hr className='mt-2' />
     <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>
       {/* Hidden file input */}
       <input
