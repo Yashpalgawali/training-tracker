@@ -7,6 +7,7 @@ export const getTrainingsByEmployeeIdAndTrainingId = (empid,trainingid) => apiCl
 
 export const updateEmployeeTraining = (emptrain) => apiClient.put(`employee-training/`,emptrain)
 
+export const getAllEmployeeTrainings = () => apiClient.get(`employee-training/getalltrainings`)
 
 export const updateCompletionDate = (emphistid,completion_date) => apiClient.patch(`employee-training/training/${emphistid}`,{completion_date: completion_date})
 
@@ -23,3 +24,4 @@ export const getAllTrainingHistory =
                         () => apiClient.get(`employee-training/exporttrainings/excel`,{
                             responseType: 'arraybuffer'
                         })
+

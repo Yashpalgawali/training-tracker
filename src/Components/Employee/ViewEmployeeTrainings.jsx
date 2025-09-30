@@ -231,16 +231,16 @@ function addTrainingToEmployee(id) {
                         <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
                     </BootstrapTooltip>
                     View Employee Trainings
-                     <Button variant="contained" color="info" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <CloudDownloadIcon /> Download</Button>
+                     <Button variant="contained" color="info" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <CloudDownloadIcon style={{marginRight : '5px'}} /> Download</Button>
                           {/* <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button> */}
                 </Typography>
             </Box>
             
             <div >
-                <div style={{ float : 'left' }}  className="mb-3">
+                <div style={{ float : 'left' ,marginLeft: '5px'}}  className="mb-3 ">
                     <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
                 </div>
-                <div style={{ float : 'right' }}>
+                <div style={{ float : 'right' ,marginLeft: '5px'}}>
                     <label htmlFor="" >Designation:</label><strong> {employee.designation.desig_name}</strong>
                 </div>
                 <div style={{ float : 'left' , clear : 'both'}} className="mb-3">
