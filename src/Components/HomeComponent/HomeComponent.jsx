@@ -13,11 +13,14 @@ import { useState } from "react";
 
 import { Button, Card, CardActions, CardContent, Typography } from "@mui/material";
 import {
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip as RechartsTooltip, Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer
 } from "recharts";
 import { useEffect } from "react";
 import { getAllEmployeeTrainings } from "../api/EmployeeTrainingApiService";
@@ -49,74 +52,64 @@ export default function HomeComponent() {
     }
  const [data,setData] = useState([])
     useEffect(()=>{
+
       getAllEmployeeTrainings().then((response)=> {
         console.log(response.data)
-        //setData(response.data)
+        response.data.map((res) => (
+          console.log(res)
+        ))
+        
+        setData(response.data)
       })  
     },[])
+// const data = [
+//   { training: "SAP", employees: 120, trainings: 10, trained: 90, untrained: 30 },
+//   { training: "Fire Training", employees: 200, trainings: 15, trained: 160, untrained: 40 },
+//   { training: "SAP (PP Module)", employees: 150, trainings: 12, trained: 110, untrained: 40 }
+  
+// ];
     
-    const DrawerList = (
-    <Box sx={{ width: 200 }} role="presentation" onClick={toggleDrawer(false)}>
-      <List>
-        {['Companies', 'Departments', 'Trainings', 'Employee'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} onClick={()=>openFunction({text})} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+  //   const DrawerList = (
+  //   <Box sx={{ width: 200 }} role="presentation" onClick={toggleDrawer(false)}>
+  //     <List>
+  //       {['Companies', 'Departments', 'Trainings', 'Employee'].map((text, index) => (
+  //         <ListItem key={text} disablePadding>
+  //           <ListItemButton>
+  //             <ListItemIcon>
+  //               {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+  //             </ListItemIcon>
+  //             <ListItemText primary={text} onClick={()=>openFunction({text})} />
+  //           </ListItemButton>
+  //         </ListItem>
+  //       ))}
+  //     </List>
        
-    </Box>
-  );
+  //   </Box>
+  // );
     return (
         <div className="container"  >
           <Box>
             <Typography gutterBottom variant="h4">Welcome</Typography>
             <ResponsiveContainer width="100%" height={400}>
-      <PieChart>
-        {/* Pie for Employee Counts */}
-        <Pie
-          data={data}
-          dataKey="employees"
-          nameKey="competency"
-          cx="50%"
-          cy="50%"
-          outerRadius={120}
-          fill="#82ca9d"
-          label
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-emp-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
+              <BarChart
+                data={data}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="training.training_name" />
+                <YAxis />
+                {/* <YAxis domain={[0, 100]} ticks={[0,25,50,75,100]} /> */}
+                <RechartsTooltip />
+                <Legend />
 
-        {/* Pie for Competency % (inner ring) */}
-        <Pie
-          data={data}
-          dataKey="percentage"
-          nameKey="competency"
-          cx="50%"
-          cy="50%"
-          innerRadius={130}
-          outerRadius={160}
-          fill="#8884d8"
-          label
-        >
-          {data.map((entry, index) => (
-            <Cell key={`cell-perc-${index}`} fill={COLORS[index % COLORS.length]} />
-          ))}
-        </Pie>
+ <Bar dataKey="trainings" fill="#82ca9d" />
+                {/* <Bar dataKey="employees" fill="#8884d8" />
+                <Bar dataKey="trainings" fill="#82ca9d" />
+                <Bar dataKey="trained" fill="#ffc658" />
+                <Bar dataKey="untrained" fill="#ff7f50" /> */}
+              </BarChart>
+            </ResponsiveContainer>
 
-        <RechartsTooltip />
-        <Legend />
-      </PieChart>
-    </ResponsiveContainer>
-
-                 
             </Box>
         </div>
     )
