@@ -7,7 +7,7 @@ export const getTrainingsByEmployeeIdAndTrainingId = (empid,trainingid) => apiCl
 
 export const updateEmployeeTraining = (emptrain) => apiClient.put(`employee-training/`,emptrain)
 
-export const getAllEmployeeTrainings = () => apiClient.get(`employee-training/getalltrainings`)
+export const getAllEmployeeTrainingsForChart = () => apiClient.get(`employee-training/getalltrainingsforchart`)
 
 export const updateCompletionDate = (emphistid,completion_date) => apiClient.patch(`employee-training/training/${emphistid}`,{completion_date: completion_date})
 

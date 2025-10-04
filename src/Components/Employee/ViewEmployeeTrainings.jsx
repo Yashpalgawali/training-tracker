@@ -238,7 +238,7 @@ function addTrainingToEmployee(id) {
                 </Typography>
             </Box>
             
-            <div >
+            <div>
                 <div style={{ float : 'left' ,marginLeft: '5px'}}  className="mb-3 ">
                     <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
                 </div>

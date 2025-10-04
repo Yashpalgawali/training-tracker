@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useAuth } from "./Security/AuthContext";
 import LoginIcon from '@mui/icons-material/Login';
+import HomeIcon from '@mui/icons-material/Home';
 
 export default function HeaderComponent() {
     
@@ -40,10 +41,14 @@ export default function HeaderComponent() {
 
                         <li className="nav-item fs-5">
                         { isAuthenticated &&
-                             <Link className="nav-link" to="/companies">Companies</Link>
+                             <Link className="nav-link" to="/home"><HomeIcon /> Home</Link>
                         }
                         </li>             
-
+                         <li className="nav-item fs-5">
+                        { isAuthenticated &&
+                             <Link className="nav-link" to="/companies">Companies</Link>
+                        }
+                        </li>    
                         <li className="nav-item fs-5">
                         { isAuthenticated &&
                              <Link className="nav-link" to="/viewdesignations">Designations</Link>

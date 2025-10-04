@@ -25,7 +25,7 @@ export default function LoginComponent() {
         {
             navigate("/viewemployees")
         }
-    })
+    },[])
     async function handleSubmit(values) {
         const res =  await authContext.login(values.username,values.password)
    
