@@ -23,14 +23,14 @@ export default function LoginComponent() {
     useEffect(()=> {
         if(authContext.isAuthenticated==true)
         {
-            navigate("/viewemployees")
+            navigate("/home")
         }
     },[])
     async function handleSubmit(values) {
         const res =  await authContext.login(values.username,values.password)
    
         if(res) {            
-            navigate('/viewemployees')
+            navigate('/home')
         }
         // else {
         //     navigate('/login',{ replace : true})
