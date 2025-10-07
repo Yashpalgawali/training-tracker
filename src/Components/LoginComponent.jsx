@@ -50,8 +50,8 @@ export default function LoginComponent() {
     }
 
     return(
-        <div className="container" >
-
+        <div className="container"  >
+         
             <div  style={{
                 position: "relative",
                 height: "100vh",
@@ -103,8 +103,7 @@ export default function LoginComponent() {
                                             onBlur={props.handleBlur}
                                             error={props.touched.username && Boolean(props.errors.username)}
                                             helperText={<ErrorMessage name="username" />}
-                                            fullWidth />
-                                                              
+                                            fullWidth />  
                                 
                                     <TextField  
                                             type="password"
@@ -137,7 +136,7 @@ export default function LoginComponent() {
                     }
                 </Formik>
             </div>
-        </div>
+        </div> 
       </div>
     )
 }
