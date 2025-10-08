@@ -90,7 +90,7 @@ export default function TrainingTrackerComponent() {
           {/* </HashRouter> */}
           
           <footer className='footer' style={{ marginTop : '50px' }}   >
-            <p><strong>&copy;</strong> All Rights Reserved @<strong>Company Pvt. Ltd</strong></p>
+            {/* <p><strong>&copy;</strong> All Rights Reserved @<strong>Savera Group Pvt. Ltd</strong></p> */}
           </footer> 
        </AuthProvider>
     )

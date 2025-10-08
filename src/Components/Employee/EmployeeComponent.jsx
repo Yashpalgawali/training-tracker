@@ -118,7 +118,7 @@ export default function EmployeeComponent() {
             category : ''
        }
    
-    const formattedJoiningDate = dayjs(values.joining_date).format("DD/MM/YYYY") 
+    const formattedJoiningDate = dayjs(values.joining_date).format("DD-MM-YYYY") 
     let employee = {
             emp_name : values.emp_name,
             emp_code : values.emp_code,
@@ -160,7 +160,7 @@ export default function EmployeeComponent() {
                 <Formik
             enableReinitialize={true}
             initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, 
-                              joining_date: joining_date ? dayjs(joining_date,"DD/MM/YYYY") : null 
+                              joining_date: joining_date ? dayjs(joining_date,"DD-MM-YYYY") : null 
                           }}
             validateOnBlur={false}
             validateOnChange={false}
@@ -220,7 +220,7 @@ export default function EmployeeComponent() {
                   {/* Joining Date Picker */}
                     <Box mb={2}>
                     <DatePicker
-                        format="DD/MM/YYYY"
+                        format="DD-MM-YYYY"
                         label="Joining Date"
                         //  value={values.joining_date ? dayjs(values.joining_date, "DD/MM/YYYY") : ""}
                         value={values.joining_date}

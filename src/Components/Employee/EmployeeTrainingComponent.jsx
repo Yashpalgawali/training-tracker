@@ -130,7 +130,7 @@ export default function EmployeeTrainingComponent(){
             }) );
 
     async function onSubmit(values) {
-            
+
         let competencyObj = {
             competency_id : parseInt(values.score)
         }
@@ -138,13 +138,13 @@ export default function EmployeeTrainingComponent(){
             training_time_slot_id : parseInt(values.trainingTimeSlot)
         }
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
-       
+
         let employeeObject = null
-        
+
         if(id!= -1) {
             employeeObject = {
                 emp_id : parseInt(id)
-            }            
+            }
         }
         else {
             employeeObject = {
@@ -155,6 +155,7 @@ export default function EmployeeTrainingComponent(){
         let employeeTraining = {
                 employee : employeeObject,
                 trainingTimeSlot : timeSlotObj,
+
                 training_date : formattedTrainingDate,
                 training_ids : values.training_ids,
                 competency : competencyObj,
@@ -202,22 +203,19 @@ export default function EmployeeTrainingComponent(){
                 competency : competencyObj,
                 completion_date : formattedTrainingDate
             }
-
-            console.log("Employee Training ",employeeTraining)
-
-                saveEmployeeTraining(employeeTraining).then((response) => {             
+            saveEmployeeTraining(employeeTraining).then((response) => {             
                     showToast(response?.data?.responseMessage,"success")
                     if(id!= -1)
                     {
                         navigate(`/training/employee/${id}`)
                     }
                     else {
-                        navigate(`/viewemployees`)
+                       navigate(`/training/employee/${id}`)
                     }
                 })
                 .catch((error) => {
                     showToast(error?.data?.errorMessage,"error")
-                    navigate(`/viewemployees`)
+                    navigate(`/training/employee/${id}`)
                 })
             }
     }
