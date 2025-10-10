@@ -2,6 +2,8 @@ import { apiClient } from './apiClient';
 
 export const retrieveAllEmployees = () => apiClient.get('employee/')
 
+ export const retrieveAllEmployeesWithPagination = (page , size) => apiClient.get(`employee/paged?page=${page}&size=${size}/`)
+
 export const saveEmployee = (employee) => apiClient.post(`employee/`,employee)
 
 export const getEmployeeById = (id) => apiClient.get(`employee/${id}`)

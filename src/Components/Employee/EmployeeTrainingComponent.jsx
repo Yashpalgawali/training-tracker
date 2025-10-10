@@ -155,7 +155,6 @@ export default function EmployeeTrainingComponent(){
         let employeeTraining = {
                 employee : employeeObject,
                 trainingTimeSlot : timeSlotObj,
-
                 training_date : formattedTrainingDate,
                 training_ids : values.training_ids,
                 competency : competencyObj,
@@ -163,7 +162,7 @@ export default function EmployeeTrainingComponent(){
             }
 
            await getTrainingsByEmployeeIdAndTrainingId(employeeObject.emp_id,values.training_ids).then((result) => {
-                
+
                 employeeTraining = {
                         employee : employeeObject,
                         trainingTimeSlot : timeSlotObj,
@@ -205,8 +204,7 @@ export default function EmployeeTrainingComponent(){
             }
             saveEmployeeTraining(employeeTraining).then((response) => {             
                     showToast(response?.data?.responseMessage,"success")
-                    if(id!= -1)
-                    {
+                    if(id!= -1) {
                         navigate(`/training/employee/${id}`)
                     }
                     else {

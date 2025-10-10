@@ -1,6 +1,6 @@
 import $ from 'jquery'; // jQuery is required for DataTables to work
 import { useEffect, useRef, useState } from "react"
-import { downAllEmployeesList, downSampleEmployeesList, retrieveAllEmployees, uploadEmployeeList } from "../api/EmployeeApiService"
+import { downAllEmployeesList, downSampleEmployeesList, retrieveAllEmployees, retrieveAllEmployeesWithPagination, uploadEmployeeList } from "../api/EmployeeApiService"
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
@@ -21,6 +21,7 @@ import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
+import { apiClient } from '../api/apiClient';
 
 
 
@@ -47,51 +48,51 @@ export default function ViewEmployeeComponent() {
 
     const [loading, setLoading] = useState(false);
 
-    useEffect(
-    () =>
-        {
-            if (!didFetchRef.current) {
-                didFetchRef.current = true;                            
-                retriveAllEmployeeList()
-            }
-        },[])
+    // useEffect(
+    // () =>
+    //     {
+    //         if (!didFetchRef.current) {
+    //             didFetchRef.current = true;                            
+    //             retriveAllEmployeeList()
+    //         }
+    //     },[])
 
-    useEffect(() => {
-      if (tableRef.current) {
-        // 🔴 Destroy old DataTable if exists
-        if ($.fn.DataTable.isDataTable(tableRef.current)) {
-          $(tableRef.current).DataTable().destroy();
-        }
+       
+        
+    //   useEffect(() => {
+    //     if (tableRef.current) {
+    //       // 🔴 Destroy old DataTable if exists
+    //       if ($.fn.DataTable.isDataTable(tableRef.current)) {
+    //         $(tableRef.current).DataTable().destroy();
+    //       }
 
-        // ✅ Initialize only when data exists
-        if (empList.length > 0) {
-          $(tableRef.current).DataTable({
-            responsive: true,
-            destroy: true, // <-- Important, allows re-init
-            scrollX: true // ensures horizontal scroll
-          });
-        }
-      }
-    }, [empList]);
+    //       // ✅ Initialize only when data exists
+    //       if (empList.length > 0) {
+    //         $(tableRef.current).DataTable({
+    //             responsive: true,
+    //             destroy: true, // <-- Important, allows re-init
+    //             scrollX: true // ensures horizontal scroll
+    //         });
+    //       }
+    //     }
+    // }, [empList]);
 
-    function retriveAllEmployeeList() {
+    // function retriveAllEmployeeList() {
       
-        retrieveAllEmployees().then((response) => {          
-            setEmpList(response.data) 
-           
-            getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
-               if(response.data=='')
-               {
-                setDownloadTrainingDisabled(true)
-               }
-            })
-
-        }).catch((error)=>{      
-             setDisabled(true)   
-              setDownloadTrainingDisabled(true)   
-             showToast(error.response.data.errorMessage, "error")
-        })
-    }
+    //     retrieveAllEmployees().then((response) => {          
+    //         setEmpList(response.data) 
+         
+    //         getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
+    //            if(response.data=='') {
+    //             setDownloadTrainingDisabled(true)
+    //            }
+    //         })
+    //     }).catch((error)=>{      
+    //          setDisabled(true)   
+    //           setDownloadTrainingDisabled(true)   
+    //          showToast(error.response.data.errorMessage, "error")
+    //     })
+    // }
 
     function updateEmployee(id) {
         navigate(`/employee/${id}`)
@@ -162,7 +163,7 @@ export default function ViewEmployeeComponent() {
       setLoading(false);
       setFileName('')
       // 🔥 Refresh employee list after successful upload
-        retriveAllEmployeeList();
+        fetchEmployees();
            
     } catch (err) {      
         alert("File Upload failed");
@@ -182,6 +183,27 @@ function downloadAllEmployees() {
             link.click();
         })
     }
+
+   const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const pageSize = 10;
+  
+
+  const fetchEmployees = (page) => {
+    retrieveAllEmployeesWithPagination(page,pageSize)
+      .then((res) => {
+        setEmpList(res.data.employees);
+        setTotalPages(res.data.totalPages);
+        setCurrentPage(res.data.currentPage);
+      })
+      .catch((err) => console.error(err));
+  };
+
+   useEffect(() => {
+    fetchEmployees(currentPage);
+  }, [currentPage]);
+
 
     return (
         <div className="container">
@@ -254,17 +276,123 @@ function downloadAllEmployees() {
         {loading ? "Uploading..." : "Upload to Server"}
       </Button>
     </Box>
-            <div className='table-responsive'>
+     <div className="table-responsive">
+      <table className="table table-striped table-hover nowrap">
+        <thead>
+          <tr>
+            <th>Sr</th>
+            <th>Name</th>
+            <th>Employee Code</th>
+            <th>Joining Date</th>
+            <th>Designation</th>
+            <th>Department</th>
+            <th>Company</th>
+            <th>Contractor</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {empList.length === 0 ? (
+            <tr>
+              <td colSpan="9">No Employees Data Found</td>
+            </tr>
+          ) : (
+            empList.map((emp, index) => (
+              <tr key={emp.emp_id}>
+                <td>{currentPage * pageSize + index + 1}</td>
+                <td>{emp.emp_name}</td>
+                <td>{emp.emp_code}</td>
+                <td>{emp.joining_date}</td>
+                <td>{emp.designation}</td>
+                <td>{emp.department}</td>
+                <td>{emp.company}</td>
+                <td>{emp.contractor_name}</td>
+                <td>
+                  <Fab
+                    size="medium"
+                    color="primary"
+                    style={{ marginRight: 5 }}
+                    onClick={() => addTraining(emp.emp_id)}
+                  >
+                    <Tooltip title="Add Training">
+                      <AddIcon />
+                    </Tooltip>
+                  </Fab>
+                  <Fab
+                    size="medium"
+                    color="secondary"
+                    style={{ marginRight: 5 }}
+                    onClick={() => updateEmployee(emp.emp_id)}
+                  >
+                    <Tooltip title="Update Employee Details">
+                      <EditIcon />
+                    </Tooltip>
+                  </Fab>
+                  <Fab
+                    size="medium"
+                    color="warning"
+                    disabled={emp.trainings === ""}
+                    onClick={() => getEmployeeTrainings(emp.emp_id)}
+                  >
+                    <Tooltip title="View Training">
+                      {emp.trainings !== "" ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <DisabledVisibleIcon />
+                      )}
+                    </Tooltip>
+                  </Fab>
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+
+      {/* Pagination Buttons */}
+      <div className="mt-3">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+          disabled={currentPage === 0}
+          className="btn btn-sm btn-outline-primary mx-1"
+        >
+          Previous
+        </button>
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i)}
+            className={`btn btn-sm mx-1 ${
+              i === currentPage ? "btn-primary" : "btn-outline-primary"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
+          }
+          disabled={currentPage === totalPages - 1}
+          className="btn btn-sm btn-outline-primary mx-1"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+   
+            {/* <div className='table-responsive'>
                 <table ref={tableRef} className="table table-striped table-hover nowrap">
                     <thead>
                         <tr>
                             <th>Sr</th>
                             <th>Name</th>
-                            <th>Employee Code</th>     
-                            <th>Joining Date</th>                     
+                            <th>Employee Code</th>
+                            <th>Joining Date</th>
                             <th>Designation</th>
                             <th>Department</th>
                             <th>Company</th>
+                            <th>Contractor</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -272,7 +400,7 @@ function downloadAllEmployees() {
                     {
                         empList.length === 0 ? (
                             <tr>
-                                <td colSpan="8">No Employees Data Found</td>
+                                <td colSpan="9">No Employees Data Found</td>
                             </tr>
                         )
                         :
@@ -287,15 +415,14 @@ function downloadAllEmployees() {
                                         <td>{emp.designation}</td>                                       
                                         <td>{emp.department}</td>
                                         <td>{emp.company}</td>
-                                        <td>
-                                         
+                                        <td>{emp.contractor_name}</td>
+                                        <td>                                         
                                             <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(emp.emp_id) } aria-label="add">
                                                 <BootstrapTooltip title="Add Training">
                                                     <AddIcon />
                                                 </BootstrapTooltip>                                                
                                             </Fab>
-
-                                             <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">
+                                            <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">
                                                 <BootstrapTooltip title="Update Employee Details">
                                                     <EditIcon />
                                                 </BootstrapTooltip>                                                
@@ -327,7 +454,7 @@ function downloadAllEmployees() {
                  <div>
        
            </div>
-        </div>
+        </div> */}
       </div>
     )
 }
