@@ -55,9 +55,7 @@ export default function ViewEmployeeComponent() {
     //             didFetchRef.current = true;                            
     //             retriveAllEmployeeList()
     //         }
-    //     },[])
-
-       
+    //     },[])       
         
     //   useEffect(() => {
     //     if (tableRef.current) {
@@ -93,6 +91,56 @@ export default function ViewEmployeeComponent() {
     //          showToast(error.response.data.errorMessage, "error")
     //     })
     // }
+
+     
+  const dtInstance = useRef(null);
+
+  useEffect(() => {
+    // ✅ Initialize DataTable only once
+    dtInstance.current = $(tableRef.current).DataTable({
+      serverSide: true,
+      processing: true,
+      paging: true,
+      searching: true,
+      pageLength: 10,
+      ajax: function (data, callback) {
+        const page = Math.floor(data.start / data.length);
+        const size = data.length;
+
+        $.ajax({
+          url: apiClient.get(`/employee/paged?page=${page}&size=${size}`),
+          type: "GET",
+          success: function (res) {
+            callback({
+              recordsTotal: res.totalItems,
+              recordsFiltered: res.totalItems,
+              data: res.employees,
+            });
+          },
+          error: function () {
+            callback({ data: [] });
+          },
+        });
+      },
+      columns: [
+        { data: "emp_id", title: "ID" },
+        { data: "emp_name", title: "Name" },
+        { data: "emp_code", title: "Employee Code" },
+        { data: "joining_date", title: "Joining Date" },
+        { data: "designation.desig_name", title: "Designation" },
+        { data: "department.dept_name", title: "Department" },
+        { data: "department.company.comp_name", title: "Company" },
+        { data: "contractor_name", title: "Contractor" },
+      ],
+    });
+
+    // ✅ Cleanup only when component unmounts
+    return () => {
+      if (dtInstance.current) {
+        dtInstance.current.destroy(true);
+      }
+    };
+  }, []); // empty deps — runs only once
 
     function updateEmployee(id) {
         navigate(`/employee/${id}`)
@@ -163,7 +211,7 @@ export default function ViewEmployeeComponent() {
       setLoading(false);
       setFileName('')
       // 🔥 Refresh employee list after successful upload
-        fetchEmployees();
+      //  fetchEmployees();
            
     } catch (err) {      
         alert("File Upload failed");
@@ -184,25 +232,26 @@ function downloadAllEmployees() {
         })
     }
 
-   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  //  const [currentPage, setCurrentPage] = useState(0);
+  // const [totalPages, setTotalPages] = useState(0);
 
-  const pageSize = 10;
+  // const pageSize = 10;
   
 
-  const fetchEmployees = (page) => {
-    retrieveAllEmployeesWithPagination(page,pageSize)
-      .then((res) => {
-        setEmpList(res.data.employees);
-        setTotalPages(res.data.totalPages);
-        setCurrentPage(res.data.currentPage);
-      })
-      .catch((err) => console.error(err));
-  };
+  // const fetchEmployees = (page) => {
+  //   retrieveAllEmployeesWithPagination(page,pageSize)
+  //     .then((res) => {
+  //       console.log(res.data.employees)
+  //       setEmpList(res.data.employees);
+  //       setTotalPages(res.data.totalPages);
+  //       setCurrentPage(res.data.currentPage);
+  //     })
+  //     .catch((err) => console.error(err));
+  // };
 
-   useEffect(() => {
-    fetchEmployees(currentPage);
-  }, [currentPage]);
+  //  useEffect(() => {
+  //   fetchEmployees(currentPage);
+  // }, [currentPage]);
 
 
     return (
@@ -276,7 +325,31 @@ function downloadAllEmployees() {
         {loading ? "Uploading..." : "Upload to Server"}
       </Button>
     </Box>
-     <div className="table-responsive">
+
+<div className="table-responsive">
+      <table
+        ref={tableRef}
+        id="employeeTable"
+        className="table table-striped table-hover table-bordered nowrap"
+        style={{ width: "100%" }}
+      >
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Employee Code</th>
+            <th>Joining Date</th>
+            <th>Designation</th>
+            <th>Department</th>
+            <th>Company</th>
+            <th>Contractor</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+     {/* <div className="table-responsive">
       <table className="table table-striped table-hover nowrap">
         <thead>
           <tr>
@@ -303,9 +376,9 @@ function downloadAllEmployees() {
                 <td>{emp.emp_name}</td>
                 <td>{emp.emp_code}</td>
                 <td>{emp.joining_date}</td>
-                <td>{emp.designation}</td>
-                <td>{emp.department}</td>
-                <td>{emp.company}</td>
+                <td>{emp.designation.desig_name}</td>
+                <td>{emp.department.dept_name}</td>
+                <td>{emp.department.company.comp_name}</td>
                 <td>{emp.contractor_name}</td>
                 <td>
                   <Fab
@@ -350,7 +423,7 @@ function downloadAllEmployees() {
       </table>
 
       {/* Pagination Buttons */}
-      <div className="mt-3">
+      {/* <div className="mt-3">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
           disabled={currentPage === 0}
@@ -379,7 +452,7 @@ function downloadAllEmployees() {
           Next
         </button>
       </div>
-    </div>
+    </div> } */}
    
             {/* <div className='table-responsive'>
                 <table ref={tableRef} className="table table-striped table-hover nowrap">
