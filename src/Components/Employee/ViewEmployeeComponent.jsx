@@ -6,14 +6,13 @@ import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styl
 import 'datatables.net'; // DataTables core functionality
 import '../Employee/ViewEmployeeComponent.css';
 
-import { Box, Button, CircularProgress, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Stack, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import EditIcon from '@mui/icons-material/Edit';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility'; 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
@@ -21,9 +20,10 @@ import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
+
 import { apiClient } from '../api/apiClient';
 
-
+import ReactDOM from "react-dom/client"; // ✅ important for createRoot
 
  const BootstrapTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} arrow classes={{ popper: className }} />
@@ -43,10 +43,126 @@ export default function ViewEmployeeComponent() {
     const navigate = useNavigate()
     const didFetchRef = useRef(false)
     const tableRef = useRef(false)
+     const dataTable = useRef(false)
     const [disabled,setDisabled] = useState(false)
     const [disabledDownloadTraining,setDownloadTrainingDisabled] = useState(false)
 
     const [loading, setLoading] = useState(false);
+
+    useEffect(()=>{
+        const table = $(tableRef.current).DataTable({
+        serverSide: true,
+        processing: true,
+        ajax: async (data, callback) => {
+          try {
+            // DataTables sends: start, length, search[value], etc.
+            const params = {
+              start: data.start,
+              length: data.length 
+            };            
+
+            const response = await apiClient.get("employee/paged", { params });
+
+            // DataTables expects this exact structure
+            callback({
+              draw: data.draw,
+              recordsTotal: response.data.recordsTotal,
+              recordsFiltered: response.data.recordsFiltered,
+              data: response.data.data,
+            });
+          } catch (error) {
+            console.error("DataTables AJAX error:", error);
+            callback({ data: [] });
+          }
+        },
+        columns: [
+          { data: "emp_id", title: "ID" },
+          { data: "emp_name", title: "Name" },
+          { data: "emp_code", title: "Employee Code" },
+          { data: "joining_date", title: "Joininig Date" },
+          { data: "designation.desig_name", title: "Designation" },
+          { data: "department.dept_name", title: "Department" },
+          { data: "department.company.comp_name", title: "Company" },
+          { data: "department.company.comp_name", title: "Action" },
+          {
+          data: null,
+          title: "Actions",
+          orderable: false,
+          searchable: false,
+          createdCell: (td, cellData, rowData) => {
+            // Clear previous renders
+            const root = ReactDOM.createRoot(td);
+            root.render(
+              <div style={{ display: "flex", gap: "8px" }}>
+                <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(rowData.emp_id) } aria-label="add">
+                                              <BootstrapTooltip title="Add Training">
+                                                  <AddIcon />
+                                              </BootstrapTooltip>                                                
+                </Fab>
+
+                <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(rowData.emp_id) } aria-label="edit">
+                    <BootstrapTooltip title="Update Employee Details">
+                        <EditIcon />
+                    </BootstrapTooltip>                                                
+                </Fab>
+
+                {   
+                    rowData.trainings != '' ? (
+                        <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(rowData.emp_id) } aria-label="view">
+                          <BootstrapTooltip title="View Training">
+                              <VisibilityIcon />
+                          </BootstrapTooltip>
+                        </Fab>
+                    ) : (
+                        <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(rowData.emp_id) } aria-label="view">
+                          <BootstrapTooltip title="View Training">
+                              <DisabledVisibleIcon />
+                          </BootstrapTooltip>
+                        </Fab>
+                    )
+                }
+              </div>
+            );
+          },
+        },
+        ],
+      });
+
+      // Cleanup when component unmounts
+     return () => {
+      if ($.fn.DataTable.isDataTable(tableRef.current)) {
+        $(tableRef.current).DataTable().clear().destroy();
+      }
+    };
+    })
+
+    // useEffect(() => {
+    //     if (dataTable.current) {
+    //       dataTable.current.destroy();
+    //     }
+
+    //     dataTable.current = $(tableRef.current).DataTable({
+    //       processing: true,
+    //       serverSide: true,
+    //       ajax: {
+    //         url: apiClient.get("employee/paged"),
+    //         dataSrc: "data", // DataTables expects this key from response
+    //       },
+    //       columns: [
+    //         { data: "id", title: "ID" },
+    //         { data: "name", title: "Name" },
+    //         { data: "department", title: "Department" },
+    //       ],
+    //       pageLength: 10,
+    //       lengthMenu: [5, 10, 25, 50],
+    //     });
+
+    //     return () => {
+    //       if (dataTable.current) {
+    //         dataTable.current.destroy(true);
+    //       }
+    //     };
+    //   }, []);
 
     // useEffect(
     // () =>
@@ -56,7 +172,7 @@ export default function ViewEmployeeComponent() {
     //             retriveAllEmployeeList()
     //         }
     //     },[])       
-        
+
     //   useEffect(() => {
     //     if (tableRef.current) {
     //       // 🔴 Destroy old DataTable if exists
@@ -91,56 +207,7 @@ export default function ViewEmployeeComponent() {
     //          showToast(error.response.data.errorMessage, "error")
     //     })
     // }
-
-     
-  const dtInstance = useRef(null);
-
-  useEffect(() => {
-    // ✅ Initialize DataTable only once
-    dtInstance.current = $(tableRef.current).DataTable({
-      serverSide: true,
-      processing: true,
-      paging: true,
-      searching: true,
-      pageLength: 10,
-      ajax: function (data, callback) {
-        const page = Math.floor(data.start / data.length);
-        const size = data.length;
-
-        $.ajax({
-          url: apiClient.get(`/employee/paged?page=${page}&size=${size}`),
-          type: "GET",
-          success: function (res) {
-            callback({
-              recordsTotal: res.totalItems,
-              recordsFiltered: res.totalItems,
-              data: res.employees,
-            });
-          },
-          error: function () {
-            callback({ data: [] });
-          },
-        });
-      },
-      columns: [
-        { data: "emp_id", title: "ID" },
-        { data: "emp_name", title: "Name" },
-        { data: "emp_code", title: "Employee Code" },
-        { data: "joining_date", title: "Joining Date" },
-        { data: "designation.desig_name", title: "Designation" },
-        { data: "department.dept_name", title: "Department" },
-        { data: "department.company.comp_name", title: "Company" },
-        { data: "contractor_name", title: "Contractor" },
-      ],
-    });
-
-    // ✅ Cleanup only when component unmounts
-    return () => {
-      if (dtInstance.current) {
-        dtInstance.current.destroy(true);
-      }
-    };
-  }, []); // empty deps — runs only once
+      
 
     function updateEmployee(id) {
         navigate(`/employee/${id}`)
@@ -232,28 +299,6 @@ function downloadAllEmployees() {
         })
     }
 
-  //  const [currentPage, setCurrentPage] = useState(0);
-  // const [totalPages, setTotalPages] = useState(0);
-
-  // const pageSize = 10;
-  
-
-  // const fetchEmployees = (page) => {
-  //   retrieveAllEmployeesWithPagination(page,pageSize)
-  //     .then((res) => {
-  //       console.log(res.data.employees)
-  //       setEmpList(res.data.employees);
-  //       setTotalPages(res.data.totalPages);
-  //       setCurrentPage(res.data.currentPage);
-  //     })
-  //     .catch((err) => console.error(err));
-  // };
-
-  //  useEffect(() => {
-  //   fetchEmployees(currentPage);
-  // }, [currentPage]);
-
-
     return (
         <div className="container">
             <Box className="btnblock" sx={ {
@@ -325,208 +370,81 @@ function downloadAllEmployees() {
         {loading ? "Uploading..." : "Upload to Server"}
       </Button>
     </Box>
-
-<div className="table-responsive">
-      <table
-        ref={tableRef}
-        id="employeeTable"
-        className="table table-striped table-hover table-bordered nowrap"
-        style={{ width: "100%" }}
-      >
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Employee Code</th>
-            <th>Joining Date</th>
-            <th>Designation</th>
-            <th>Department</th>
-            <th>Company</th>
-            <th>Contractor</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-
-     {/* <div className="table-responsive">
-      <table className="table table-striped table-hover nowrap">
-        <thead>
-          <tr>
-            <th>Sr</th>
-            <th>Name</th>
-            <th>Employee Code</th>
-            <th>Joining Date</th>
-            <th>Designation</th>
-            <th>Department</th>
-            <th>Company</th>
-            <th>Contractor</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {empList.length === 0 ? (
-            <tr>
-              <td colSpan="9">No Employees Data Found</td>
-            </tr>
-          ) : (
-            empList.map((emp, index) => (
-              <tr key={emp.emp_id}>
-                <td>{currentPage * pageSize + index + 1}</td>
-                <td>{emp.emp_name}</td>
-                <td>{emp.emp_code}</td>
-                <td>{emp.joining_date}</td>
-                <td>{emp.designation.desig_name}</td>
-                <td>{emp.department.dept_name}</td>
-                <td>{emp.department.company.comp_name}</td>
-                <td>{emp.contractor_name}</td>
-                <td>
-                  <Fab
-                    size="medium"
-                    color="primary"
-                    style={{ marginRight: 5 }}
-                    onClick={() => addTraining(emp.emp_id)}
-                  >
-                    <Tooltip title="Add Training">
-                      <AddIcon />
-                    </Tooltip>
-                  </Fab>
-                  <Fab
-                    size="medium"
-                    color="secondary"
-                    style={{ marginRight: 5 }}
-                    onClick={() => updateEmployee(emp.emp_id)}
-                  >
-                    <Tooltip title="Update Employee Details">
-                      <EditIcon />
-                    </Tooltip>
-                  </Fab>
-                  <Fab
-                    size="medium"
-                    color="warning"
-                    disabled={emp.trainings === ""}
-                    onClick={() => getEmployeeTrainings(emp.emp_id)}
-                  >
-                    <Tooltip title="View Training">
-                      {emp.trainings !== "" ? (
-                        <VisibilityIcon />
-                      ) : (
-                        <DisabledVisibleIcon />
-                      )}
-                    </Tooltip>
-                  </Fab>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-
-      {/* Pagination Buttons */}
-      {/* <div className="mt-3">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-          disabled={currentPage === 0}
-          className="btn btn-sm btn-outline-primary mx-1"
-        >
-          Previous
-        </button>
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i)}
-            className={`btn btn-sm mx-1 ${
-              i === currentPage ? "btn-primary" : "btn-outline-primary"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-        <button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
-          }
-          disabled={currentPage === totalPages - 1}
-          className="btn btn-sm btn-outline-primary mx-1"
-        >
-          Next
-        </button>
-      </div>
-    </div> } */}
    
-            {/* <div className='table-responsive'>
-                <table ref={tableRef} className="table table-striped table-hover nowrap">
-                    <thead>
-                        <tr>
-                            <th>Sr</th>
-                            <th>Name</th>
-                            <th>Employee Code</th>
-                            <th>Joining Date</th>
-                            <th>Designation</th>
-                            <th>Department</th>
-                            <th>Company</th>
-                            <th>Contractor</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        empList.length === 0 ? (
-                            <tr>
-                                <td colSpan="9">No Employees Data Found</td>
-                            </tr>
-                        )
-                        :
-                        (
-                            empList.map(
-                                (emp,index) => (
-                                    <tr key={emp.emp_id}>
-                                        <td>{index+1}</td>
-                                        <td>{emp.emp_name}</td>
-                                        <td>{emp.emp_code}</td>
-                                        <td>{emp.joining_date}</td>    
-                                        <td>{emp.designation}</td>                                       
-                                        <td>{emp.department}</td>
-                                        <td>{emp.company}</td>
-                                        <td>{emp.contractor_name}</td>
-                                        <td>                                         
-                                            <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(emp.emp_id) } aria-label="add">
-                                                <BootstrapTooltip title="Add Training">
-                                                    <AddIcon />
-                                                </BootstrapTooltip>                                                
-                                            </Fab>
-                                            <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">
-                                                <BootstrapTooltip title="Update Employee Details">
-                                                    <EditIcon />
-                                                </BootstrapTooltip>                                                
-                                            </Fab>
-                                             {   
-                                              emp.trainings != '' ? (
-                                                 <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
-                                                    <BootstrapTooltip title="View Training">
-                                                        <VisibilityIcon />
-                                                    </BootstrapTooltip>
-                                                  </Fab>
-                                              ) : (
-                                                 <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
-                                                    <BootstrapTooltip title="View Training">
-                                                        <DisabledVisibleIcon />
-                                                    </BootstrapTooltip>
-                                                  </Fab>
-                                              )
-                                             }
-
-                                        </td>
-                                    </tr>
-                                )
-                            )
-                        )
-                    }
-                    </tbody>
-                </table>
-                 <div>
-       
-           </div>
+   <div className="mt-3">
+      <table ref={tableRef} className="display" style={{ width: "100%" }}></table>
+    </div>
+          {/* <div className='table-responsive'>
+              <table ref={tableRef} className="table table-striped table-hover nowrap">
+                  <thead>
+                      <tr>
+                          <th>Sr</th>
+                          <th>Name</th>
+                          <th>Employee Code</th>
+                          <th>Joining Date</th>
+                          <th>Designation</th>
+                          <th>Department</th>
+                          <th>Company</th>
+                          <th>Contractor</th>
+                          <th>Action</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                  {
+                      empList.length === 0 ? (
+                          <tr>
+                              <td colSpan="9">No Employees Data Found</td>
+                          </tr>
+                      )
+                      :
+                      (
+                          empList.map(
+                              (emp,index) => (
+                                  <tr key={emp.emp_id}>
+                                      <td>{index+1}</td>
+                                      <td>{emp.emp_name}</td>
+                                      <td>{emp.emp_code}</td>
+                                      <td>{emp.joining_date}</td>    
+                                      <td>{emp.designation}</td>                                       
+                                      <td>{emp.department}</td>
+                                      <td>{emp.company}</td>
+                                      <td>{emp.contractor_name}</td>
+                                      <td>                                         
+                                          <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(emp.emp_id) } aria-label="add">
+                                              <BootstrapTooltip title="Add Training">
+                                                  <AddIcon />
+                                              </BootstrapTooltip>                                                
+                                          </Fab>
+                                          <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">
+                                              <BootstrapTooltip title="Update Employee Details">
+                                                  <EditIcon />
+                                              </BootstrapTooltip>                                                
+                                          </Fab>
+                                            {   
+                                            emp.trainings != '' ? (
+                                                <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
+                                                  <BootstrapTooltip title="View Training">
+                                                      <VisibilityIcon />
+                                                  </BootstrapTooltip>
+                                                </Fab>
+                                            ) : (
+                                                <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
+                                                  <BootstrapTooltip title="View Training">
+                                                      <DisabledVisibleIcon />
+                                                  </BootstrapTooltip>
+                                                </Fab>
+                                            )
+                                            }
+                                      </td>
+                                  </tr>
+                              )
+                          )
+                      )
+                  }
+                  </tbody>
+              </table>
+            <div>
+          </div>
         </div> */}
       </div>
     )
