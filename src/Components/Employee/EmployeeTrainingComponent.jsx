@@ -143,12 +143,12 @@ export default function EmployeeTrainingComponent(){
 
         if(id!= -1) {
             employeeObject = {
-                emp_id : parseInt(id)
+                empId : parseInt(id)
             }
         }
         else {
             employeeObject = {
-                emp_id : parseInt(values.employee)
+                empId : parseInt(values.employee)
             }
         }
 
@@ -161,7 +161,7 @@ export default function EmployeeTrainingComponent(){
                 completion_date : formattedTrainingDate 
             }
 
-           await getTrainingsByEmployeeIdAndTrainingId(employeeObject.emp_id,values.training_ids).then((result) => {
+           await getTrainingsByEmployeeIdAndTrainingId(employeeObject.empId,values.training_ids).then((result) => {
 
                 employeeTraining = {
                         employee : employeeObject,

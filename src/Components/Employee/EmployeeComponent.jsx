@@ -57,9 +57,9 @@ export default function EmployeeComponent() {
             
             getEmployeeById(id).then((response) => {
                 
-                setEmpName(response.data.emp_name)
-                setEmpCode(response.data.emp_code)              
-                setContractorName(response.data?.contractor_name)
+                setEmpName(response.data.empName)
+                setEmpCode(response.data.empCode)              
+                setContractorName(response.data?.contractorName)
                 setDesignations(response.data.designation?.desig_id)                  
                 setCompany(response.data.department.company?.company_id)
                 
@@ -120,13 +120,13 @@ export default function EmployeeComponent() {
    
     const formattedJoiningDate = dayjs(values.joining_date).format("DD-MM-YYYY") 
     let employee = {
-            emp_name : values.emp_name,
-            emp_code : values.emp_code,
+            empName : values.emp_name,
+            empCode : values.emp_code,
             designation : designation,
             department : department,
             category : category,
-            contractor_name : values.contractor_name,
-            joining_date : formattedJoiningDate           
+            contractorName : values.contractor_name,
+            joiningDate : formattedJoiningDate           
         }
 
         if(id == -1) {
@@ -140,7 +140,7 @@ export default function EmployeeComponent() {
                 })
         }
         else {
-            employee.emp_id = id
+            employee.empId = id
             updateEmployee(employee).then((response)=>{
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)

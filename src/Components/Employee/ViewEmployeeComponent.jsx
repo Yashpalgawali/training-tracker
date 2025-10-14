@@ -76,10 +76,10 @@ export default function ViewEmployeeComponent() {
           }
         },
         columns: [
-          { data: "emp_id", title: "ID" },
-          { data: "emp_name", title: "Name" },
-          { data: "emp_code", title: "Employee Code" },
-          { data: "joining_date", title: "Joininig Date" },
+          { data: "empId", title: "ID" },
+          { data: "empName", title: "Name" },
+          { data: "empCode", title: "Employee Code" },
+          { data: "joiningDate", title: "Joininig Date" },
           { data: "designation.desig_name", title: "Designation" },
           { data: "department.dept_name", title: "Department" },
           { data: "department.company.comp_name", title: "Company" },
@@ -90,37 +90,55 @@ export default function ViewEmployeeComponent() {
           orderable: false,
           searchable: false,
           createdCell: (td, cellData, rowData) => {
+          
             // Clear previous renders
             const root = ReactDOM.createRoot(td);
+
+             getTrainingsByEmployeeId(rowData.empId).then((response)=> {
+                console.log('result is ',response)
+                // setDownloadTrainingDisabled(true)
+             });
+            
+            // if(status!='') {
+            //   alert('Trainings given to empid '+rowData.empId)
+            // }
+            // else {
+            //   alert('Trainings are NOT given'+rowData.empId)
+            // }
+
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
-                <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(rowData.emp_id) } aria-label="add">
+                <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
                                               <BootstrapTooltip title="Add Training">
                                                   <AddIcon />
                                               </BootstrapTooltip>                                                
                 </Fab>
 
-                <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(rowData.emp_id) } aria-label="edit">
+                <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(rowData.empId) } aria-label="edit">
                     <BootstrapTooltip title="Update Employee Details">
                         <EditIcon />
                     </BootstrapTooltip>                                                
                 </Fab>
-
-                {   
+                 <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(rowData.empId) } aria-label="view">
+                          <BootstrapTooltip title="View Training">
+                              <DisabledVisibleIcon />
+                          </BootstrapTooltip>
+                </Fab>
+                {/* {
                     rowData.trainings != '' ? (
-                        <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(rowData.emp_id) } aria-label="view">
+                        <Fab  size="medium" disabled={false} color="warning"  aria-label="view">
                           <BootstrapTooltip title="View Training">
                               <VisibilityIcon />
                           </BootstrapTooltip>
                         </Fab>
                     ) : (
-                        <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(rowData.emp_id) } aria-label="view">
+                        <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(rowData.empId) } aria-label="view">
                           <BootstrapTooltip title="View Training">
                               <DisabledVisibleIcon />
                           </BootstrapTooltip>
                         </Fab>
                     )
-                }
+                } */}
               </div>
             );
           },
@@ -136,34 +154,7 @@ export default function ViewEmployeeComponent() {
     };
     })
 
-    // useEffect(() => {
-    //     if (dataTable.current) {
-    //       dataTable.current.destroy();
-    //     }
-
-    //     dataTable.current = $(tableRef.current).DataTable({
-    //       processing: true,
-    //       serverSide: true,
-    //       ajax: {
-    //         url: apiClient.get("employee/paged"),
-    //         dataSrc: "data", // DataTables expects this key from response
-    //       },
-    //       columns: [
-    //         { data: "id", title: "ID" },
-    //         { data: "name", title: "Name" },
-    //         { data: "department", title: "Department" },
-    //       ],
-    //       pageLength: 10,
-    //       lengthMenu: [5, 10, 25, 50],
-    //     });
-
-    //     return () => {
-    //       if (dataTable.current) {
-    //         dataTable.current.destroy(true);
-    //       }
-    //     };
-    //   }, []);
-
+    
     // useEffect(
     // () =>
     //     {
@@ -196,11 +187,11 @@ export default function ViewEmployeeComponent() {
     //     retrieveAllEmployees().then((response) => {          
     //         setEmpList(response.data) 
          
-    //         getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
-    //            if(response.data=='') {
-    //             setDownloadTrainingDisabled(true)
-    //            }
-    //         })
+            // getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
+            //    if(response.data=='') {
+            //     setDownloadTrainingDisabled(true)
+            //    }
+            // })
     //     }).catch((error)=>{      
     //          setDisabled(true)   
     //           setDownloadTrainingDisabled(true)   
