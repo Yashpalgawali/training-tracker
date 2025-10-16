@@ -43,26 +43,43 @@ export default function ViewEmployeeComponent() {
     const navigate = useNavigate()
     const didFetchRef = useRef(false)
     const tableRef = useRef(false)
-     const dataTable = useRef(false)
+    const dataTable = useRef(false)
     const [disabled,setDisabled] = useState(false)
     const [disabledDownloadTraining,setDownloadTrainingDisabled] = useState(false)
 
     const [loading, setLoading] = useState(false);
+    const [isTrainingGiven,setIsTrainingGiven] = useState(false)
 
-    useEffect(()=>{
+    function getTrainingsOfEmployeeById(empid) {
+      let res;
+      getTrainingsByEmployeeId(empid).then((response) => {
+        res = true
+        return res
+      })
+    }
+
+    useEffect(()=> {
+       
         const table = $(tableRef.current).DataTable({
-        serverSide: true,
-        processing: true,
+          serverSide: true,
+          processing: true,
+          paging: true,        // ✅ ensure paging is enabled
+          searching: true,     // ✅ enable search box
+          info: true,          // ✅ show "Showing 1 to 10 of ..."
+          lengthChange: true,  // ✅ allow user to select rows per page
         ajax: async (data, callback) => {
           try {
             // DataTables sends: start, length, search[value], etc.
             const params = {
               start: data.start,
-              length: data.length 
+              length: data.length,
+              search: data.search.value || "",
+              orderColumn: data.columns[data.order[0].column].data, // which column to sort
+              orderDir: data.order[0].dir, // 'asc' or 'desc'
             };            
 
             const response = await apiClient.get("employee/paged", { params });
-
+           
             // DataTables expects this exact structure
             callback({
               draw: data.draw,
@@ -83,7 +100,7 @@ export default function ViewEmployeeComponent() {
           { data: "designation.desig_name", title: "Designation" },
           { data: "department.dept_name", title: "Department" },
           { data: "department.company.comp_name", title: "Company" },
-          { data: "department.company.comp_name", title: "Action" },
+         
           {
           data: null,
           title: "Actions",
@@ -93,19 +110,7 @@ export default function ViewEmployeeComponent() {
           
             // Clear previous renders
             const root = ReactDOM.createRoot(td);
-
-             getTrainingsByEmployeeId(rowData.empId).then((response)=> {
-                console.log('result is ',response)
-                // setDownloadTrainingDisabled(true)
-             });
-            
-            // if(status!='') {
-            //   alert('Trainings given to empid '+rowData.empId)
-            // }
-            // else {
-            //   alert('Trainings are NOT given'+rowData.empId)
-            // }
-
+ 
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
                 <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
@@ -119,40 +124,36 @@ export default function ViewEmployeeComponent() {
                         <EditIcon />
                     </BootstrapTooltip>                                                
                 </Fab>
-                 <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(rowData.empId) } aria-label="view">
-                          <BootstrapTooltip title="View Training">
-                              <DisabledVisibleIcon />
-                          </BootstrapTooltip>
-                </Fab>
-                {/* {
-                    rowData.trainings != '' ? (
-                        <Fab  size="medium" disabled={false} color="warning"  aria-label="view">
-                          <BootstrapTooltip title="View Training">
-                              <VisibilityIcon />
-                          </BootstrapTooltip>
-                        </Fab>
-                    ) : (
-                        <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(rowData.empId) } aria-label="view">
-                          <BootstrapTooltip title="View Training">
-                              <DisabledVisibleIcon />
-                          </BootstrapTooltip>
-                        </Fab>
-                    )
-                } */}
+                {
+                    <Fab  size="medium" disabled= {
+                                              ()=> {
+                                                getTrainingsOfEmployeeById(rowData.empId) 
+                                              }
+                    } color="warning" onClick={() => getTrainingsOfEmployeeById(rowData.empId) } aria-label="view">
+                    <BootstrapTooltip title="View Training">
+                        <VisibilityIcon />
+                    </BootstrapTooltip>
+                  </Fab>
+                }                  
               </div>
             );
           },
         },
         ],
       });
-
+    
       // Cleanup when component unmounts
      return () => {
-      if ($.fn.DataTable.isDataTable(tableRef.current)) {
-        $(tableRef.current).DataTable().clear().destroy();
-      }
+       if ($.fn.DataTable.isDataTable(tableRef.current)) {
+          table.destroy(true); // ✅ true keeps the original table element
+        }
+      //  if (tableRef.current) {
+      //   if ($.fn.DataTable.isDataTable(tableRef.current)) {
+      //     $(tableRef.current).DataTable().clear().destroy();
+      //   }
+      //  }
     };
-    })
+    }, [])
 
     
     // useEffect(
@@ -162,7 +163,7 @@ export default function ViewEmployeeComponent() {
     //             didFetchRef.current = true;                            
     //             retriveAllEmployeeList()
     //         }
-    //     },[])       
+    //     },[])
 
     //   useEffect(() => {
     //     if (tableRef.current) {

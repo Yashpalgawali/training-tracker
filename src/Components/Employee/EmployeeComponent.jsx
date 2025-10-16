@@ -23,7 +23,7 @@ export default function EmployeeComponent() {
     const [emp_code,setEmpCode] = useState('')
     const [contractor_name,setContractorName] = useState('')
 
-    const [joining_date, setJoiningDate] = useState('')
+    const [joiningDate, setJoiningDate] = useState('')
     const [category , setCategory] = useState('')
     const [designation , setDesignations] = useState('')
     const [company ,setCompany] = useState('')
@@ -49,28 +49,29 @@ export default function EmployeeComponent() {
             setCategoryList(response.data)
         })
         retrieveAllCompanies().then((response) => {
-                            setCompList(response.data)
+            setCompList(response.data)
         })
       
         if(id != -1) {
             setBtnValue('Update Employee') 
             
             getEmployeeById(id).then((response) => {
-                
+
                 setEmpName(response.data.empName)
                 setEmpCode(response.data.empCode)              
                 setContractorName(response.data?.contractorName)
                 setDesignations(response.data.designation?.desig_id)                  
                 setCompany(response.data.department.company?.company_id)
-                
+
+                setDepartment(response.data.department?.dept_id);
+
                 let comp_id = response.data.department.company?.company_id
 
-                getDepartmentByCompanyId(comp_id).then((response)=> {
-                    setDepartment(response.data.department?.dept_id);
+                getDepartmentByCompanyId(comp_id).then((response)=> {                   
                     setDeptList(response.data)                    
                 })                
-                setCategory(response.data.category?.category_id)
-                setJoiningDate(response.data?.joining_date);                 
+                setCategory(response.data.category?.category_id)                
+                setJoiningDate(response.data?.joiningDate)
             })           
         }
     },[id] )
@@ -118,7 +119,7 @@ export default function EmployeeComponent() {
             category : ''
        }
    
-    const formattedJoiningDate = dayjs(values.joining_date).format("DD-MM-YYYY") 
+    const formattedJoiningDate = dayjs(values.joiningDate).format("DD-MM-YYYY") 
     let employee = {
             empName : values.emp_name,
             empCode : values.emp_code,
@@ -149,7 +150,6 @@ export default function EmployeeComponent() {
                 navigate(`/viewemployees`)
             })
         }
-
     }
 
     return(
@@ -160,7 +160,7 @@ export default function EmployeeComponent() {
                 <Formik
             enableReinitialize={true}
             initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, 
-                              joining_date: joining_date ? dayjs(joining_date,"DD-MM-YYYY") : null 
+                              joiningDate: joiningDate ? dayjs(joiningDate,"DD-MM-YYYY") : null 
                           }}
             validateOnBlur={false}
             validateOnChange={false}
@@ -222,14 +222,14 @@ export default function EmployeeComponent() {
                     <DatePicker
                         format="DD-MM-YYYY"
                         label="Joining Date"
-                        //  value={values.joining_date ? dayjs(values.joining_date, "DD/MM/YYYY") : ""}
-                        value={values.joining_date}
-                        onChange={(date) =>  setFieldValue("joining_date", date) }
+                        //  value={values.joiningDate ? dayjs(values.joiningDate, "DD/MM/YYYY") : ""}
+                        value={values.joiningDate}
+                        onChange={(date) =>  setFieldValue("joiningDate", date) }
                         slotProps={{
                         textField: {
                                 fullWidth: true,
-                                error: touched.joining_date && Boolean(errors.joining_date),
-                                helperText: <ErrorMessage name="joining_date" />
+                                error: touched.joiningDate && Boolean(errors.joiningDate),
+                                helperText: <ErrorMessage name="joiningDate" />
                             }
                         }}
                     />
