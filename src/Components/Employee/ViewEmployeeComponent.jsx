@@ -76,10 +76,9 @@ export default function ViewEmployeeComponent() {
               search: data.search.value || "",
               orderColumn: data.columns[data.order[0].column].data, // which column to sort
               orderDir: data.order[0].dir, // 'asc' or 'desc'
-            };            
-
+            }; 
             const response = await apiClient.get("employee/paged", { params });
-           
+              setEmpList(response.data.data)
             // DataTables expects this exact structure
             callback({
               draw: data.draw,
@@ -96,8 +95,9 @@ export default function ViewEmployeeComponent() {
           { data: "empId", title: "ID" },
           { data: "empName", title: "Name" },
           { data: "empCode", title: "Employee Code" },
-          { data: "joiningDate", title: "Joininig Date" },
-          { data: "designation.desig_name", title: "Designation" },
+          { data: "joiningDate", title: "Joining Date" },
+          { data: "contractorName", title: "Contractor Name" },
+          { data: "designation.desigName", title: "Designation" },
           { data: "department.dept_name", title: "Department" },
           { data: "department.company.comp_name", title: "Company" },
          
@@ -114,9 +114,9 @@ export default function ViewEmployeeComponent() {
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
                 <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
-                                              <BootstrapTooltip title="Add Training">
-                                                  <AddIcon />
-                                              </BootstrapTooltip>                                                
+                    <BootstrapTooltip title="Add Training">
+                        <AddIcon />
+                    </BootstrapTooltip>                                                
                 </Fab>
 
                 <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(rowData.empId) } aria-label="edit">
@@ -278,8 +278,9 @@ export default function ViewEmployeeComponent() {
   };
 
 function downloadAllEmployees() {
+  setLoading(true)
     downAllEmployeesList().then((response)=> {
-                
+            setLoading(false)
             // Convert the array buffer to a Blob
             const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
@@ -355,7 +356,7 @@ function downloadAllEmployees() {
         onClick={handleUpload}
         disabled={!file || loading}
         
-        startIcon={
+        startIcon= {
           loading ? <CircularProgress size={20} color="teal" /> : null
         }
       >

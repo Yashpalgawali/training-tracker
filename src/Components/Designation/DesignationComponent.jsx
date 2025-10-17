@@ -7,8 +7,8 @@ import { showToast } from "../SharedComponent/showToast"
 
 export default function DesignationComponent() {
     const [btnValue,setBtnValue] = useState('Add Designtion')
-    const [desig_name,setDesigName]  = useState('')
-    const [desig_id,setDesigId]  = useState('')
+    const [desigName,setDesigName]  = useState('')
+    const [desigId,setDesigId]  = useState('')
 
     const navigate = useNavigate()
     const {id} = useParams()
@@ -16,15 +16,14 @@ export default function DesignationComponent() {
     useEffect( 
         () => {
             retrieveDesignationById()
-        } , 
-    )
+        },[] )
 
     function retrieveDesignationById ()  {
         if(id != -1) {
             setBtnValue('Update Designation')
             getDesignationById(id).then((response) => {
-                 setDesigName(response.data.desig_name)
-                 setDesigId(response.data.desig_id)
+                 setDesigName(response.data.desigName)
+                 setDesigId(response.data.desigId)
             }).catch((error)=>{
                 sessionStorage.setItem('reserr',error.response.data.errorMessage)
                 navigate(`/viewdesignations`)
@@ -37,16 +36,16 @@ export default function DesignationComponent() {
         
         let errors  = {} 
 
-        if(values.desig_name.length<2) {
-            errors.desig_name="Enter at least 3 characters"
+        if(values.desigName.length<2) {
+            errors.desigName="Enter at least 3 characters"
         }
         return errors
     }
 
     function onSubmit(values) {
         let designation = {
-            desig_id : id,
-            desig_name : values.desig_name
+            desigId : id,
+            desigName : values.desigName
         }
         if(id != -1) {
            
@@ -75,7 +74,7 @@ export default function DesignationComponent() {
         <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik
-                initialValues={ { desig_id  ,desig_name } }
+                initialValues={ { desigId  ,desigName } }
                 enableReinitialize={true}
                 validate={validate}
                 onSubmit={onSubmit}
@@ -90,16 +89,16 @@ export default function DesignationComponent() {
                                     noValidate
                                     autoComplete="off"
                                     >
-                                    <TextField  id="desig_name"
-                                                name="desig_name"
+                                    <TextField  id="desigName"
+                                                name="desigName"
                                                 label="Designation Name"
                                                 variant="standard"
                                                 placeholder="Enter Designation Name"
-                                                value={props.values.desig_name}
+                                                value={props.values.desigName}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
-                                                error={props.touched.desig_name && Boolean(props.errors.desig_name)}
-                                                helperText={<ErrorMessage name="desig_name" />}
+                                                error={props.touched.desigName && Boolean(props.errors.desigName)}
+                                                helperText={<ErrorMessage name="desigName" />}
                                                 fullWidth />
                                        
                             </Box>
