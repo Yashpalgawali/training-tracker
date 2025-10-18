@@ -19,7 +19,7 @@ import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
-import { getAllTrainingHistory, getTrainingsByEmployeeId } from "../api/EmployeeTrainingApiService";
+import { getAllTrainingHistory, getTrainingsByEmployeeId, getTrainingsCountByEmployeeId } from "../api/EmployeeTrainingApiService";
 
 import { apiClient } from '../api/apiClient';
 
@@ -51,11 +51,11 @@ export default function ViewEmployeeComponent() {
     const [isTrainingGiven,setIsTrainingGiven] = useState(false)
 
     function getTrainingsOfEmployeeById(empid) {
-      let res;
-      getTrainingsByEmployeeId(empid).then((response) => {
-        res = true
-        return res
+        
+      getTrainingsCountByEmployeeId(empid).then((response) => {
+        alert('Total trainings given to empid '+empid+' are = '+response.data)
       })
+         
     }
 
     useEffect(()=> {
@@ -78,6 +78,7 @@ export default function ViewEmployeeComponent() {
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
             const response = await apiClient.get("employee/paged", { params });
+            console.log(response)
               setEmpList(response.data.data)
             // DataTables expects this exact structure
             callback({
@@ -100,17 +101,17 @@ export default function ViewEmployeeComponent() {
           { data: "designation.desigName", title: "Designation" },
           { data: "department.dept_name", title: "Department" },
           { data: "department.company.comp_name", title: "Company" },
-         
           {
           data: null,
           title: "Actions",
           orderable: false,
           searchable: false,
           createdCell: (td, cellData, rowData) => {
-          
+
             // Clear previous renders
             const root = ReactDOM.createRoot(td);
- 
+            console.log(rowData)
+
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
                 <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
@@ -124,12 +125,9 @@ export default function ViewEmployeeComponent() {
                         <EditIcon />
                     </BootstrapTooltip>                                                
                 </Fab>
-                {
-                    <Fab  size="medium" disabled= {
-                                              ()=> {
-                                                getTrainingsOfEmployeeById(rowData.empId) 
-                                              }
-                    } color="warning" onClick={() => getTrainingsOfEmployeeById(rowData.empId) } aria-label="view">
+                {                 
+                  <Fab  size="medium" disabled= {rowData.isTrainingGiven}
+                     color="warning" onClick={() => getTrainingsOfEmployeeById(rowData.empId) } aria-label="view">
                     <BootstrapTooltip title="View Training">
                         <VisibilityIcon />
                     </BootstrapTooltip>
@@ -364,81 +362,10 @@ function downloadAllEmployees() {
       </Button>
     </Box>
    
-   <div className="mt-3">
-      <table ref={tableRef} className="display" style={{ width: "100%" }}></table>
+        <div className="mt-3">
+          <table ref={tableRef} className="display" style={{ width: "100%" }}></table>
+        </div>
+         
     </div>
-          {/* <div className='table-responsive'>
-              <table ref={tableRef} className="table table-striped table-hover nowrap">
-                  <thead>
-                      <tr>
-                          <th>Sr</th>
-                          <th>Name</th>
-                          <th>Employee Code</th>
-                          <th>Joining Date</th>
-                          <th>Designation</th>
-                          <th>Department</th>
-                          <th>Company</th>
-                          <th>Contractor</th>
-                          <th>Action</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                  {
-                      empList.length === 0 ? (
-                          <tr>
-                              <td colSpan="9">No Employees Data Found</td>
-                          </tr>
-                      )
-                      :
-                      (
-                          empList.map(
-                              (emp,index) => (
-                                  <tr key={emp.emp_id}>
-                                      <td>{index+1}</td>
-                                      <td>{emp.emp_name}</td>
-                                      <td>{emp.emp_code}</td>
-                                      <td>{emp.joining_date}</td>    
-                                      <td>{emp.designation}</td>                                       
-                                      <td>{emp.department}</td>
-                                      <td>{emp.company}</td>
-                                      <td>{emp.contractor_name}</td>
-                                      <td>                                         
-                                          <Fab size="medium" style={ { marginRight : 5 } }  color="primary" onClick={() => addTraining(emp.emp_id) } aria-label="add">
-                                              <BootstrapTooltip title="Add Training">
-                                                  <AddIcon />
-                                              </BootstrapTooltip>                                                
-                                          </Fab>
-                                          <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(emp.emp_id) } aria-label="edit">
-                                              <BootstrapTooltip title="Update Employee Details">
-                                                  <EditIcon />
-                                              </BootstrapTooltip>                                                
-                                          </Fab>
-                                            {   
-                                            emp.trainings != '' ? (
-                                                <Fab  size="medium" disabled={false} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
-                                                  <BootstrapTooltip title="View Training">
-                                                      <VisibilityIcon />
-                                                  </BootstrapTooltip>
-                                                </Fab>
-                                            ) : (
-                                                <Fab  size="medium" disabled={true} color="warning" onClick={() => getEmployeeTrainings(emp.emp_id) } aria-label="view">
-                                                  <BootstrapTooltip title="View Training">
-                                                      <DisabledVisibleIcon />
-                                                  </BootstrapTooltip>
-                                                </Fab>
-                                            )
-                                            }
-                                      </td>
-                                  </tr>
-                              )
-                          )
-                      )
-                  }
-                  </tbody>
-              </table>
-            <div>
-          </div>
-        </div> */}
-      </div>
-    )
+  )
 }

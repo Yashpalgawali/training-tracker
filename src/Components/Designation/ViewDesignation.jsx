@@ -3,14 +3,12 @@ import { useNavigate } from "react-router-dom"
 import { getAllDesignations }  from "../api/DesignationApiService"
 
 import $ from 'jquery'; // jQuery is required for DataTables to work
-
-import EditIcon from '@mui/icons-material/Edit';
-
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast";
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function ViewDesignation() {
 
@@ -77,11 +75,11 @@ export default function ViewDesignation() {
                         </tr>
                         ) : (
                         desiglist.map((desig,index) => (
-                            <tr key={desig.desig_id}>
+                            <tr key={desig.desigId}>
                             <td>{index+1}</td>
-                            <td>{desig.desig_name}</td>
+                            <td>{desig.desigName}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateDesignation(desig.desig_id)} > <Tooltip arrow placement="left" title={`Update ${desig.desig_name}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateDesignation(desig.desigId)} > <Tooltip arrow placement="left" title={`Update ${desig.desig_name}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))
