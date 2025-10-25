@@ -174,49 +174,47 @@ export default function EmployeeTrainingComponent(){
                 }
                 
                 sessionStorage.setItem('training_id',values.training_ids)
-            }).catch((error)=>{
-               console.log()
-            })
+                }).catch((error)=>{  })
 
             if(sessionStorage.getItem('training_id')!=null) {
-                let trainId  = parseInt(sessionStorage.getItem('training_id'))
                  
-                updateEmployeeTraining(employeeTraining).then((response) => {
-
+                updateEmployeeTraining(employeeTraining).then((response) => {                   
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
                 })
-                .catch((error) => {
+                .catch((error) => {                
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 }).finally(()=>{
                     sessionStorage.removeItem('training_id')
                 })                
             }
-            else {
-                employeeTraining = {
-                employee : employeeObject,
-                trainingTimeSlot : timeSlotObj,
-                training_date : formattedTrainingDate,
-                training_ids : values.training_ids,
-                competency : competencyObj,
-                completion_date : formattedTrainingDate
-            }
-            saveEmployeeTraining(employeeTraining).then((response) => {             
-                    showToast(response?.data?.responseMessage,"success")
-                    if(id!= -1) {
+            else {             
+                    employeeTraining = {
+                    employee : employeeObject,
+                    trainingTimeSlot : timeSlotObj,
+                    training_date : formattedTrainingDate,
+                    training_ids : values.training_ids,
+                    competency : competencyObj,
+                    completion_date : formattedTrainingDate
+                }
+                    saveEmployeeTraining(employeeTraining).then((response) => {
+                        if(id!= -1) {
+                            navigate(`/training/employee/${id}`)
+                            showToast(response?.data?.responseMessage,"success")
+                        }
+                        else {
+                            navigate(`/viewemployees`)
+                            showToast(response?.data?.responseMessage,"success")
+                        }
+                    })
+                    .catch((error) => {
+                        showToast(error?.data?.errorMessage,"error")
                         navigate(`/training/employee/${id}`)
-                    }
-                    else {
-                       navigate(`/training/employee/${id}`)
-                    }
-                })
-                .catch((error) => {
-                    showToast(error?.data?.errorMessage,"error")
-                    navigate(`/training/employee/${id}`)
-                })
+                    })
             }
     }
+    
     function validate(values) {
         let errors = {}
         if(id == -1)
@@ -239,10 +237,11 @@ export default function EmployeeTrainingComponent(){
 
         return errors
     }
-   return(
+
+    return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
-                    {btnValue} {employee.emp_name}
+                    {btnValue} {employee.empName}
                 </Typography>
                 <div>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -284,12 +283,12 @@ export default function EmployeeTrainingComponent(){
                                                 isDisabled={disabled}                                    
                                                 name="employee"
                                                 options={empList.map(emp => ({
-                                                    value: emp.emp_id,
-                                                    label: emp.emp_name
+                                                    value: emp.empId,
+                                                    label: emp.empName
                                                 }))}
                                                 value= {
                                                     empList
-                                                    .map(emp => ({ value: emp.emp_id, label: emp.emp_name }))
+                                                    .map(emp => ({ value: emp.empId, label: emp.empName }))
                                                     .find(option => option.value === values.employee) || null
                                                 }
                                                 onChange={(option) => setFieldValue('employee', option ? option.value : '')}
@@ -326,13 +325,7 @@ export default function EmployeeTrainingComponent(){
                                 <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
                                 <ErrorMessage name="training_ids" />
                                 </FormHelperText>  
-                                {/* <TrainingMultiSelect
-                               
-                                    options={options}
-                                    value={values.training_ids}
-                                    onChange={(value) => setFieldValue('training_ids', value)}
-                                />
-                                <FormHelperText><ErrorMessage name="training_ids" /></FormHelperText> */}
+                                
                             </Box>
 
                             {/* Competency Score */}

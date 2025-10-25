@@ -41,25 +41,24 @@ export default function ViewEmployeeComponent() {
     const [empList,setEmpList] = useState([])
 
     const navigate = useNavigate()
-    const didFetchRef = useRef(false)
-    const tableRef = useRef(false)
-    const dataTable = useRef(false)
+    
+    const tableRef = useRef(false)  
     const [disabled,setDisabled] = useState(false)
     const [disabledDownloadTraining,setDownloadTrainingDisabled] = useState(false)
 
     const [loading, setLoading] = useState(false);
-    const [isTrainingGiven,setIsTrainingGiven] = useState(false)
+    // const [isTrainingGiven,setIsTrainingGiven] = useState(false)
 
-    function getTrainingsOfEmployeeById(empid) {
-        
-      getTrainingsCountByEmployeeId(empid).then((response) => {
-        alert('Total trainings given to empid '+empid+' are = '+response.data)
-      })
+    function getTrainingsOfEmployeeById(empid) {       
+      navigate(`/training/employee/${empid}`)
          
     }
 
     useEffect(()=> {
-       
+        // ✅ Prevent reinitialization
+        if ($.fn.DataTable.isDataTable(tableRef.current)) {
+          return;
+        }
         const table = $(tableRef.current).DataTable({
           serverSide: true,
           processing: true,
@@ -78,8 +77,9 @@ export default function ViewEmployeeComponent() {
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
             const response = await apiClient.get("employee/paged", { params });
-            console.log(response)
+          console.log('Response is ',response.data.data)
               setEmpList(response.data.data)
+
             // DataTables expects this exact structure
             callback({
               draw: data.draw,
@@ -98,9 +98,9 @@ export default function ViewEmployeeComponent() {
           { data: "empCode", title: "Employee Code" },
           { data: "joiningDate", title: "Joining Date" },
           { data: "contractorName", title: "Contractor Name" },
-          { data: "designation.desigName", title: "Designation" },
-          { data: "department.dept_name", title: "Department" },
-          { data: "department.company.comp_name", title: "Company" },
+          { data: "designation", title: "Designation" },
+          { data: "department", title: "Department" },
+          { data: "company", title: "Company" },
           {
           data: null,
           title: "Actions",
@@ -126,12 +126,12 @@ export default function ViewEmployeeComponent() {
                     </BootstrapTooltip>                                                
                 </Fab>
                 {                 
-                  <Fab  size="medium" disabled= {rowData.isTrainingGiven}
+                  <Fab  size="medium" disabled= {!rowData.isTrainingGiven}
                      color="warning" onClick={() => getTrainingsOfEmployeeById(rowData.empId) } aria-label="view">
                     <BootstrapTooltip title="View Training">
                         <VisibilityIcon />
                     </BootstrapTooltip>
-                  </Fab>
+                  </Fab>  
                 }                  
               </div>
             );
@@ -145,59 +145,9 @@ export default function ViewEmployeeComponent() {
        if ($.fn.DataTable.isDataTable(tableRef.current)) {
           table.destroy(true); // ✅ true keeps the original table element
         }
-      //  if (tableRef.current) {
-      //   if ($.fn.DataTable.isDataTable(tableRef.current)) {
-      //     $(tableRef.current).DataTable().clear().destroy();
-      //   }
-      //  }
     };
     }, [])
 
-    
-    // useEffect(
-    // () =>
-    //     {
-    //         if (!didFetchRef.current) {
-    //             didFetchRef.current = true;                            
-    //             retriveAllEmployeeList()
-    //         }
-    //     },[])
-
-    //   useEffect(() => {
-    //     if (tableRef.current) {
-    //       // 🔴 Destroy old DataTable if exists
-    //       if ($.fn.DataTable.isDataTable(tableRef.current)) {
-    //         $(tableRef.current).DataTable().destroy();
-    //       }
-
-    //       // ✅ Initialize only when data exists
-    //       if (empList.length > 0) {
-    //         $(tableRef.current).DataTable({
-    //             responsive: true,
-    //             destroy: true, // <-- Important, allows re-init
-    //             scrollX: true // ensures horizontal scroll
-    //         });
-    //       }
-    //     }
-    // }, [empList]);
-
-    // function retriveAllEmployeeList() {
-      
-    //     retrieveAllEmployees().then((response) => {          
-    //         setEmpList(response.data) 
-         
-            // getTrainingsByEmployeeId(parseInt(response.data[0].emp_id)).then((response) =>{
-            //    if(response.data=='') {
-            //     setDownloadTrainingDisabled(true)
-            //    }
-            // })
-    //     }).catch((error)=>{      
-    //          setDisabled(true)   
-    //           setDownloadTrainingDisabled(true)   
-    //          showToast(error.response.data.errorMessage, "error")
-    //     })
-    // }
-      
 
     function updateEmployee(id) {
         navigate(`/employee/${id}`)
@@ -275,20 +225,48 @@ export default function ViewEmployeeComponent() {
     }
   };
 
-function downloadAllEmployees() {
-  setLoading(true)
-    downAllEmployeesList().then((response)=> {
-            setLoading(false)
-            // Convert the array buffer to a Blob
-            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  async function downloadAllEmployees() {
+  try {
+    
 
-            // Create a link element to trigger download
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'All Employees List.xlsx';
-            link.click();
-        })
-    }
+    const response = await downAllEmployeesList();
+
+    const blob = new Blob([response.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    // Create temporary download link
+    const link = document.createElement("a");
+    const url = window.URL.createObjectURL(blob);
+    link.href = url;
+    link.download = "All Employees List.xlsx";
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Download failed:", error);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// function downloadAllEmployees() {
+//   // setLoading(true)
+//     downAllEmployeesList().then((response)=> {
+//             // setLoading(false)
+//             // Convert the array buffer to a Blob
+//             const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+//             // Create a link element to trigger download
+//             const link = document.createElement('a');
+//             link.href = URL.createObjectURL(blob);
+//             link.download = 'All Employees List.xlsx';
+//             link.click();
+//         })
+//     }
 
     return (
         <div className="container">

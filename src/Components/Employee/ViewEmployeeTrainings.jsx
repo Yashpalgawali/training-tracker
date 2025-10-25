@@ -76,8 +76,8 @@ export default function ViewEmployeeTrainings() {
     const location = useLocation();
     
     const [employee,setEmployee] = useState({
-        emp_name : '',
-        emp_code : '',
+        empName : '',
+        empCode : '',
         department : {
             dept_name : ''
         },
@@ -227,11 +227,11 @@ function addTrainingToEmployee(id) {
         <div className="mb-2">
             <Box>
                 <Typography variant="h4" gutterBottom>
-                    <BootstrapTooltip title={`Give Training to ${employee.emp_name} `}>
+                    <BootstrapTooltip title={`Give Training to ${employee.empName} `}>
                         <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
                     </BootstrapTooltip>
                     View Employee Trainings
-                    <BootstrapTooltip title= {`Download trainings given to ${employee.emp_name}`}>
+                    <BootstrapTooltip title= {`Download trainings given to ${employee.empName}`}>
                      <Button variant="contained" color="info" style={ { float : 'right' } } onClick={()=>downloadTrainingHistory(id)}> <CloudDownloadIcon style={{marginRight : '5px'}} /> Download</Button>
                           {/* <Button style={ { float : 'left' ,marginLeft : '5px'} }   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button> */}
                     </BootstrapTooltip>
@@ -240,10 +240,10 @@ function addTrainingToEmployee(id) {
             
             <div>
                 <div style={{ float : 'left' ,marginLeft: '5px'}}  className="mb-3 ">
-                    <label htmlFor="" >Name:</label><strong> {employee.emp_name}</strong>
+                    <label htmlFor="" >Name:</label><strong> {employee.empName}</strong>
                 </div>
                 <div style={{ float : 'right' ,marginLeft: '5px'}}>
-                    <label htmlFor="" >Designation:</label><strong> {employee.designation.desig_name}</strong>
+                    <label htmlFor="" >Designation:</label><strong> {employee.designation.desigName}</strong>
                 </div>
                 <div style={{ float : 'left' , clear : 'both'}} className="mb-3">
                     <label htmlFor="" >Department:</label><strong> {employee.department.dept_name}</strong>
