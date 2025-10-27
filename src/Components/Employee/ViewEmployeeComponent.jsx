@@ -19,7 +19,7 @@ import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
-import { getAllTrainingHistory, getTrainingsByEmployeeId, getTrainingsCountByEmployeeId } from "../api/EmployeeTrainingApiService";
+import { getAllTrainingHistory, getTrainingsByEmployeeId, getTrainingsCount, getTrainingsCountByEmployeeId } from "../api/EmployeeTrainingApiService";
 
 import { apiClient } from '../api/apiClient';
 
@@ -59,6 +59,16 @@ export default function ViewEmployeeComponent() {
         if ($.fn.DataTable.isDataTable(tableRef.current)) {
           return;
         }
+
+        getTrainingsCount().then((response) => {
+          if(response.data == 0) {
+            setDownloadTrainingDisabled(true)
+          }
+          else {
+            setDownloadTrainingDisabled(false)
+          }
+        })
+
         const table = $(tableRef.current).DataTable({
           serverSide: true,
           processing: true,
@@ -77,8 +87,8 @@ export default function ViewEmployeeComponent() {
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
             const response = await apiClient.get("employee/paged", { params });
-          console.log('Response is ',response.data.data)
-              setEmpList(response.data.data)
+            
+            setEmpList(response.data.data)
 
             // DataTables expects this exact structure
             callback({
@@ -110,7 +120,6 @@ export default function ViewEmployeeComponent() {
 
             // Clear previous renders
             const root = ReactDOM.createRoot(td);
-            console.log(rowData)
 
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>

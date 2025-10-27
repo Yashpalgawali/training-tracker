@@ -60,12 +60,12 @@ export default function EmployeeComponent() {
                 setEmpName(response.data.empName)
                 setEmpCode(response.data.empCode)              
                 setContractorName(response.data?.contractorName)
-                setDesignations(response.data.designation?.desig_id)                  
-                setCompany(response.data.department.company?.company_id)
+                setDesignations(response.data.designation?.desigId)                  
+                setCompany(response.data.department.company?.companyId)
 
-                setDepartment(response.data.department?.dept_id);
+                setDepartment(response.data.department?.deptId);
 
-                let comp_id = response.data.department.company?.company_id
+                let comp_id = response.data.department.company?.companyId
 
                 getDepartmentByCompanyId(comp_id).then((response)=> {                   
                     setDeptList(response.data)                    
@@ -105,13 +105,13 @@ export default function EmployeeComponent() {
     function  onSubmit(values) {
       
        let designation = {
-            desig_id : values.designation,
-            desig_name : ''
+            desigId : values.designation,
+            desigName : ''
        }
 
        let department = {
-            dept_id : values.department,
-            dept_name : ''
+            deptId : values.department,
+            deptName : ''
        }
      
        let category = {
@@ -250,8 +250,8 @@ export default function EmployeeComponent() {
                     >
                         <MenuItem value="">Please Select Designation</MenuItem>
                         {desiglist.map((desig) => (
-                        <MenuItem key={desig.desig_id} value={desig.desig_id}>
-                            {desig.desig_name}
+                        <MenuItem key={desig.desigId} value={desig.desigId}>
+                            {desig.desigName}
                         </MenuItem>
                         ))}
                     </Select>
@@ -282,30 +282,7 @@ export default function EmployeeComponent() {
                     <FormHelperText><ErrorMessage name="category" /></FormHelperText>
                     </FormControl>
                 </Box>
-
-                 {/* Category
-                <Box mb={2}>
-                    <FormControl fullWidth variant="standard" error={touched.category && Boolean(errors.category)}>
-                    <InputLabel id="category-label">Category</InputLabel>
-                    <Select
-                        labelId="category-label"
-                        id="category"
-                        name="category"
-                        value={values.category}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        label="Category"
-                    >
-                        <MenuItem value="">Please Select Category</MenuItem>
-                        {categorylist.map((cat) => (
-                        <MenuItem key={cat.category_id} value={cat.category_id}>
-                            {cat.category}
-                        </MenuItem>
-                        ))}
-                    </Select>
-                    <FormHelperText><ErrorMessage name="category" /></FormHelperText>
-                    </FormControl>
-                </Box> */}
+               
                 {/* Company */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.company && Boolean(errors.company)}>
@@ -321,8 +298,8 @@ export default function EmployeeComponent() {
                     >
                         <MenuItem value="">Please Select Company</MenuItem>
                         {complist.map((company) => (
-                        <MenuItem key={company.company_id} value={company.company_id}>
-                            {company.comp_name}
+                        <MenuItem key={company.companyId} value={company.companyId}>
+                            {company.compName}
                         </MenuItem>
                         ))}
                     </Select>
@@ -345,8 +322,8 @@ export default function EmployeeComponent() {
                     >
                         <MenuItem value="">Please Select Department</MenuItem>
                         {deptlist.map((dept) => (
-                        <MenuItem key={dept.dept_id} value={dept.dept_id}>
-                            {dept.dept_name}
+                        <MenuItem key={dept.deptId} value={dept.deptId}>
+                            {dept.deptName}
                         </MenuItem>
                         ))}
                     </Select>
@@ -390,7 +367,7 @@ export default function EmployeeComponent() {
                                     {
                                         desiglist.map(
                                             (desig)=> (
-                                                <option key={desig.desig_id} value={desig.desig_id}>{desig.desig_name}</option>
+                                                <option key={desig.desigId} value={desig.desigId}>{desig.desigName}</option>
                                             )
                                         )
                                     }
@@ -403,7 +380,7 @@ export default function EmployeeComponent() {
                                     {
                                         complist.map(
                                             (company)=>(
-                                                <option key={company.company_id} value={company.company_id}>{company.comp_name}</option>
+                                                <option key={company.companyId} value={company.companyId}>{company.comp_name}</option>
                                             )
                                         )
                                     }
@@ -416,7 +393,7 @@ export default function EmployeeComponent() {
                                     {
                                         deptlist.map(
                                             (dept)=>(
-                                                <option key={dept.dept_id} value={dept.dept_id}>{dept.dept_name}</option>
+                                                <option key={dept.deptId} value={dept.deptId}>{dept.deptName}</option>
                                             )
                                         )
                                     }
@@ -449,7 +426,7 @@ export default function EmployeeComponent() {
                                         {
                                             companies.map(
                                                         (company) =>(
-                                                            <MenuItem key={company.company_id} value={company.company_id}>{company.comp_name}</MenuItem>
+                                                            <MenuItem key={company.companyId} value={company.companyId}>{company.comp_name}</MenuItem>
                                                         )
                                                         )   
                                         }
@@ -459,16 +436,16 @@ export default function EmployeeComponent() {
                                     <ErrorMessage name="companies" />
                                     </FormHelperText>
                                 </FormControl>
-                                    <TextField  id="dept_name"
-                                                name="dept_name"
+                                    <TextField  id="deptName"
+                                                name="deptName"
                                                 label="Department Name"
                                                 variant="filled"
                                                 placeholder="Enter Department Name"
-                                                value={props.values.dept_name}
+                                                value={props.values.deptName}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
-                                                error={props.touched.dept_name && Boolean(props.errors.dept_name)}
-                                                helperText={<ErrorMessage name="dept_name" />}
+                                                error={props.touched.deptName && Boolean(props.errors.deptName)}
+                                                helperText={<ErrorMessage name="deptName" />}
                                                 fullWidth />
                                 
                                        

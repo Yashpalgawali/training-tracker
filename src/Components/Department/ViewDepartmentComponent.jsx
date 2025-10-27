@@ -57,10 +57,7 @@ export default function ViewDepartmentComponent() {
     function retrieveAllDepartments() {
         getAllDepartments()
             .then((response) => setDeptList(response.data))
-            .catch((error) => {
-                                showToast(error.response.data.errorMessage, "error")
-                                
-                              })
+            .catch((error) => { showToast(error.response.data.errorMessage, "error") })
     }
 
     function updateDepartmentById(id) {
@@ -86,8 +83,7 @@ export default function ViewDepartmentComponent() {
         }
 
     return(
-        <div className="container">
-            
+        <div className="container">            
             <Box>
                 <Typography variant="h4" gutterBottom>View Departments 
                      <Button type="submit" variant="contained" color="info" style={ { float: 'left' } } disabled={!deptlist || deptlist.length=== 0} className="m-2" onClick={downloadAllDepartmentsList} > <Tooltip title="Download Department List" arrow> <CloudDownloadIcon /> Download </Tooltip></Button> 
@@ -112,12 +108,12 @@ export default function ViewDepartmentComponent() {
                         ): (
                         deptlist.map(
                             (dept,index)=> (
-                                <tr key={dept.dept_id}>
+                                <tr key={dept.dept_d}>
                                     <td>{index+1}</td>
-                                    <td>{dept.dept_name}</td>
-                                    <td>{dept.company?.comp_name}</td>
+                                    <td>{dept.deptName}</td>
+                                    <td>{dept.company?.compName}</td>
                                     <td>
-                                        <Button variant="contained" color="success" onClick={()=>updateDepartmentById(dept.dept_id)}> <Tooltip title={`Update Department ${dept.dept_name}`} arrow placement="left"><EditIcon /> &nbsp;UPDATE</Tooltip></Button>                                       
+                                        <Button variant="contained" color="success" onClick={()=>updateDepartmentById(dept.deptId)}> <Tooltip title={`Update Department ${dept.deptName}`} arrow placement="left"><EditIcon /> &nbsp;UPDATE</Tooltip></Button>                                       
                                     </td>
                                 </tr>
                             )

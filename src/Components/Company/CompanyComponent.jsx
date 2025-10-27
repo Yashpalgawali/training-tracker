@@ -8,8 +8,8 @@ import { showToast } from "../SharedComponent/showToast"
 export default function CompanyComponent () {
 
     const {id} =  useParams()
-    const [comp_name , setCompName] = useState('')
-    const [company_id ,setCompId] = useState('')
+    const [compName , setCompName] = useState('')
+    const [companyId ,setCompId] = useState('')
     const navigate = useNavigate()
     const [isDisabled, setIsDisabled] = useState(false)
     const [btnValue, setBtnValue] = useState('Add Company')
@@ -20,14 +20,14 @@ export default function CompanyComponent () {
             if(id != -1) {
                 setBtnValue('Update Company')         
                 retrieveCompanyById(id).then((response) => {
-                    setCompName(response.data.comp_name)
-                    setCompId(response.data.company_id)
+                    setCompName(response.data.compName)
+                    setCompId(response.data.companyId)
                 })
                 .catch((error)=> { 
                     sessionStorage.setItem('reserr',error.response.data.errorMessage)
                     navigate(`/companies`)
                 })
-        }
+            }
         };
 
         if(id){
@@ -39,7 +39,7 @@ export default function CompanyComponent () {
     function onSubmit(values) {
         setIsDisabled(true)
             const company = {
-                company_id : id , comp_name: values.comp_name
+                companyId : id , compName: values.compName
             }
 
             setTimeout(() => {
@@ -73,8 +73,8 @@ export default function CompanyComponent () {
    function validate(values) {
         let errors = { }
   
-        if(values.comp_name.length<2) {
-            errors.comp_name = 'Please Enter at least 2 Characters'
+        if(values.compName.length<2) {
+            errors.compName = 'Please Enter at least 2 Characters'
         }
         return errors
    }
@@ -82,7 +82,7 @@ export default function CompanyComponent () {
      return (
         <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-            <Formik initialValues={ { company_id,comp_name} }
+            <Formik initialValues={ { companyId,compName} }
                 enableReinitialize={true}
                 onSubmit={onSubmit}
                 validate={validate}
@@ -97,16 +97,16 @@ export default function CompanyComponent () {
                                 noValidate
                                 autoComplete="off"
                                 >
-                                <TextField  id="comp_name"
-                                            name="comp_name"
+                                <TextField  id="compName"
+                                            name="compName"
                                             label="Company Name"
                                             variant="standard"
                                             placeholder="Enter Company Name"
-                                            value={props.values.comp_name}
+                                            value={props.values.compName}
                                             onChange={props.handleChange}
                                             onBlur={props.handleBlur}
-                                            error={props.touched.comp_name && Boolean(props.errors.comp_name)}
-                                            helperText={<ErrorMessage name="comp_name" />}
+                                            error={props.touched.compName && Boolean(props.errors.compName)}
+                                            helperText={<ErrorMessage name="compName" />}
                                             fullWidth />
                                
                         </Box>

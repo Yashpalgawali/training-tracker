@@ -18,29 +18,28 @@ import {
 } from "recharts";
 
 import { getAllEmployeeTrainingsForChart } from "../api/EmployeeTrainingApiService";
- 
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff7f50", "#00c49f"];
 
 export default function HomeComponent() {
-    
+
     const [data,setData] = useState([])
     const [username,setUsername] = useState('')
 
     useEffect(()=> {
       let name = localStorage.getItem('username')    
       setUsername(name)
-      
+
       getAllEmployeeTrainingsForChart().then((response)=> {       
           setData(response.data)
         })
       },[])
-     
+
     return (
         <div className="container"  >
           <Box>
             <Typography gutterBottom variant="h4">Welcome {username}</Typography>
-            
+
             <ResponsiveContainer width="100%" height={400}>
                   <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -52,7 +51,7 @@ export default function HomeComponent() {
                     <Bar dataKey="comp50" fill="#fbc02d" name="50%" />
                     <Bar dataKey="comp75" fill="#1976d2" name="75%" />
                     <Bar dataKey="comp100" fill="#388e3c" name="100%" />                   
-                    
+
                   </BarChart>
             </ResponsiveContainer>
             </Box>

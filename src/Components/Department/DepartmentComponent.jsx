@@ -12,12 +12,12 @@ export default function DepartmentComponent() {
 
     const [btnValue,setBtnValue] = useState('Add Department')    
     const [companies,setCompanies] = useState([])
-    const [dept_id,setDeptId] = useState('')
-    const [dept_name,setDeptName] = useState('')
+    const [ deptId,setDeptId] = useState('')
+    const [deptName,setDeptName] = useState('')
     const [isDisabled, setIsDisabled] =  useState(false)
     const [company,setCompany] = useState({
-        company_id : '',
-        comp_name : ''
+        companyId : '',
+        compName : ''
     })
     const navigate = useNavigate()
     
@@ -32,8 +32,8 @@ export default function DepartmentComponent() {
            getDepartmentById(id).then((response) => {
             console.log('Dept Obj ',response.data)
                 setCompany(response.data.company)
-                setDeptId(response.data.dept_id)
-                setDeptName(response.data.dept_name)    
+                setDeptId(response.data.deptId)
+                setDeptName(response.data.deptName)    
            })
         }
      } 
@@ -44,8 +44,8 @@ export default function DepartmentComponent() {
          
     function validate(values) {
         let errors ={}
-        if(values.dept_name.length <=1 ) {
-            errors.dept_name='Department Name should be at least 2 characters'
+        if(values.deptName.length <=1 ) {
+            errors.deptName='Department Name should be at least 2 characters'
         }
         return errors
     }
@@ -59,11 +59,11 @@ export default function DepartmentComponent() {
         retrieveCompanyById(values.companies).then((response) => {
             
              const compObj = {
-                company_id   : response.data.company_id,
-                comp_name : response.data.comp_name
+                companyId   : response.data.companyId,
+                compName : response.data.compName
              }
             const dept = {
-                dept_id : values.dept_id , dept_name : values.dept_name , company : compObj
+                 deptId : values. deptId , deptName : values.deptName , company : compObj
             }
             if(id == -1) {
                 saveDepartment(dept).then((response)=> {
@@ -75,7 +75,7 @@ export default function DepartmentComponent() {
                 })
             }
             else { 
-                    if(dept.company.company_id==null || dept.company.company_id=='') {
+                    if(dept.company.companyId==null || dept.company.companyId=='') {
                         dept.company = company
                     }
                     
@@ -95,7 +95,7 @@ export default function DepartmentComponent() {
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
        
             <Formik
-                initialValues={ { dept_id , dept_name , companies:'' } }
+                initialValues={ {  deptId , deptName , companies:'' } }
                 enableReinitialize={true}
                 validate={validate}
                 onSubmit={onSubmit}
@@ -112,7 +112,7 @@ export default function DepartmentComponent() {
                                 {
                                  companies.map(
                                     (company) =>(
-                                        <option key={company.company_id} value={company.company_id}>{company.comp_name}</option>
+                                        <option key={company.companyId} value={company.companyId}>{company.compName}</option>
                                     )
                                  )   
                                 }
@@ -120,9 +120,9 @@ export default function DepartmentComponent() {
                             <ErrorMessage  component="div" className="alert alert-warning" name="companies"/>
                         </fieldset>
                             <fieldset>
-                            <label htmlFor="dept_name">Department</label>
-                            <Field className="form-control" name="dept_name"  type="text"></Field>
-                            <ErrorMessage  component="div" className="alert alert-warning" name="dept_name"/>
+                            <label htmlFor="deptName">Department</label>
+                            <Field className="form-control" name="deptName"  type="text"></Field>
+                            <ErrorMessage  component="div" className="alert alert-warning" name="deptName"/>
                         </fieldset>
                             <div>
                                 <Button type="submit" disabled={isDisabled} id="submit" variant="contained" color="primary" className="m-3">{btnValue}</Button>    
@@ -151,7 +151,7 @@ export default function DepartmentComponent() {
                                         {
                                             companies.map(
                                                         (company) =>(
-                                                            <MenuItem key={company.company_id} value={company.company_id}>{company.comp_name}</MenuItem>
+                                                            <MenuItem key={company.companyId} value={company.companyId}>{company.compName}</MenuItem>
                                                         )
                                                         )   
                                         }
@@ -161,16 +161,16 @@ export default function DepartmentComponent() {
                                     <ErrorMessage name="companies" />
                                     </FormHelperText>
                                 </FormControl>
-                                    <TextField  id="dept_name"
-                                                name="dept_name"
+                                    <TextField  id="deptName"
+                                                name="deptName"
                                                 label="Department Name"
                                                 variant="standard"
                                                 placeholder="Enter Department Name"
-                                                value={props.values.dept_name}
+                                                value={props.values.deptName}
                                                 onChange={props.handleChange}
                                                 onBlur={props.handleBlur}
-                                                error={props.touched.dept_name && Boolean(props.errors.dept_name)}
-                                                helperText={<ErrorMessage name="dept_name" />}
+                                                error={props.touched.deptName && Boolean(props.errors.deptName)}
+                                                helperText={<ErrorMessage name="deptName" />}
                                                 fullWidth />
                                 
                                        

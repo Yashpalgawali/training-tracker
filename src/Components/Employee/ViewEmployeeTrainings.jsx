@@ -82,7 +82,7 @@ export default function ViewEmployeeTrainings() {
             dept_name : ''
         },
         designation : {
-            desig_name : ''
+            desigName : ''
         }
     })
 
@@ -138,6 +138,7 @@ export default function ViewEmployeeTrainings() {
     function getTrainingsByEmpId() {
         setLoading(true);
         getTrainingsByEmployeeId(id).then((response) => {
+            console.log(response.data)
                 setEmployee(response.data[0].employee)                
                 setTrainingList(response.data)
        })
@@ -197,7 +198,7 @@ export default function ViewEmployeeTrainings() {
                 // Create a link element to trigger download
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = 'Training History - '+employee.emp_name+'.xlsx';
+                link.download = 'Training History - '+employee.empName+'.xlsx';
                 link.click();
         })
     }

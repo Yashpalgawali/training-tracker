@@ -81,11 +81,11 @@ export default function ViewCompanyComponent() {
                         </tr>
                         ) : (
                         complist.map((comp,index) => (
-                            <tr key={comp.company_id}>
+                            <tr key={comp.companyId}>
                             <td>{index+1}</td>
-                            <td>{comp.comp_name}</td>
+                            <td>{comp.compName}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompany(comp.company_id)} > <Tooltip title={`Update ${comp.comp_name}` } placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateCompany(comp.companyId)} > <Tooltip title={`Update ${comp.compName}` } placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))
