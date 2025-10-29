@@ -25,7 +25,6 @@ import ViewCompetenciesComponent from './Competency/ViewCompetenciesComponent';
 import CompetencyComponent from './Competency/CompetencyComponent';
 
 
-
 function AuthenticateRoute({children}) {
    const authContext  = useAuth()
 
@@ -37,8 +36,7 @@ function AuthenticateRoute({children}) {
 }
 
 export default function TrainingTrackerComponent() {
-
-  
+ 
     return(
       <AuthProvider>
        <BrowserRouter basename="/trainingtracker">
@@ -90,7 +88,7 @@ export default function TrainingTrackerComponent() {
           {/* </HashRouter> */}
           
           <footer className='footer' style={{ marginTop : '50px' }}   >
-            {/* <p><strong>&copy;</strong> All Rights Reserved @<strong>Savera Group Pvt. Ltd</strong></p> */}
+            <p><strong>&copy;</strong> All Rights Reserved @<strong>Company Pvt. Ltd</strong></p>
           </footer> 
        </AuthProvider>
     )

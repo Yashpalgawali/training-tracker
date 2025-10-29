@@ -234,48 +234,48 @@ export default function ViewEmployeeComponent() {
     }
   };
 
-  async function downloadAllEmployees() {
-  try {
+//   async function downloadAllEmployees() {
+//   try {
     
 
-    const response = await downAllEmployeesList();
+//     const response = await downAllEmployeesList();
 
-    const blob = new Blob([response.data], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
+//     const blob = new Blob([response.data], {
+//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+//     });
 
-    // Create temporary download link
-    const link = document.createElement("a");
-    const url = window.URL.createObjectURL(blob);
-    link.href = url;
-    link.download = "All Employees List.xlsx";
-    document.body.appendChild(link);
-    link.click();
+//     // Create temporary download link
+//     const link = document.createElement("a");
+//     const url = window.URL.createObjectURL(blob);
+//     link.href = url;
+//     link.download = "All Employees List.xlsx";
+//     document.body.appendChild(link);
+//     link.click();
 
-    // Cleanup
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (error) {
-    console.error("Download failed:", error);
-  } finally {
-    setLoading(false);
-  }
-}
+//     // Cleanup
+//     link.remove();
+//     window.URL.revokeObjectURL(url);
+//   } catch (error) {
+//     console.error("Download failed:", error);
+//   } finally {
+//     setLoading(false);
+//   }
+// }
 
-// function downloadAllEmployees() {
-//   // setLoading(true)
-//     downAllEmployeesList().then((response)=> {
-//             // setLoading(false)
-//             // Convert the array buffer to a Blob
-//             const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+function downloadAllEmployees() {
+  // setLoading(true)
+    downAllEmployeesList().then((response)=> {
+            // setLoading(false)
+            // Convert the array buffer to a Blob
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
-//             // Create a link element to trigger download
-//             const link = document.createElement('a');
-//             link.href = URL.createObjectURL(blob);
-//             link.download = 'All Employees List.xlsx';
-//             link.click();
-//         })
-//     }
+            // Create a link element to trigger download
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'All Employees List.xlsx';
+            link.click();
+        })
+    }
 
     return (
         <div className="container">

@@ -79,7 +79,7 @@ export default function ViewEmployeeTrainings() {
         empName : '',
         empCode : '',
         department : {
-            dept_name : ''
+            deptName : ''
         },
         designation : {
             desigName : ''
@@ -247,7 +247,7 @@ function addTrainingToEmployee(id) {
                     <label htmlFor="" >Designation:</label><strong> {employee.designation.desigName}</strong>
                 </div>
                 <div style={{ float : 'left' , clear : 'both'}} className="mb-3">
-                    <label htmlFor="" >Department:</label><strong> {employee.department.dept_name}</strong>
+                    <label htmlFor="" >Department:</label><strong> {employee.department.deptName}</strong>
                 </div>
             </div>
         </div>
