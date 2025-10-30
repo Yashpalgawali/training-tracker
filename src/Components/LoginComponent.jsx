@@ -1,4 +1,4 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { useEffect, useState } from "react";
 import { useAuth } from "./Security/AuthContext";
@@ -49,6 +49,26 @@ export default function LoginComponent() {
         return errors
     }
 
+     
+  const [openDialog, setOpenDialog] = useState(false);
+  const [email, setEmail] = useState('');
+
+  const handleForgotPassword = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+    setEmail('');
+  };
+
+  const handleSendResetLink = () => {
+    console.log('Reset link sent to:', email);
+    // You can call your API endpoint here, e.g.:
+    // axios.post('/api/forgot-password', { email });
+    handleClose();
+  };
+
     return(
         <div className="container"  >
          
@@ -88,8 +108,16 @@ export default function LoginComponent() {
                     {
                         (props) => (
                             <Form>
-                               <Box                                
-                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+                               <Box
+                                    // sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+                                    sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'flex-start', // 👈 aligns everything to the left
+                                            '& > :not(style)': { m: 1, width: '100%' },
+                                            maxWidth: 400,
+                                            mx: 'auto', // centers the form container itself horizontally
+                                        }}
                                     noValidate
                                     autoComplete="off"
                                     >
@@ -118,20 +146,63 @@ export default function LoginComponent() {
                                             error={props.touched.password && Boolean(props.errors.password)}
                                             helperText={<ErrorMessage name="password" />}
                                             fullWidth />
-                                                              
-                                </Box>
-
-                                <Box  className="btnvalue">
-                                    <Button
+                                    <Button 
+                                        sx={{ mt: 1,
+                                            alignSelf: 'flex-start', // 👈 ensures button aligns to left
+                                        }}
+                                        className="btnvalue"
                                         type="submit"
-                                        style={{ float: 'left' }}
+                                        // style={{ float: 'left' }}
                                         variant="contained"
-                                        color="primary"                                   
+                                        color="primary"
+                                       
                                     >
                                     Login
-                                    </Button>
+                                    </Button>  
+                                     {/* 👇 Forgot Password link */}
+                                    {/* <Typography
+                                        variant="body2"
+                                        sx={{
+                                        color: 'primary.main',
+                                        cursor: 'pointer',
+                                        textDecoration: 'underline',
+                                        ml: 1,
+                                        mb: 1,
+                                        }}
+                                        onClick={handleForgotPassword}
+                                    >
+                                        Forgot Password?
+                                    </Typography> */}
+                                                   
                                 </Box>
-                            </Form>
+
+                               {/* ======= DIALOG ======= */}
+                            <Dialog open={openDialog} onClose={handleClose}>
+                                <DialogTitle>Forgot Password</DialogTitle>
+                                <DialogContent>
+                                <Typography variant="body2" sx={{ mb: 2 }}>
+                                    Enter your registered email address to receive a password reset link.
+                                </Typography>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="email"
+                                    label="Email Address"
+                                    type="email"
+                                    fullWidth
+                                    variant="outlined"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
+                                </DialogContent>
+                                <DialogActions>
+                                <Button onClick={handleClose}>Cancel</Button>
+                                <Button onClick={handleSendResetLink} variant="contained">
+                                    Send Reset Link
+                                </Button>
+                                </DialogActions>
+                            </Dialog>
+                          </Form>
                         )
                     }
                 </Formik>

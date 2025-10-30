@@ -123,7 +123,7 @@ export default function ViewEmployeeComponent() {
 
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
-                <Fab size="medium"  container={document.body} color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
+                <Fab size="medium"   color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
                     <BootstrapTooltip title="Add Training">
                         <AddIcon />
                     </BootstrapTooltip>                                                
