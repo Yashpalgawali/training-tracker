@@ -118,19 +118,21 @@ export default function ViewEmployeeTrainings() {
     }, [traininglist] )
  
     useEffect(
-    () => 
+    () =>
         {
+
             if (!didFetchRef.current) {
                 didFetchRef.current = true;                            
                 getTrainingsByEmpId()
             }
         },[id])
-
+         
          const  getUpdatedTrainingsByEmpId = () => {
            
                 getTrainingsByEmployeeId(id).then((response) => {
                     
-                    setEmployee(response.data[0].employee)                
+                    setEmployee(response.data[0].employee)
+                    console.log(response.data)
                     setTrainingList(response.data)
                 });
         };

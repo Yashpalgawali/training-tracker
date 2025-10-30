@@ -32,3 +32,6 @@ body {
 }
  
 
+.navbar.fixed-top {
+  z-index: 1200 !important;
+}
