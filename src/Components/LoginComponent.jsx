@@ -154,8 +154,7 @@ export default function LoginComponent() {
                                         type="submit"
                                         // style={{ float: 'left' }}
                                         variant="contained"
-                                        color="primary"
-                                       
+                                        color="primary"                                       
                                     >
                                     Login
                                     </Button>  

@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 // For External Tomcat
-// export const apiClient = axios.create({
-//     baseURL : 'http://192.168.0.219:8081/trainingtrackerrest/'
-// })
+export const apiClient = axios.create({
+    baseURL : 'http://192.168.0.219:8081/trainingtrackerrest/'
+})
 
 // For Local Tomcat (STS)
 // export const apiClient = axios.create({
@@ -14,9 +14,9 @@ import axios from 'axios';
 //     baseURL : 'http://192.168.0.219:7878/trainingtrackerrest/'
 // })
 
-export const apiClient = axios.create({
-    baseURL : 'http://192.168.0.219:8080/trainingtrackerrest/'
-})
+// export const apiClient = axios.create({
+//     baseURL : 'http://192.168.0.219:8080/trainingtrackerrest/'
+// })
 
 
 // For Tomcat 10
