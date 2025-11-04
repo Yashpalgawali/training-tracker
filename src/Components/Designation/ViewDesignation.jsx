@@ -79,14 +79,12 @@ export default function ViewDesignation() {
                             <td>{index+1}</td>
                             <td>{desig.desigName}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateDesignation(desig.desigId)} > <Tooltip arrow placement="left" title={`Update ${desig.desig_name}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateDesignation(desig.desigId)} > <Tooltip arrow placement="left" title={`Update ${desig.desigName}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))
                       )
-                       
-                    }   
-                         
+                    }    
                 </tbody>
             </table>
         </div>
