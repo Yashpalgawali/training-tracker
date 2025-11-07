@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { getCompetency, getTrainingsByEmployeeId, getTrainingsHistoryByEmployeeId, updateCompletionDate, updateTrainingDateAndCompetency } from "../api/EmployeeTrainingApiService";
+import { getCompetency, getTrainingsByEmployeeId, getTrainingsCountByEmployeeTrainingId, getTrainingsHistoryByEmployeeId, updateCompletionDate, updateTrainingDateAndCompetency } from "../api/EmployeeTrainingApiService";
 
 import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
@@ -64,6 +64,7 @@ export default function ViewEmployeeTrainings() {
     const [scoreList ,setScoreList] = useState([])
     const [score,setScore] = useState('')
     const [trainTimeSlot,setTrainTimeSlot]  = useState([])
+    const [trainingCount,setTrainingCount] = useState(0)
 
     const {id} = useParams();
     const navigate = useNavigate()
@@ -120,7 +121,6 @@ export default function ViewEmployeeTrainings() {
     useEffect(
     () =>
         {
-
             if (!didFetchRef.current) {
                 didFetchRef.current = true;                            
                 getTrainingsByEmpId()
@@ -205,24 +205,32 @@ export default function ViewEmployeeTrainings() {
         })
     }
 
-     const handleChange = (event) => {        
+    const handleChange = (event) => {        
             setScore(event.target.value); // sets competency_id
         };
 
-const [selectedCompetency, setSelectedCompetency] = useState("");
-const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
+    const [selectedCompetency, setSelectedCompetency] = useState("");
+    const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
-const handleCompetencyChange = (event) => {
-  setSelectedCompetency(event.target.value);
-};
+    const handleCompetencyChange = (event) => {
+    setSelectedCompetency(event.target.value);
+    };
 
-const handleTimeSlotChange = (event) => {
-  setSelectedTimeSlot(event.target.value);
-};
+    const handleTimeSlotChange = (event) => {
+    setSelectedTimeSlot(event.target.value);
+    };
 
-function addTrainingToEmployee(id) {
-    navigate(`/train/employee/${id}`)
+    function addTrainingToEmployee(id) {
+        navigate(`/train/employee/${id}`)
+    }
 
+function getTrainingCountByTrainingHistId(id) {
+    
+    getTrainingsCountByEmployeeTrainingId(id).then((response) => {
+        console.log(response.data)
+        setTrainingCount(response.data)
+    })
+   
 }
 
     return (
@@ -300,6 +308,7 @@ function addTrainingToEmployee(id) {
                         <th>Complete Date</th>
                         <th>Time Slot</th>
                         <th>Competency Score</th>
+                        <th>Training Count</th>
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -321,9 +330,9 @@ function addTrainingToEmployee(id) {
                                                 <td>{training.completion_date ? (training.completion_date): (<span style={{ color : 'red'}}> Not Completed</span>)} </td>
                                                 <td>{training?.trainingTimeSlot.training_time_slot}</td>
                                                 <td>{training.competency.score}</td>
+                                                <td>{ getTrainingCountByTrainingHistId(training.emp_train_id)}</td>
                                                 <td> 
                                                     <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_id)}>{training.emp_train_hist_id} <EditIcon /> Update</Button>
-                                                    
                                                 </td>
                                             </tr>
                             )

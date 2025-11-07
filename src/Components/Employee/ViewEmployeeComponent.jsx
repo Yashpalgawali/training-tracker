@@ -15,7 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility'; 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
@@ -87,7 +87,7 @@ export default function ViewEmployeeComponent() {
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
             const response = await apiClient.get("employee/paged", { params });
-            
+            console.log(response.data.data)
             setEmpList(response.data.data)
 
             // DataTables expects this exact structure
@@ -297,7 +297,7 @@ function downloadAllEmployees() {
                         <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
                       </BootstrapTooltip>
                           <BootstrapTooltip title="Download Trainings given to Employees">
-                                  <Button   disabled={disabledDownloadTraining} variant="contained" color="inherit"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
+                                  <Button disabled={disabledDownloadTraining} variant="contained" color="inherit"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
                           </BootstrapTooltip> 
                       <BootstrapTooltip title="Download Sample excel To upload Employees">
                             <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>

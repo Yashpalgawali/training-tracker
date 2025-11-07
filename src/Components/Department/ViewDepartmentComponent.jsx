@@ -64,7 +64,7 @@ export default function ViewDepartmentComponent() {
          navigate(`/department/${id}`)
     }
 
-    function addNewDepartment(){
+    function addNewDepartment() {
         navigate(`/department/-1`)
     }
 
@@ -108,7 +108,7 @@ export default function ViewDepartmentComponent() {
                         ): (
                         deptlist.map(
                             (dept,index)=> (
-                                <tr key={dept.dept_d}>
+                                <tr key={dept.deptId}>
                                     <td>{index+1}</td>
                                     <td>{dept.deptName}</td>
                                     <td>{dept.company?.compName}</td>

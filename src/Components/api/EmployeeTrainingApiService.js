@@ -6,6 +6,8 @@ export const saveEmployeeTraining = (emptrain) => apiClient.post(`employee-train
 
 export const getTrainingsCountByEmployeeId = (empid) => apiClient.get(`employee-training/count/${empid}`)
 
+export const getTrainingsCountByEmployeeTrainingId = (tid) => apiClient.get(`employee-training/count/training/${tid}`)
+
 export const getTrainingsCount = () => apiClient.get(`employee-training/count/trainings`)
 
 export const getTrainingsByEmployeeIdAndTrainingId = (empid,trainingid) => apiClient.get(`employee-training/${empid}/training/${trainingid}`)
