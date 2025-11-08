@@ -61,14 +61,14 @@ export default function EmployeeTrainingComponent(){
 
     function getAllDetails() {
         
-        retrieveAllEmployees().then((response) => {
-           setEmpDisabled(false)
-            setEmployeeList(response.data)
-        }).catch((error)=> {
+        // retrieveAllEmployees().then((response) => {
+        //    setEmpDisabled(false)
+        //    setEmployeeList(response.data)
+        // }).catch((error)=> {
              
-            setEmpDisabled(true)
-            showToast(error.response.data.errorMessage, "error")
-        })
+        //     setEmpDisabled(true)
+        //     showToast(error.response.data.errorMessage, "error")
+        // })
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
         }).catch((error)=> {
@@ -100,33 +100,33 @@ export default function EmployeeTrainingComponent(){
             })
     }
 
-     function TrainingMultiSelect({ options }) {
-        const { setFieldValue, values } = useFormikContext();
+    //  function TrainingMultiSelect({ options }) {
+    //     const { setFieldValue, values } = useFormikContext();
 
-        return (
+    //     return (
             
-            <Select          
-                styles={customStyles}
-                name="training_ids"
-                isMulti
-                options={options}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                onChange={(selectedOptions) => {
-                    const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
-                    setFieldValue("training_ids", ids);
-                }}
-                value={options.filter((opt) => values.training_ids?.includes(opt.value))}
-            />
-        );
-    }
+    //         <Select          
+    //             styles={customStyles}
+    //             name="training_ids"
+    //             isMulti
+    //             options={options}
+    //             className="basic-multi-select"
+    //             classNamePrefix="select"
+    //             onChange={(selectedOptions) => {
+    //                 const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];                
+    //                 setFieldValue("training_ids", ids);
+    //             }}
+    //             value={options.filter((opt) => values.training_ids?.includes(opt.value))}
+    //         />
+    //     );
+    // }
 
     var options = ''
-    options =  trainingList    
-        .map((training) =>
+    options =  empList    
+        .map((emp) =>
             ({
-                value: training.training_id,
-                label: `${training.training_name}`
+                value: emp.empId,
+                label: `${emp.empName}`
             }) );
 
     async function onSubmit(values) {
@@ -140,79 +140,81 @@ export default function EmployeeTrainingComponent(){
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
 
         let employeeObject = null
+        
+        console.log(values)
 
-        if(id!= -1) {
-            employeeObject = {
-                empId : parseInt(id)
-            }
-        }
-        else {
-            employeeObject = {
-                empId : parseInt(values.employee)
-            }
-        }
+        // if(id!= -1) {
+        //     employeeObject = {
+        //         empId : parseInt(id)
+        //     }
+        // }
+        // else {
+        //     employeeObject = {
+        //         empId : parseInt(values.employee)
+        //     }
+        // }
 
-        let employeeTraining = {
-                employee : employeeObject,
-                trainingTimeSlot : timeSlotObj,
-                training_date : formattedTrainingDate,
-                training_ids : values.training_ids,
-                competency : competencyObj,
-                completion_date : formattedTrainingDate 
-            }
+        // let employeeTraining = {
+        //         employee : employeeObject,
+        //         trainingTimeSlot : timeSlotObj,
+        //         training_date : formattedTrainingDate,
+        //         training_ids : values.training_ids,
+        //         competency : competencyObj,
+        //         completion_date : formattedTrainingDate 
+        //     }
 
-           await getTrainingsByEmployeeIdAndTrainingId(employeeObject.empId,values.training_ids).then((result) => {
+        //     console.log(employeeTraining)
+        //    await getTrainingsByEmployeeIdAndTrainingId(employeeObject.empId,values.training_ids).then((result) => {
 
-                employeeTraining = {
-                        employee : employeeObject,
-                        trainingTimeSlot : timeSlotObj,
-                        training_date : formattedTrainingDate,
-                        training_ids : values.training_ids,
-                        competency : competencyObj,
-                        completion_date : formattedTrainingDate,
-                        emp_train_id : result.data.emp_train_id
-                }
-                
-                sessionStorage.setItem('training_id',values.training_ids)
-                }).catch((error)=>{  })
+        //         employeeTraining = {
+        //                 employee : employeeObject,
+        //                 trainingTimeSlot : timeSlotObj,
+        //                 training_date : formattedTrainingDate,
+        //                 training_ids : values.training_ids,
+        //                 competency : competencyObj,
+        //                 completion_date : formattedTrainingDate,
+        //                 emp_train_id : result.data.emp_train_id
+        //         }
+        //             sessionStorage.setItem('training_id',values.training_ids)
+        //         }).catch((error)=>{  })
 
-            if(sessionStorage.getItem('training_id')!=null) {
+        //     if(sessionStorage.getItem('training_id')!=null) {
                  
-                updateEmployeeTraining(employeeTraining).then((response) => {                   
-                    showToast(response?.data?.responseMessage,"success")
-                    navigate(`/viewemployees`)
-                })
-                .catch((error) => {                
-                    showToast(error?.data?.errorMessage,"error")
-                    navigate(`/viewemployees`)
-                }).finally(()=>{
-                    sessionStorage.removeItem('training_id')
-                })                
-            }
-            else {             
-                    employeeTraining = {
-                    employee : employeeObject,
-                    trainingTimeSlot : timeSlotObj,
-                    training_date : formattedTrainingDate,
-                    training_ids : values.training_ids,
-                    competency : competencyObj,
-                    completion_date : formattedTrainingDate
-                }
-                    saveEmployeeTraining(employeeTraining).then((response) => {
-                        if(id!= -1) {
-                            navigate(`/training/employee/${id}`)
-                            showToast(response?.data?.responseMessage,"success")
-                        }
-                        else {
-                            navigate(`/viewemployees`)
-                            showToast(response?.data?.responseMessage,"success")
-                        }
-                    })
-                    .catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
-                        navigate(`/training/employee/${id}`)
-                    })
-            }
+        //         updateEmployeeTraining(employeeTraining).then((response) => {                   
+        //             showToast(response?.data?.responseMessage,"success")
+        //             navigate(`/viewemployees`)
+        //         })
+        //         .catch((error) => {                
+        //             showToast(error?.data?.errorMessage,"error")
+        //             navigate(`/viewemployees`)
+        //         }).finally(()=>{
+        //             sessionStorage.removeItem('training_id')
+        //         })                
+        //     }
+        //     else {             
+        //             employeeTraining = {
+        //             employee : employeeObject,
+        //             trainingTimeSlot : timeSlotObj,
+        //             training_date : formattedTrainingDate,
+        //             training_ids : values.training_ids,
+        //             competency : competencyObj,
+        //             completion_date : formattedTrainingDate
+        //         }
+        //             saveEmployeeTraining(employeeTraining).then((response) => {
+        //                 if(id!= -1) {
+        //                     navigate(`/training/employee/${id}`)
+        //                     showToast(response?.data?.responseMessage,"success")
+        //                 }
+        //                 else {
+        //                     navigate(`/viewemployees`)
+        //                     showToast(response?.data?.responseMessage,"success")
+        //                 }
+        //             })
+        //             .catch((error) => {
+        //                 showToast(error?.data?.errorMessage,"error")
+        //                 navigate(`/training/employee/${id}`)
+        //             })
+        //     }
     }
     
     function validate(values) {
@@ -238,6 +240,40 @@ export default function EmployeeTrainingComponent(){
         return errors
     }
 
+    function EmployeeMultiSelect({ options }) {
+      const { setFieldValue, values } = useFormikContext();
+    
+      return (
+        <Select
+          styles={customStyles}
+          name="employee"
+          isMulti
+          options={options}
+          className="basic-multi-select"
+          classNamePrefix="select"
+          onChange={(selectedOptions) => {
+            const ids = selectedOptions ? selectedOptions.map((opt) => opt.value) : [];
+            setFieldValue("employee", ids);
+          }}
+          value={options.filter((opt) => values.employee?.includes(opt.value))}
+        />
+      );
+    }
+
+    function getEmployeesByTrainingAndCompetencyId() {
+        alert('Competency ID '+sessionStorage.getItem('competency_id'))
+        alert('Training ID '+sessionStorage.getItem('training_id'))
+
+         retrieveAllEmployees().then((response) => {
+           setEmpDisabled(false)
+           setEmployeeList(response.data)
+        }).catch((error)=> {
+             
+            setEmpDisabled(true)
+            showToast(error.response.data.errorMessage, "error")
+        })
+    }
+
     return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
@@ -249,7 +285,8 @@ export default function EmployeeTrainingComponent(){
                         initialValues={{
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
-                            employee: employee ? id : '',
+                           // employee: employee ? id : '',
+                            employee : [],
                             competency : score ? score : '',
                             training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
@@ -262,6 +299,68 @@ export default function EmployeeTrainingComponent(){
                         >
                         {({ setFieldValue, values, handleChange, handleBlur,  touched, errors }) => (
                             <Form>
+                                 {/* Training Select */}
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Select Trainings</Typography>
+                                <Select   
+                                        styles={customStyles}                                     
+                                        name="training_ids"
+                                        options={trainingList.map(training => ({
+                                            value: training.training_id,
+                                            label: training.training_name
+                                        }))}
+                                        value={
+                                            trainingList
+                                                .map(training => ({ value: training.training_id, label: training.training_name }))
+                                                .find(option => option.value === values.training_ids) || null
+                                        }
+                                            onChange={(option) =>   
+                                                {
+                                                    setFieldValue('training_ids', option ? option.value : '')                                                    
+                                                    sessionStorage.setItem('training_id',option.value)                                                    
+                                                }
+                                            }
+                                                
+                                             
+                                            placeholder="Select Training"
+                                    />
+                                <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
+                                <ErrorMessage name="training_ids" />
+                                </FormHelperText>  
+                                
+                            </Box>
+
+                             {/* Competency Score */}
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Competency Score</Typography>
+                                
+                                    <Select   
+                                        styles={customStyles}                                     
+                                        name="score"
+                                        options={scoreList.map(scores => ({
+                                            value: scores.competency_id,
+                                            label: scores.score
+                                        }))}
+                                        value={
+                                            scoreList
+                                                .map(scores => ({ value: scores.competency_id, label: scores.score }))
+                                                .find(option => option.value === values.score) || null
+                                        }
+                                        onChange={(option) => {
+                                            
+                                            setFieldValue('score', option ? option.value : '')
+                                            sessionStorage.setItem('competency_id',option.value)
+                                            getEmployeesByTrainingAndCompetencyId()
+                                        }}
+                                            placeholder="Select Score"
+                                    /> 
+                                
+                                <FormHelperText error={touched.competency && Boolean(errors.competency)}>
+                                <ErrorMessage name="competency" />
+                                </FormHelperText>  
+                                  
+                            </Box>
+
                             {/* Employee Dropdown */}
                             <Box mb={2}>                              
                                    
@@ -277,7 +376,8 @@ export default function EmployeeTrainingComponent(){
                                                 </>
                                             ) : (
                                             <>
-                                            <Select
+                                            <EmployeeMultiSelect options={options} />
+                                            {/* <Select
                                                 styles={customStyles}                                            
                                                 hideSelectedOptions={true}
                                                 isDisabled={disabled}                                    
@@ -294,66 +394,13 @@ export default function EmployeeTrainingComponent(){
                                                 onChange={(option) => setFieldValue('employee', option ? option.value : '')}
                                                 placeholder="Select Employee"
                                                
-                                            />                                
+                                            />                                 */}
                                             <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                             <ErrorMessage name="employee" />
                                             </FormHelperText>   
                                         </>
                                    )
                                 }
-
-                            </Box>
-
-                            {/* Training MultiSelect */}
-                            <Box mb={2}>
-                                <Typography variant="subtitle1">Select Trainings</Typography>
-                                <Select   
-                                        styles={customStyles}                                     
-                                        name="training_ids"
-                                        options={trainingList.map(training => ({
-                                            value: training.training_id,
-                                            label: training.training_name
-                                        }))}
-                                        value={
-                                            trainingList
-                                                .map(training => ({ value: training.training_id, label: training.training_name }))
-                                                .find(option => option.value === values.training_ids) || null
-                                        }
-                                            onChange={(option) => setFieldValue('training_ids', option ? option.value : '')}
-                                            placeholder="Select Training"
-                                    />
-                                <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
-                                <ErrorMessage name="training_ids" />
-                                </FormHelperText>  
-                                
-                            </Box>
-
-                            {/* Competency Score */}
-                            <Box mb={2}>
-                                <Typography variant="subtitle1">Competency Score</Typography>
-                                
-                                    <Select   
-                                        styles={customStyles}                                     
-                                        name="score"
-                                        options={scoreList.map(scores => ({
-                                            value: scores.competency_id,
-                                            label: scores.score
-                                        }))}
-                                        value={
-                                            scoreList
-                                                .map(scores => ({ value: scores.competency_id, label: scores.score }))
-                                                .find(option => option.value === values.score) || null
-                                        }
-                                            onChange={(option) => {
-                                                
-                                                setFieldValue('score', option ? option.value : '') }}
-                                            placeholder="Select Score"
-                                    /> 
-                                
-                                <FormHelperText error={touched.competency && Boolean(errors.competency)}>
-                                <ErrorMessage name="competency" />
-                                </FormHelperText>  
-                                  
                             </Box>
                              
                               {/* Training Date Picker */}
@@ -372,7 +419,6 @@ export default function EmployeeTrainingComponent(){
                                     }}
                                 />
                             </Box>
-                                
                                 
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Training Time Slot</Typography>
