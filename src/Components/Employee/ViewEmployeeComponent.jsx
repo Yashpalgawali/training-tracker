@@ -111,6 +111,8 @@ export default function ViewEmployeeComponent() {
           { data: "designation", title: "Designation" },
           { data: "department", title: "Department" },
           { data: "company", title: "Company" },
+          { data: "status", title: "Status" },
+           
           {
           data: null,
           title: "Actions",
@@ -120,10 +122,19 @@ export default function ViewEmployeeComponent() {
 
             // Clear previous renders
             const root = ReactDOM.createRoot(td);
+            let disabled = false
 
+            if(rowData.status==="InActive") {
+              disabled = true
+            }
+            else {
+              disabled = false
+            }
+           
+            
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
-                <Fab size="medium"   color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
+                <Fab size="medium"  disabled={disabled}  color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
                     <BootstrapTooltip title="Add Training">
                         <AddIcon />
                     </BootstrapTooltip>                                                

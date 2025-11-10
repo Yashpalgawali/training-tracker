@@ -17,12 +17,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 export default function EmployeeComponent() {
 
-    const [btnValue,setBtnValue] = useState('Add Employee')
+    const [btnValue, setBtnValue] = useState('Add Employee')
  
     const [emp_name, setEmpName] = useState('')
-    const [emp_code,setEmpCode] = useState('')
-    const [contractor_name,setContractorName] = useState('')
-
+    const [emp_code, setEmpCode] = useState('')
+    const [contractor_name, setContractorName] = useState('')
     const [joiningDate, setJoiningDate] = useState('')
     const [category , setCategory] = useState('')
     const [designation , setDesignations] = useState('')
@@ -33,6 +32,12 @@ export default function EmployeeComponent() {
     const [complist , setCompList] = useState([])
     const [deptlist , setDeptList] = useState([])
     const [categorylist , setCategoryList] = useState([])
+    const [statusList, setStatusList] = useState([
+        { statusId: 1, statusLabel: "Active" },
+        { statusId: 2, statusLabel: "Inactive" }
+    ])
+
+    const [status,setStatus] = useState('')
 
     const [loading,setLoading] = useState(false)
 
@@ -44,17 +49,16 @@ export default function EmployeeComponent() {
         getAllDesignations().then((response) => {
             setDesigList(response.data)
         })
-      
         retrieveAllCategories().then((response) => {            
             setCategoryList(response.data)
         })
         retrieveAllCompanies().then((response) => {
             setCompList(response.data)
         })
-      
+
         if(id != -1) {
             setBtnValue('Update Employee') 
-            
+
             getEmployeeById(id).then((response) => {
 
                 setEmpName(response.data.empName)
@@ -64,6 +68,7 @@ export default function EmployeeComponent() {
                 setCompany(response.data.department.company?.companyId)
 
                 setDepartment(response.data.department?.deptId);
+                setStatus(response.data.status)
 
                 let comp_id = response.data.department.company?.companyId
 
@@ -127,9 +132,10 @@ export default function EmployeeComponent() {
             department : department,
             category : category,
             contractorName : values.contractor_name,
-            joiningDate : formattedJoiningDate           
+            joiningDate : formattedJoiningDate,
+            status : values.status
         }
-
+ 
         if(id == -1) {
             saveEmployee(employee).then((response) => {                
                   showToast(response?.data?.responseMessage,"success")
@@ -151,21 +157,58 @@ export default function EmployeeComponent() {
             })
         }
     }
+    function validate(values) {
+        let errors = {}
 
+        if(values.emp_name=="") {
+            errors.emp_name = "Please enter Employee Name "
+        }
+
+        if(values.emp_code=="") {
+            errors.emp_code = "Please enter Employee Code "
+        }
+
+        if(values.contractor_name=="") {
+            errors.contractor_name = "Please enter Contractor Name "
+        }
+
+        if(values.joiningDate==null) {
+            errors.joiningDate = "Please Select Joining Date "
+        }
+
+        if(values.designation=="") {
+            errors.designation = "Please Select Designation "
+        }
+
+        if(values.category=="") {
+            errors.category = "Please Select Category "
+        }
+
+        if(values.company=="") {
+            errors.company = "Please Select Company "
+        }
+
+        if(values.department=="") {
+            errors.department = "Please Select Department "
+        }
+
+        return errors
+    }
     return(
         <div className="container">
            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
              <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <Formik
-            enableReinitialize={true}
-            initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, 
-                              joiningDate: joiningDate ? dayjs(joiningDate,"DD-MM-YYYY") : null 
-                          }}
-            validateOnBlur={false}
-            validateOnChange={false}
-            onSubmit={onSubmit}
-            >
+                    enableReinitialize={true}
+                    initialValues={{ emp_name, emp_code, designation, department, company, category, contractor_name, status,
+                                    joiningDate: joiningDate ? dayjs(joiningDate,"DD-MM-YYYY") : null 
+                                }}
+                    validateOnBlur={false}
+                    validateOnChange={false}
+                    validate={validate}
+                    onSubmit={onSubmit}
+                >
             {({ setFieldValue, values, handleChange, handleBlur, errors, touched }) => (
                 <Form>
                 {/* Employee Name */}
@@ -328,9 +371,32 @@ export default function EmployeeComponent() {
                         ))}
                     </Select>
                     <FormHelperText><ErrorMessage name="department" /></FormHelperText>
-                    </FormControl>
+                   </FormControl>
                 </Box>
 
+                {/* Employee Status */}
+                <Box mb={2}>
+                    <FormControl fullWidth variant="standard" error={touched.status && Boolean(errors.status)}>
+                    <InputLabel id="status-label">Status</InputLabel>
+                    <Select
+                        labelId="status-label"
+                        id="status"
+                        name="status"
+                        value={values.status}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        label="Status"
+                    >
+                        <MenuItem value="">Please Select Status</MenuItem>
+                        {statusList.map((status) => (
+                        <MenuItem key={status.statusId} value={status.statusId}>
+                            {status.statusLabel}
+                        </MenuItem>
+                        ))}
+                    </Select>
+                    <FormHelperText><ErrorMessage name="status" /></FormHelperText>
+                    </FormControl>
+                </Box>
                 {/* Submit Button */}
                 <Box mt={3}>
                     <Button type="submit" variant="contained" color="primary">
