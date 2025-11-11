@@ -82,7 +82,8 @@ export default function ViewEmployeeComponent() {
             const params = {
               start: data.start,
               length: data.length,
-              search: data.search.value || "",
+              // search: data.search.value || "",
+              search: String(data.search.value || "").trim(),
               orderColumn: data.columns[data.order[0].column].data, // which column to sort
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
@@ -130,7 +131,6 @@ export default function ViewEmployeeComponent() {
             else {
               disabled = false
             }
-           
             
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
@@ -301,18 +301,18 @@ function downloadAllEmployees() {
                   alignItems={ { xs:'stretch' , sm: 'flex-end' } }
                   sx={{ alignSelf: {  xs : 'stretch' ,sm: 'center' }   }}
                 >
-                      <BootstrapTooltip title="Download Employee List">
-                          <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
-                      </BootstrapTooltip>
-                      <BootstrapTooltip title="Add Employee">
-                        <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
-                      </BootstrapTooltip>
-                          <BootstrapTooltip title="Download Trainings given to Employees">
-                                  <Button disabled={disabledDownloadTraining} variant="contained" color="inherit"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
-                          </BootstrapTooltip> 
-                      <BootstrapTooltip title="Download Sample excel To upload Employees">
-                            <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
-                      </BootstrapTooltip> 
+                    <BootstrapTooltip title="Download Employee List">
+                        <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
+                    </BootstrapTooltip>
+                    <BootstrapTooltip title="Add Employee">
+                      <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
+                    </BootstrapTooltip>
+                        <BootstrapTooltip title="Download Trainings given to Employees">
+                                <Button disabled={disabledDownloadTraining} variant="contained" color="inherit"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
+                        </BootstrapTooltip> 
+                    <BootstrapTooltip title="Download Sample excel To upload Employees">
+                          <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
+                    </BootstrapTooltip> 
                         
                  </Stack>
             </Box>
@@ -350,8 +350,7 @@ function downloadAllEmployees() {
         variant="contained"
         color="success"
         onClick={handleUpload}
-        disabled={!file || loading}
-        
+        disabled={!file || loading}        
         startIcon= {
           loading ? <CircularProgress size={20} color="teal" /> : null
         }
@@ -360,9 +359,9 @@ function downloadAllEmployees() {
       </Button>
     </Box>
    
-        <div className="mt-3">
-          <table ref={tableRef} className="display" style={{ width: "100%" }}></table>
-        </div>
+      <div className="mt-3">
+        <table ref={tableRef} className="display" style={{ width: "100%" }}></table>
+      </div>
          
     </div>
   )
