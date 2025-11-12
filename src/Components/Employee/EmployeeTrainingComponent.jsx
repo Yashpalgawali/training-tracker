@@ -61,14 +61,14 @@ export default function EmployeeTrainingComponent(){
 
     function getAllDetails() {
         
-        // retrieveAllEmployees().then((response) => {
-        //    setEmpDisabled(false)
-        //    setEmployeeList(response.data)
-        // }).catch((error)=> {
+        retrieveAllEmployees().then((response) => {
+           setEmpDisabled(false)
+           setEmployeeList(response.data)
+        }).catch((error)=> {
              
-        //     setEmpDisabled(true)
-        //     showToast(error.response.data.errorMessage, "error")
-        // })
+            setEmpDisabled(true)
+            showToast(error.response.data.errorMessage, "error")
+        })
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
         }).catch((error)=> {
@@ -149,10 +149,10 @@ export default function EmployeeTrainingComponent(){
             }
         }
         else {
-            // employeeObject = {
-            //     empId : parseInt(values.employee)
-            // }
-            employeeObject = values.employee
+            employeeObject = {
+                empId : parseInt(values.employee)
+            }
+            // employeeObject = values.employee
         }
 
         let employeeTraining = {
@@ -204,12 +204,12 @@ export default function EmployeeTrainingComponent(){
                     saveEmployeeTraining(employeeTraining).then((response) => {
                         if(id!= -1) {
                             alert('training saved')
-                           // navigate(`/training/employee/${id}`)
+                           navigate(`/training/employee/${id}`)
                             showToast(response?.data?.responseMessage,"success")
                         }
                         else {
                              alert('training saved for multiple IDs')
-                           // navigate(`/viewemployees`)
+                           navigate(`/viewemployees`)
                             showToast(response?.data?.responseMessage,"success")
                         }
                     })
@@ -289,8 +289,8 @@ export default function EmployeeTrainingComponent(){
                         initialValues={{
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
-                           // employee: employee ? id : '',
-                            employee : [],
+                           employee: employee ? id : '',
+                            // employee : [],
                             competency : score ? score : '',
                             training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
@@ -354,7 +354,7 @@ export default function EmployeeTrainingComponent(){
                                             
                                             setFieldValue('score', option ? option.value : '')
                                             sessionStorage.setItem('competency_id',option.value)
-                                            getEmployeesByTrainingAndCompetencyId()
+                                           // getEmployeesByTrainingAndCompetencyId()
                                         }}
                                             placeholder="Select Score"
                                     /> 
@@ -366,7 +366,7 @@ export default function EmployeeTrainingComponent(){
                             </Box>
 
                             {/* Employee Dropdown */}
-                            <Box mb={2}>                              
+                            <Box mb={2}>                            
                                    
                                      <Typography variant="subtitle1">Employee</Typography>
                                         {
@@ -380,8 +380,8 @@ export default function EmployeeTrainingComponent(){
                                                 </>
                                             ) : (
                                             <>
-                                            <EmployeeMultiSelect options={options} />
-                                            {/* <Select
+                                            {/* <EmployeeMultiSelect options={options} /> */}
+                                            <Select
                                                 styles={customStyles}                                            
                                                 hideSelectedOptions={true}
                                                 isDisabled={disabled}                                    
@@ -398,7 +398,7 @@ export default function EmployeeTrainingComponent(){
                                                 onChange={(option) => setFieldValue('employee', option ? option.value : '')}
                                                 placeholder="Select Employee"
                                                
-                                            />                                 */}
+                                            />                                
                                             <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                             <ErrorMessage name="employee" />
                                             </FormHelperText>   
