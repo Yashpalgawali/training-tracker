@@ -192,6 +192,10 @@ export default function EmployeeComponent() {
             errors.department = "Please Select Department "
         }
 
+        if(values.status=="") {
+            errors.status = "Please Select Status of the Employee "
+        }
+
         return errors
     }
     return(
@@ -244,7 +248,8 @@ export default function EmployeeComponent() {
                         helperText={<ErrorMessage name="emp_code" />}
                     />
                 </Box>
-                  {/* Contractor Name */}
+                
+                {/* Contractor Name */}
                 <Box mb={2}>
                     <Typography variant="subtitle1">Contractor Name</Typography>
                     <TextField
@@ -260,8 +265,8 @@ export default function EmployeeComponent() {
                         helperText={<ErrorMessage name="contractor_name" />}
                     />
                 </Box>
-                  {/* Joining Date Picker */}
-                    <Box mb={2}>
+                {/* Joining Date Picker */}
+                <Box mb={2}>
                     <DatePicker
                         format="DD-MM-YYYY"
                         label="Joining Date"

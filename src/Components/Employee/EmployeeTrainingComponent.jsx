@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { getEmployeeById, retrieveAllEmployees } from "../api/EmployeeApiService"
+import { getEmployeeById, retrieveAllActiveEmployees, retrieveAllEmployees } from "../api/EmployeeApiService"
 import { retrieveAllTraining } from "../api/TrainingApiService"
 import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
@@ -9,7 +9,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs  from "dayjs";
 
-import { Box, Button, FormHelperText,  TextField,  Typography } from "@mui/material";
+import { Box, Button, FormControl, FormHelperText,  TextField,  Typography } from "@mui/material";
 
 import { getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
@@ -56,16 +56,16 @@ export default function EmployeeTrainingComponent(){
                 getEmployeeById(id).then((response) => {
                         setEmployee(response.data)
                 })
-        } 
+        }
     }, [id] )
 
     function getAllDetails() {
-        
-        retrieveAllEmployees().then((response) => {
+
+        retrieveAllActiveEmployees().then((response) => {
            setEmpDisabled(false)
            setEmployeeList(response.data)
         }).catch((error)=> {
-             
+
             setEmpDisabled(true)
             showToast(error.response.data.errorMessage, "error")
         })
@@ -104,7 +104,7 @@ export default function EmployeeTrainingComponent(){
     //     const { setFieldValue, values } = useFormikContext();
 
     //     return (
-            
+
     //         <Select          
     //             styles={customStyles}
     //             name="training_ids"
@@ -140,8 +140,6 @@ export default function EmployeeTrainingComponent(){
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
 
         let employeeObject = null
-        
-        console.log(values)
 
         if(id!= -1) {
             employeeObject = {
@@ -164,23 +162,22 @@ export default function EmployeeTrainingComponent(){
                 completion_date : formattedTrainingDate 
             }
 
-           console.log('Employee Training Object is ',employeeTraining)
-           await getTrainingsByEmployeeIdAndTrainingId(employeeObject.empId,values.training_ids).then((result) => {
+        await getTrainingsByEmployeeIdAndTrainingId(employeeObject.empId,values.training_ids).then((result) => {
 
-                employeeTraining = {
-                        employee : employeeObject,
-                        trainingTimeSlot : timeSlotObj,
-                        training_date : formattedTrainingDate,
-                        training_ids : values.training_ids,
-                        competency : competencyObj,
-                        completion_date : formattedTrainingDate,
-                        emp_train_id : result.data.emp_train_id
-                }
-                    sessionStorage.setItem('training_id',values.training_ids)
-                }).catch((error)=>{  })
+            employeeTraining = {
+                    employee : employeeObject,
+                    trainingTimeSlot : timeSlotObj,
+                    training_date : formattedTrainingDate,
+                    training_ids : values.training_ids,
+                    competency : competencyObj,
+                    completion_date : formattedTrainingDate,
+                    emp_train_id : result.data.emp_train_id
+            }
+                sessionStorage.setItem('training_id',values.training_ids)
+            }).catch((error)=>{  })
 
+            
             if(sessionStorage.getItem('training_id')!=null) {
-                 
                 updateEmployeeTraining(employeeTraining).then((response) => {                   
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
@@ -192,8 +189,8 @@ export default function EmployeeTrainingComponent(){
                     sessionStorage.removeItem('training_id')
                 })                
             }
-            else {             
-                    employeeTraining = {
+            else {
+                   employeeTraining = {
                     employee : employeeObject,
                     trainingTimeSlot : timeSlotObj,
                     training_date : formattedTrainingDate,
@@ -201,23 +198,23 @@ export default function EmployeeTrainingComponent(){
                     competency : competencyObj,
                     completion_date : formattedTrainingDate
                 }
-                    saveEmployeeTraining(employeeTraining).then((response) => {
-                        if(id!= -1) {
-                            alert('training saved')
-                           navigate(`/training/employee/${id}`)
-                            showToast(response?.data?.responseMessage,"success")
-                        }
-                        else {
-                             alert('training saved for multiple IDs')
-                           navigate(`/viewemployees`)
-                            showToast(response?.data?.responseMessage,"success")
-                        }
-                    })
-                    .catch((error) => {
-                         alert('training saved error')
-                        showToast(error?.data?.errorMessage,"error")
+                saveEmployeeTraining(employeeTraining).then((response) => {
+                    if(id!= -1) {
+                        alert('training saved')
                         navigate(`/training/employee/${id}`)
-                    })
+                        showToast(response?.data?.responseMessage,"success")
+                    }
+                    else {
+                            alert('training saved for multiple IDs')
+                        navigate(`/viewemployees`)
+                        showToast(response?.data?.responseMessage,"success")
+                    }
+                })
+                .catch((error) => {
+                        alert('training saved error')
+                    showToast(error?.data?.errorMessage,"error")
+                    navigate(`/training/employee/${id}`)
+                })
             }
     }
     
@@ -229,7 +226,7 @@ export default function EmployeeTrainingComponent(){
                 errors.employee='No Employee Selected'
             }
         }
-        
+
         if(values.training_ids=='') {
            errors.training_ids='No Training is Selected'
         }
@@ -237,10 +234,15 @@ export default function EmployeeTrainingComponent(){
         if(values.trainingTimeSlot=='') {
            errors.trainingTimeSlot='No Training Time Slot is Selected'
         }
+        
+        if(values.competency=='') {
+           errors.competency='No Competency is Selected'
+        }
+
         if(values.training_date==null) {
            errors.training_date='No Training Date is Selected'
         }
-
+        
         return errors
     }
 
@@ -265,10 +267,7 @@ export default function EmployeeTrainingComponent(){
     }
 
     function getEmployeesByTrainingAndCompetencyId() {
-        alert('Competency ID '+sessionStorage.getItem('competency_id'))
-        alert('Training ID '+sessionStorage.getItem('training_id'))
-
-         retrieveAllEmployees().then((response) => {
+        retrieveAllEmployees().then((response) => {
            setEmpDisabled(false)
            setEmployeeList(response.data)
         }).catch((error)=> {
@@ -321,11 +320,9 @@ export default function EmployeeTrainingComponent(){
                                             onChange={(option) =>   
                                                 {
                                                     setFieldValue('training_ids', option ? option.value : '')                                                    
-                                                    sessionStorage.setItem('training_id',option.value)                                                    
+                                                 //   sessionStorage.setItem('training_id',option.value)                                                    
                                                 }
-                                            }
-                                                
-                                             
+                                            }                                             
                                             placeholder="Select Training"
                                     />
                                 <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
@@ -337,7 +334,6 @@ export default function EmployeeTrainingComponent(){
                              {/* Competency Score */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Competency Score</Typography>
-                                
                                     <Select   
                                         styles={customStyles}                                     
                                         name="score"
@@ -356,61 +352,58 @@ export default function EmployeeTrainingComponent(){
                                             sessionStorage.setItem('competency_id',option.value)
                                            // getEmployeesByTrainingAndCompetencyId()
                                         }}
-                                            placeholder="Select Score"
-                                    /> 
-                                
+                                        
+                                        placeholder="Select Score"
+                                    />
                                 <FormHelperText error={touched.competency && Boolean(errors.competency)}>
                                 <ErrorMessage name="competency" />
-                                </FormHelperText>  
-                                  
+                                </FormHelperText>
                             </Box>
 
                             {/* Employee Dropdown */}
-                            <Box mb={2}>                            
-                                   
-                                     <Typography variant="subtitle1">Employee</Typography>
-                                        {
-                                            empListDisabled ? (
-                                                <>
-                                                <TextField 
-                                                    fullWidth
-                                                    disabled="true"
-                                                    placeholder="No Employees Present"
-                                                />
-                                                </>
-                                            ) : (
+                            <Box mb={2}>
+                                    <Typography variant="subtitle1">Employee</Typography>
+                                    {
+                                        empListDisabled ? (
                                             <>
-                                            {/* <EmployeeMultiSelect options={options} /> */}
-                                            <Select
-                                                styles={customStyles}                                            
-                                                hideSelectedOptions={true}
-                                                isDisabled={disabled}                                    
-                                                name="employee"
-                                                options={empList.map(emp => ({
-                                                    value: emp.empId,
-                                                    label: emp.empName
-                                                }))}
-                                                value= {
-                                                    empList
-                                                    .map(emp => ({ value: emp.empId, label: emp.empName }))
-                                                    .find(option => option.value === values.employee) || null
-                                                }
-                                                onChange={(option) => setFieldValue('employee', option ? option.value : '')}
-                                                placeholder="Select Employee"
-                                               
-                                            />                                
-                                            <FormHelperText error={touched.employee && Boolean(errors.employee)}>
-                                            <ErrorMessage name="employee" />
-                                            </FormHelperText>   
-                                        </>
+                                            <TextField 
+                                                fullWidth
+                                                disabled="true"
+                                                placeholder="No Employees Present"
+                                            />
+                                            </>
+                                        ) : (
+                                        <>
+                                        {/* <EmployeeMultiSelect options={options} /> */}
+                                        <Select
+                                            styles={customStyles}                                            
+                                            hideSelectedOptions={true}
+                                            isDisabled={disabled}                                    
+                                            name="employee"
+                                            options={empList.map(emp => ({
+                                                value: emp.empId,
+                                                label: emp.empName
+                                            }))}
+                                            value= {
+                                                empList
+                                                .map(emp => ({ value: emp.empId, label: emp.empName }))
+                                                .find(option => option.value === values.employee) || null
+                                            }
+                                            onChange={(option) => setFieldValue('employee', option ? option.value : '')}
+                                            placeholder="Select Employee"
+                                            
+                                        />                                
+                                        <FormHelperText error={touched.employee && Boolean(errors.employee)}>
+                                        <ErrorMessage name="employee" />
+                                        </FormHelperText>   
+                                    </>
                                    )
                                 }
                             </Box>
                              
                               {/* Training Date Picker */}
                                 <Box mb={2}  >
-                                <DatePicker
-                                    
+                                <DatePicker                                    
                                     format="DD/MM/YYYY"
                                     label="Training Date"
                                     value={values.training_date}
@@ -441,9 +434,7 @@ export default function EmployeeTrainingComponent(){
                                     onChange={(option) => setFieldValue('trainingTimeSlot', option ? option.value : '')}
                                     placeholder="Select Training time Slot"
                                 />
-                                <FormHelperText error={touched.trainingTimeSlot && Boolean(errors.trainingTimeSlot)}>
-                                <ErrorMessage name="trainingTimeSlot" />
-                                </FormHelperText>
+                                <FormHelperText error={touched.trainingTimeSlot && Boolean(errors.trainingTimeSlot)}><ErrorMessage name="trainingTimeSlot" /></FormHelperText>
                             </Box>
 
                             {/* Submit Button */}
