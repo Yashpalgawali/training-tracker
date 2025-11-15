@@ -60,8 +60,10 @@ export default function EmployeeTrainingComponent(){
     }, [id] )
 
     function getAllDetails() {
-
+        
+       
         retrieveAllActiveEmployees().then((response) => {
+            
            setEmpDisabled(false)
            setEmployeeList(response.data)
         }).catch((error)=> {
@@ -102,9 +104,7 @@ export default function EmployeeTrainingComponent(){
 
     //  function TrainingMultiSelect({ options }) {
     //     const { setFieldValue, values } = useFormikContext();
-
     //     return (
-
     //         <Select          
     //             styles={customStyles}
     //             name="training_ids"
