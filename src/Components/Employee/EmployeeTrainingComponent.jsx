@@ -235,9 +235,9 @@ export default function EmployeeTrainingComponent(){
            errors.trainingTimeSlot='No Training Time Slot is Selected'
         }
         
-        if(values.competency=='') {
-           errors.competency='No Competency is Selected'
-        }
+        // if(values.competency=='') {
+        //    errors.competency='No Competency is Selected'
+        // }
 
         if(values.training_date==null) {
            errors.training_date='No Training Date is Selected'
