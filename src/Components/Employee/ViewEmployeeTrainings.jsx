@@ -65,6 +65,7 @@ export default function ViewEmployeeTrainings() {
     const [score,setScore] = useState('')
     const [trainTimeSlot,setTrainTimeSlot]  = useState([])
     const [trainingCount,setTrainingCount] = useState(0)
+    const [addTrainingDisabled , setAddTrainingDisabled ] = useState(false)
 
     const {id} = useParams();
     const navigate = useNavigate()
@@ -132,6 +133,9 @@ export default function ViewEmployeeTrainings() {
                 getTrainingsByEmployeeId(id).then((response) => {
                     
                     setEmployee(response.data[0].employee)
+                    if(response.data[0].employee.status!=1) {
+                        setAddTrainingDisabled(true)
+                    }
                     console.log(response.data)
                     setTrainingList(response.data)
                 });
@@ -213,11 +217,11 @@ export default function ViewEmployeeTrainings() {
     const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
 
     const handleCompetencyChange = (event) => {
-    setSelectedCompetency(event.target.value);
+        setSelectedCompetency(event.target.value);
     };
 
     const handleTimeSlotChange = (event) => {
-    setSelectedTimeSlot(event.target.value);
+        setSelectedTimeSlot(event.target.value);
     };
 
     function addTrainingToEmployee(id) {
@@ -239,7 +243,7 @@ function getTrainingCountByTrainingHistId(id) {
             <Box>
                 <Typography variant="h4" gutterBottom>
                     <BootstrapTooltip title={`Give Training to ${employee.empName} `}>
-                        <Button variant="contained" color="info" style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
+                        <Button variant="contained" color="info" disabled={addTrainingDisabled} style={ { float : 'left' } } onClick={()=>addTrainingToEmployee(id)}> Give Training</Button>
                     </BootstrapTooltip>
                     View Employee Trainings
                     <BootstrapTooltip title= {`Download trainings given to ${employee.empName}`}>
