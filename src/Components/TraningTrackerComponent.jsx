@@ -23,6 +23,7 @@ import TrainingTimeSlotComponent from './TrainingTimeSlot/TrainingTimeSlotCompon
 import ViewTrainingTimeSlotComponent from './TrainingTimeSlot/ViewTrainingTimeSlotComponent';
 import ViewCompetenciesComponent from './Competency/ViewCompetenciesComponent';
 import CompetencyComponent from './Competency/CompetencyComponent';
+import ChangePassword from './ChangePassword';
 
 
 function AuthenticateRoute({children}) {
@@ -77,6 +78,8 @@ export default function TrainingTrackerComponent() {
 
                 <Route path='/category/:id' element={ <AuthenticateRoute><CategoryComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/viewcategories' element={ <AuthenticateRoute><ViewCategoriesComponent /></AuthenticateRoute> }> </Route>
+                
+                <Route path='/change/password' element={<AuthenticateRoute> <ChangePassword /> </AuthenticateRoute>}></Route>
 
                 <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>

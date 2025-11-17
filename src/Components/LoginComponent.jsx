@@ -63,7 +63,7 @@ export default function LoginComponent() {
   };
 
   const handleSendResetLink = () => {
-    console.log('Reset link sent to:', email);
+    alert('Reset link sent to:'+ email);
     // You can call your API endpoint here, e.g.:
     // axios.post('/api/forgot-password', { email });
     handleClose();
@@ -159,7 +159,7 @@ export default function LoginComponent() {
                                     Login
                                     </Button>  
                                      {/* 👇 Forgot Password link */}
-                                    {/* <Typography
+                                    <Typography
                                         variant="body2"
                                         sx={{
                                         color: 'primary.main',
@@ -171,7 +171,7 @@ export default function LoginComponent() {
                                         onClick={handleForgotPassword}
                                     >
                                         Forgot Password?
-                                    </Typography> */}
+                                    </Typography>
                                                    
                                 </Box>
 
