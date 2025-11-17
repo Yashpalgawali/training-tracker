@@ -15,11 +15,10 @@ import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility'; 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
-import { getAllTrainingHistory, getTrainingsByEmployeeId, getTrainingsCount, getTrainingsCountByEmployeeId } from "../api/EmployeeTrainingApiService";
+import { getAllTrainingHistory, getTrainingsCount } from "../api/EmployeeTrainingApiService";
 
 import { apiClient } from '../api/apiClient';
 
@@ -88,7 +87,6 @@ export default function ViewEmployeeComponent() {
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
             const response = await apiClient.get("employee/paged", { params });
-            console.log(response.data.data)
             setEmpList(response.data.data)
 
             // DataTables expects this exact structure
@@ -167,7 +165,6 @@ export default function ViewEmployeeComponent() {
         }
     };
     }, [])
-
 
     function updateEmployee(id) {
         navigate(`/employee/${id}`)

@@ -89,11 +89,12 @@ export default function ViewEmployeeTrainings() {
     })
 
      useEffect(()=> {
+       
         retrieveAllTrainingTimeSlots().then((response) => {
             setTrainTimeSlot(response.data)
         })
         
-         retrieveAllCompetencies().then((response) => {
+        retrieveAllCompetencies().then((response) => {
             setScoreList(response.data)
          })
 
@@ -131,7 +132,7 @@ export default function ViewEmployeeTrainings() {
          const  getUpdatedTrainingsByEmpId = () => {
            
                 getTrainingsByEmployeeId(id).then((response) => {
-                    
+                  
                     setEmployee(response.data[0].employee)
                     if(response.data[0].employee.status!=1) {
                         setAddTrainingDisabled(true)
@@ -142,11 +143,14 @@ export default function ViewEmployeeTrainings() {
         };
 
     function getTrainingsByEmpId() {
+        
         setLoading(true);
         getTrainingsByEmployeeId(id).then((response) => {
-            console.log(response.data)
-                setEmployee(response.data[0].employee)                
-                setTrainingList(response.data)
+            if(response.data[0].employee.status!=1) {
+                setAddTrainingDisabled(true)
+            }
+            setEmployee(response.data[0].employee)                
+            setTrainingList(response.data)
        })
        .catch((error) => {
             showToast("No Trainings are given ","error")
@@ -312,7 +316,7 @@ function getTrainingCountByTrainingHistId(id) {
                         <th>Complete Date</th>
                         <th>Time Slot</th>
                         <th>Competency Score</th>
-                        <th>Training Count</th>
+                        <th>Total Trainings Given</th>
                         <th>Action</th>                    
                     </tr>
                 </thead>
@@ -327,14 +331,14 @@ function getTrainingCountByTrainingHistId(id) {
                     (
                         traininglist.map(
                             (training,index) => (
-                                            <tr key={training.emp_train_id}>
+                                            <tr key={training.emp_train_id ?? index}>
                                                 <td>{index+1}</td>
                                                 <td>{training.training.training_name}</td>
                                                 <td>{training?.training_date}</td>
                                                 <td>{training.completion_date ? (training.completion_date): (<span style={{ color : 'red'}}> Not Completed</span>)} </td>
                                                 <td>{training?.trainingTimeSlot.training_time_slot}</td>
                                                 <td>{training.competency.score}</td>
-                                                <td>{ getTrainingCountByTrainingHistId(training.emp_train_id)}</td>
+                                                <td>{training.trainingCount}</td>
                                                 <td> 
                                                     <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_id)}>{training.emp_train_hist_id} <EditIcon /> Update</Button>
                                                 </td>
