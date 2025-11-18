@@ -6,7 +6,7 @@ import { updateForgotPassword, updatePassword } from "./api/ChangePasswordApiSer
 import { showToast } from "./SharedComponent/showToast"
 import { error } from "jquery"
 
-export default function ChangePassword() {
+export default function ChangeForgotPassword() {
 
     const [username,setUserName] = useState('')
     const [password,setPassword] = useState('')
@@ -20,31 +20,14 @@ export default function ChangePassword() {
 
     function handleSubmit(values) {
        if(values.password!= values.cnfpassword) {
-        alert('Not matched')
+        alert('Passwords Do Not Match')
        }
        else {
-        
-        if(sessionStorage.getItem('userid')!=null) {
-        
-        const user = {
-            user_id : parseInt(sessionStorage.getItem('userid')),
-            password : values.password
-        }
-
-        updatePassword(user).then((response)=> {
-            
-            showToast(response.data.responseMessage,'success')
-            navigate(`/home`)
-        }).catch((error) => {
-            showToast(error.data.errorMessage,'error')
-            navigate(`/change/password`)
-        })
-       }
-       else {
-            let user = {
+         let user = {
                 email : sessionStorage.getItem('email'),
                 password : values.password
             }
+
             updateForgotPassword(user).then((response) => {
                 sessionStorage.removeItem('email')
                 showToast(response.data.responseMessage,'success')
@@ -54,8 +37,6 @@ export default function ChangePassword() {
                 showToast(error.response.data.errorMessage,'error')
                 navigate(`/login`)
             })
-
-       } 
       }
     }
 
@@ -63,13 +44,11 @@ export default function ChangePassword() {
 
         let errors = {}
 
-        if(values.password=='')
-        {
+        if(values.password=='') {
             errors.password = 'Password Can\'t be blank'
         }
 
-        if(values.cnfpassword=='')
-        {
+        if(values.cnfpassword=='') {
             errors.cnfpassword = 'Confirm Password Can\'t be blank'
         }
         return errors;

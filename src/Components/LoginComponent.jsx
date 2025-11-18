@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "./Security/AuthContext";
 import "../../src/Components/LogonComponent.css";
 import { useNavigate } from "react-router-dom";
+import { sendOtp } from "./api/ChangePasswordApiService";
 
 
 export default function LoginComponent() {
@@ -63,10 +64,18 @@ export default function LoginComponent() {
   };
 
   const handleSendResetLink = () => {
-    alert('Reset link sent to:'+ email);
+    
+    sendOtp(email).then((response)=> {
+        sessionStorage.setItem('email',email)        
+         
+        navigate('/confirm/otp')
+    }).catch((error) => {
+        console.log('error ',error)
+        alert(error.response.data.errorMessage)
+    })
     // You can call your API endpoint here, e.g.:
     // axios.post('/api/forgot-password', { email });
-    handleClose();
+    //handleClose();
   };
 
     return(
@@ -175,12 +184,12 @@ export default function LoginComponent() {
                                                    
                                 </Box>
 
-                               {/* ======= DIALOG ======= */}
+                            {/* ======= DIALOG ======= */}
                             <Dialog open={openDialog} onClose={handleClose}>
                                 <DialogTitle>Forgot Password</DialogTitle>
                                 <DialogContent>
                                 <Typography variant="body2" sx={{ mb: 2 }}>
-                                    Enter your registered email address to receive a password reset link.
+                                    Enter your registered email address to receive an OTP.
                                 </Typography>
                                 <TextField
                                     autoFocus
@@ -197,7 +206,7 @@ export default function LoginComponent() {
                                 <DialogActions>
                                 <Button onClick={handleClose}>Cancel</Button>
                                 <Button onClick={handleSendResetLink} variant="contained">
-                                    Send Reset Link
+                                    Send Otp
                                 </Button>
                                 </DialogActions>
                             </Dialog>

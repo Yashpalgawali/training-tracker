@@ -24,6 +24,8 @@ import ViewTrainingTimeSlotComponent from './TrainingTimeSlot/ViewTrainingTimeSl
 import ViewCompetenciesComponent from './Competency/ViewCompetenciesComponent';
 import CompetencyComponent from './Competency/CompetencyComponent';
 import ChangePassword from './ChangePassword';
+import ConfirmOtp from './ConfirmOtp';
+import ChangeForgotPassword from './ChangeForgotPassword';
 
 
 function AuthenticateRoute({children}) {
@@ -80,7 +82,10 @@ export default function TrainingTrackerComponent() {
                 <Route path='/viewcategories' element={ <AuthenticateRoute><ViewCategoriesComponent /></AuthenticateRoute> }> </Route>
                 
                 <Route path='/change/password' element={<AuthenticateRoute> <ChangePassword /> </AuthenticateRoute>}></Route>
+                <Route path='/confirm/otp' element={  <ConfirmOtp />  } ></Route>
 
+                <Route path='/forgot/password/change' element={  <ChangeForgotPassword />  } ></Route>
+                
                 <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>
                 <Route path='/login' element={ <LoginComponent /> }> </Route>
