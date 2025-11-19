@@ -15,14 +15,15 @@ export default function ConfirmOtp() {
     useEffect(()=> {
         if(sessionStorage.getItem('email')==null) {
             navigate(`/login`)
+        }else {
+            let eml = sessionStorage.getItem('email')
+            
         }
     },[])
 
     function handleSubmit(values) {
         let email = sessionStorage.getItem('email')
         let notp = values.otp
-        alert('Otp is '+notp+'\n Email is '+email)
-
         validateOtp(email,notp).then((response)=> {
            
             navigate('/forgot/password/change')
@@ -45,7 +46,7 @@ export default function ConfirmOtp() {
     return(
         <div className="container">
             <Box>
-                <Typography variant="h4" gutterBottom>Time To Login!! </Typography>
+                <Typography variant="h4" gutterBottom>Otp is sent to your email  </Typography>
             </Box>
             <div >
                 <Formik

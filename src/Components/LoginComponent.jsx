@@ -5,6 +5,7 @@ import { useAuth } from "./Security/AuthContext";
 import "../../src/Components/LogonComponent.css";
 import { useNavigate } from "react-router-dom";
 import { sendOtp } from "./api/ChangePasswordApiService";
+import { showToast } from "./SharedComponent/showToast";
 
 
 export default function LoginComponent() {
@@ -67,7 +68,7 @@ export default function LoginComponent() {
     
     sendOtp(email).then((response)=> {
         sessionStorage.setItem('email',email)        
-         
+        showToast(response.data.responseMessage,'success')
         navigate('/confirm/otp')
     }).catch((error) => {
         console.log('error ',error)
