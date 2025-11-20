@@ -38,7 +38,7 @@ import ReactDOM from "react-dom/client"; // ✅ important for createRoot
 export default function ViewEmployeeComponent() {
 
     const [empList,setEmpList] = useState([])
-
+    const [empListLength,setEmpListLength] = useState(0)
     const navigate = useNavigate()
     
     const tableRef = useRef(false)  
@@ -87,8 +87,9 @@ export default function ViewEmployeeComponent() {
               orderDir: data.order[0].dir, // 'asc' or 'desc'
             }; 
             const response = await apiClient.get("employee/paged", { params });
-            setEmpList(response.data.data)
-
+           // setEmpList(response.data.data)
+           
+            setEmpListLength(response.data.data.length)
             // DataTables expects this exact structure
             callback({
               draw: data.draw,
@@ -292,14 +293,15 @@ function downloadAllEmployees() {
             } }>
                 <Typography variant="h4">View Employees   </Typography>
                 <Stack
-                  direction={{ xs :"column", sm: "row" }}
+                  direction={{ xs: "column", sm: "row" }}
+                  spacing={2}
+                  alignItems={{ xs: "center", sm: "center" }}
+                  justifyContent={{ xs: "center", sm: "center" }}
+                  sx={{ width: "100%" }}
                   
-                  spacing={  2 }
-                  alignItems={ { xs:'stretch' , sm: 'flex-end' } }
-                  sx={{ alignSelf: {  xs : 'stretch' ,sm: 'center' }   }}
                 >
                     <BootstrapTooltip title="Download Employee List">
-                        <Button  disabled={!empList || empList.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
+                        <Button  disabled={!empListLength || empListLength.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
                     </BootstrapTooltip>
                     <BootstrapTooltip title="Add Employee">
                       <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
