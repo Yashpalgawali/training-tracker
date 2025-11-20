@@ -1,5 +1,5 @@
 import HeaderComponent from './HeaderComponent';
-import { BrowserRouter, Routes, Route, Navigate, HashRouter } from 'react-router-dom'; 
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'; 
 import DesignationComponent from './Designation/DesignationComponent';
 import ViewDesignation from './Designation/ViewDesignation';
 import CompanyComponent from './Company/CompanyComponent';
@@ -26,12 +26,13 @@ import CompetencyComponent from './Competency/CompetencyComponent';
 import ChangePassword from './ChangePassword';
 import ConfirmOtp from './ConfirmOtp';
 import ChangeForgotPassword from './ChangeForgotPassword';
-
+import ViewEmployeehistory from './Employee/ViewEmployeehistory';
 
 function AuthenticateRoute({children}) {
    const authContext  = useAuth()
-
+ 
    if(authContext.isAuthenticated) {
+
        return children
    }
 
@@ -85,7 +86,7 @@ export default function TrainingTrackerComponent() {
                 <Route path='/confirm/otp' element={  <ConfirmOtp />  } ></Route>
 
                 <Route path='/forgot/password/change' element={  <ChangeForgotPassword />  } ></Route>
-                
+                <Route path='/history/employee/:id' element={<AuthenticateRoute> <ViewEmployeehistory /> </AuthenticateRoute>} ></Route>
                 <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>
                 <Route path='/login' element={ <LoginComponent /> }> </Route>

@@ -15,6 +15,7 @@ import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility'; 
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 
 import Tooltip, { tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
@@ -51,6 +52,10 @@ export default function ViewEmployeeComponent() {
     function getTrainingsOfEmployeeById(empid) {       
       navigate(`/training/employee/${empid}`)
          
+    }
+
+    function getEmployeeHistory(empid) {
+      navigate(`/history/employee/${empid}`)
     }
 
     useEffect(()=> {
@@ -133,25 +138,42 @@ export default function ViewEmployeeComponent() {
             
             root.render(
               <div style={{ display: "flex", gap: "8px" }}>
-                <Fab size="medium"  disabled={disabled}  color="primary" onClick={() => addTraining(rowData.empId) } aria-label="add">
+                <Fab size="medium"  disabled={disabled}  color="primary" onClick={() => { 
+                     
+                      addTraining(rowData.empId) 
+                    }} aria-label="add">
                     <BootstrapTooltip title="Add Training">
                         <AddIcon />
                     </BootstrapTooltip>                                                
                 </Fab>
 
-                <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => updateEmployee(rowData.empId) } aria-label="edit">
+                <Fab size="medium" style={ { marginRight : 5 } }  color="secondary" onClick={() => 
+                   
+                    updateEmployee(rowData.empId)
+                   } aria-label="edit">
                     <BootstrapTooltip title="Update Employee Details">
                         <EditIcon />
                     </BootstrapTooltip>                                                
                 </Fab>
                 {                 
                   <Fab  size="medium" disabled= {!rowData.isTrainingGiven}
-                     color="warning" onClick={() => getTrainingsOfEmployeeById(rowData.empId) } aria-label="view">
+                     color="warning" onClick={() =>
+                      
+                        getTrainingsOfEmployeeById(rowData.empId) 
+                      } aria-label="view">
                     <BootstrapTooltip title="View Training">
                         <VisibilityIcon />
                     </BootstrapTooltip>
                   </Fab>  
-                }                  
+                }
+                <Fab size="medium" style={ { marginRight : 5 } }  color="Tertiary" onClick={() => 
+                     
+                      getEmployeeHistory(rowData.empId)
+                     } aria-label="edit">
+                    <BootstrapTooltip title="View Employee History">
+                        <WorkHistoryIcon />
+                    </BootstrapTooltip>                                                
+                </Fab>
               </div>
             );
           },
@@ -311,7 +333,9 @@ function downloadAllEmployees() {
                         </BootstrapTooltip> 
                     <BootstrapTooltip title="Download Sample excel To upload Employees">
                           <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
-                    </BootstrapTooltip> 
+                    </BootstrapTooltip>
+
+                   
                         
                  </Stack>
             </Box>
