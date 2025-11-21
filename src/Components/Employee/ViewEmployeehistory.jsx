@@ -5,7 +5,7 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 
-import { Box,   Typography } from "@mui/material"
+import { Box,   Grid,   Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"; 
 import { retrieveEmployeeHistoryByEmpId } from "../api/EmployeeHistoryApiService";
 
@@ -74,25 +74,42 @@ export default function ViewEmployeehistory() {
         <div className="container">
             <Box >
                 <Typography variant="h4" gutterBottom>View History </Typography>
-                <div  className="mb-5 " style={{ borderBlockStyle : "outset"}} > 
-                <div   >
-                    <span style={{ float : 'left' }}><strong>Name :</strong> {employee.empName}</span>
-                    <span style={{ float : 'right' }}><strong>Employee Code: </strong> {employee.empCode}  </span>
-                </div>
-                <br />
-                 <div className="mt-3 ">
-                     <span style={{ float : 'left' }}><strong>Designation :</strong> {employee.designation.desigName}</span>
-                    <span style={{ float : 'right' }}><strong>Category :</strong> {employee.category.category}</span>
-                </div>
-                <br />
-               <div className="mb-5 mt-3 ">
-                    <span style={{ float : 'left' }}><strong>Company :</strong> {employee.department.company.compName}</span>
-                    <span style={{ float : 'right' }}><strong>Department :</strong> {employee.department.deptName}</span>
-                </div>
-                </div>
+                <Box className="mb-5" sx={{borderBlockStyle: 'outset', p: 2}}>
+                    {/* Row 1 */}
+                {/* Row 1 */}
+                <Grid container sx={{ mb: 2 }}>
+                <Grid item xs={6} sx={{ pr: 2 }}>
+                    <strong>Name: </strong> {employee.empName}
+                </Grid>
+                <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                    <strong>Employee Code: </strong> {employee.empCode}
+                </Grid>
+                </Grid>
+
+                {/* Row 2 */}
+                <Grid container sx={{ mb: 2 }}>
+                <Grid item xs={6} sx={{ pr: 2 }}>
+                    <strong>Designation: </strong> {employee.designation.desigName}
+                </Grid>
+                <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                    <strong>Category: </strong> {employee.category.category}
+                </Grid>
+                </Grid>
+
+                {/* Row 3 */}
+                <Grid container sx={{ mb: 2 }}>
+                <Grid item xs={6} sx={{ pr: 2 }}>
+                    <strong>Company: </strong> {employee.department.company.compName}
+                </Grid>
+                <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                    <strong>Department: </strong> {employee.department.deptName}
+                </Grid>
+                </Grid>
+
             </Box>
+        </Box>
         
-            <table ref={tableRef} className="table table-striped table-hover display">
+        <table ref={tableRef} className="table table-striped table-hover display">
                 <thead>
                     <tr >
                         <th>Sr No.</th>
@@ -127,7 +144,15 @@ export default function ViewEmployeehistory() {
                             <td>{emp.deptName}</td>
                             <td>{emp.compName}</td>
                             <td>{emp.joiningDate}</td>
-                            <td>{emp.status}</td>
+                            <td><span
+                                style={{
+                                    padding : "4px 10px",
+                                    borderRadius: "12px",
+                                    color : "white",
+                                    backgroundColor : emp.status ===1 ? "green" : "red",
+                                    fontSize: "0.85rem"
+                                }}
+                            > {(emp.status==1 ? 'Active' : 'InActive') }</span></td>
                              
                             </tr>
                         ))
