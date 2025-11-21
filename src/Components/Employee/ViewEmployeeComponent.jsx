@@ -47,6 +47,9 @@ export default function ViewEmployeeComponent() {
     const [disabledDownloadTraining,setDownloadTrainingDisabled] = useState(false)
 
     const [loading, setLoading] = useState(false);
+    const [downloadingTraining,setDownloadTraining] = useState(false)
+    const [downloadingEmployee,setDownloadEmployee] = useState(false)
+
     // const [isTrainingGiven,setIsTrainingGiven] = useState(false)
 
     function getTrainingsOfEmployeeById(empid) {       
@@ -157,8 +160,7 @@ export default function ViewEmployeeComponent() {
                 </Fab>
                 {                 
                   <Fab  size="medium" disabled= {!rowData.isTrainingGiven}
-                     color="warning" onClick={() =>
-                      
+                     color="warning" onClick={() =>                      
                         getTrainingsOfEmployeeById(rowData.empId) 
                       } aria-label="view">
                     <BootstrapTooltip title="View Training">
@@ -206,16 +208,18 @@ export default function ViewEmployeeComponent() {
     }
     
     function downloadAllTrainings() {
+       setDownloadTraining(true)
         getAllTrainingHistory().then((response)=> {
                 // Convert the array buffer to a Blob
                 const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-
+               
                 // Create a link element to trigger download
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
                 link.download = 'All Employees Training.xlsx';
                 link.click();
-            })
+               
+            }).finally((response)=> setDownloadTraining(false))
     }
 
      function downloadSampleToUploadEmployee() {
@@ -265,38 +269,10 @@ export default function ViewEmployeeComponent() {
     }
   };
 
-//   async function downloadAllEmployees() {
-//   try {
-    
-
-//     const response = await downAllEmployeesList();
-
-//     const blob = new Blob([response.data], {
-//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//     });
-
-//     // Create temporary download link
-//     const link = document.createElement("a");
-//     const url = window.URL.createObjectURL(blob);
-//     link.href = url;
-//     link.download = "All Employees List.xlsx";
-//     document.body.appendChild(link);
-//     link.click();
-
-//     // Cleanup
-//     link.remove();
-//     window.URL.revokeObjectURL(url);
-//   } catch (error) {
-//     console.error("Download failed:", error);
-//   } finally {
-//     setLoading(false);
-//   }
-// }
-
 function downloadAllEmployees() {
-  // setLoading(true)
+    setDownloadEmployee(true)
     downAllEmployeesList().then((response)=> {
-            // setLoading(false)
+            
             // Convert the array buffer to a Blob
             const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
@@ -305,8 +281,12 @@ function downloadAllEmployees() {
             link.href = URL.createObjectURL(blob);
             link.download = 'All Employees List.xlsx';
             link.click();
+        }).finally((response)=> {
+          alert('finally executed')
+          setDownloadEmployee(false)
         })
-    }
+    
+      }
 
     return (
         <div className="container">
@@ -320,26 +300,35 @@ function downloadAllEmployees() {
                   alignItems={{ xs: "center", sm: "center" }}
                   justifyContent={{ xs: "center", sm: "center" }}
                   sx={{ width: "100%" }}
-                  
                 >
-                    <BootstrapTooltip title="Download Employee List">
-                        <Button  disabled={!empListLength || empListLength.length===0} variant="contained" color="primary" onClick={downloadAllEmployees}><CloudDownloadIcon style={ { paddingRight : '5px'} }  /> Employees  </Button>
-                    </BootstrapTooltip>
-                    <BootstrapTooltip title="Add Employee">
-                      <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
-                    </BootstrapTooltip>
-                        <BootstrapTooltip title="Download Trainings given to Employees">
-                                <Button disabled={disabledDownloadTraining} variant="contained" color="inherit"  onClick={downloadAllTrainings}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Trainings  </Button>
-                        </BootstrapTooltip> 
-                    <BootstrapTooltip title="Download Sample excel To upload Employees">
-                          <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
-                    </BootstrapTooltip>
+                <BootstrapTooltip title="Download Employee List">
+                    <Button  disabled={!empListLength || empListLength.length===0 || downloadingEmployee} 
+                        startIcon= {
+                                downloadingEmployee ? <CircularProgress size={20} color="teal" /> : null
+                              } 
+                        variant="contained" color="primary" onClick={downloadAllEmployees}>
+                          <CloudDownloadIcon style={ { paddingRight : '5px'} }  /> {downloadingEmployee ?  'Downloading ' : 'Employees'  } 
+                    </Button>
+                </BootstrapTooltip>
+                <BootstrapTooltip title="Add Employee">
+                  <Button  variant="contained" color="secondary" onClick={addNewEmployee} >Add Employee</Button>
+                </BootstrapTooltip>
+                    <BootstrapTooltip title="Download Trainings given to Employees">
+                            <Button disabled={disabledDownloadTraining || downloadingTraining}
+                              
+                              startIcon= {
+                                downloadingTraining ? <CircularProgress size={20} color="teal" /> : null
+                              } 
+                          variant="contained" color="inherit"  onClick={downloadAllTrainings}>
+                            <CloudDownloadIcon style={ { paddingRight : '5px'} } />  {downloadingTraining ? "Downloading..." : "Trainings"}  </Button>
+                    </BootstrapTooltip> 
 
-                   
-                        
-                 </Stack>
-            </Box>
-            <hr className='mt-2' />
+                  <BootstrapTooltip title="Download Sample excel To upload Employees">
+                      <Button   variant="contained" color="info"  onClick={downloadSampleToUploadEmployee}><CloudDownloadIcon style={ { paddingRight : '5px'} } /> Sample  </Button>
+                  </BootstrapTooltip>
+      </Stack>
+    </Box>
+    <hr className='mt-2' />
     <Box className="mt-4" display="flex" flexDirection="column" alignItems="center" gap={2}>
       {/* Hidden file input */}
       <input
