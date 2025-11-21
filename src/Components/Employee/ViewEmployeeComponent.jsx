@@ -282,10 +282,8 @@ function downloadAllEmployees() {
             link.download = 'All Employees List.xlsx';
             link.click();
         }).finally((response)=> {
-          alert('finally executed')
           setDownloadEmployee(false)
         })
-    
       }
 
     return (
