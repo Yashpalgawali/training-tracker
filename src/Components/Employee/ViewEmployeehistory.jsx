@@ -99,11 +99,12 @@ export default function ViewEmployeehistory() {
                         <th>Name</th>
                         <th>Employee Code</th>
                         <th>Designation</th>
+                        <th>Category</th>
                         <th>Contractor</th>
                         <th>Department</th>
                         <th>Company</th>
                         <th>Joining Date</th>
-                        
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,10 +122,12 @@ export default function ViewEmployeehistory() {
                             <td>{emp.empName}</td>
                             <td>{emp.empCode}</td>
                             <td>{emp.desigName}</td>
+                            <td>{emp.category}</td>
                             <td>{emp.contractorName}</td>
                             <td>{emp.deptName}</td>
                             <td>{emp.compName}</td>
                             <td>{emp.joiningDate}</td>
+                            <td>{emp.status}</td>
                              
                             </tr>
                         ))
