@@ -6,7 +6,7 @@ import { showToast } from "../SharedComponent/showToast"
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 import $ from 'jquery'; // jQuery is required for DataTables to work
-import { Button, Divider, InputLabel, MenuItem, Select, Typography } from "@mui/material"; 
+import { Button, Divider, Grid, InputLabel, MenuItem, Select, Typography } from "@mui/material"; 
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -20,7 +20,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CircularProgress, Box } from '@mui/material';
  
 import  EditIcon from '@mui/icons-material/Edit';
-import DownloadIcon from '@mui/icons-material/Download';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 
 import {
@@ -89,7 +89,7 @@ export default function ViewEmployeeTrainings() {
     })
 
      useEffect(()=> {
-       
+          
         retrieveAllTrainingTimeSlots().then((response) => {
             setTrainTimeSlot(response.data)
         })
@@ -130,9 +130,9 @@ export default function ViewEmployeeTrainings() {
         },[id])
          
          const  getUpdatedTrainingsByEmpId = () => {
-           
+ 
                 getTrainingsByEmployeeId(id).then((response) => {
-                  
+               
                     setEmployee(response.data[0].employee)
                     if(response.data[0].employee.status!=1) {
                         setAddTrainingDisabled(true)
@@ -241,6 +241,14 @@ function getTrainingCountByTrainingHistId(id) {
    
 }
 
+function getTrainingHistoryByEmpAndTrainingId(empid,tid) {
+    navigate(`/training/history/${empid}/${tid}`)
+}
+
+function getTrainingHistoryByEmpId(id) {
+    navigate(`/training/history/${id}`)
+}
+
     return (
       <div className="container">
         <div className="mb-2">
@@ -257,19 +265,47 @@ function getTrainingCountByTrainingHistId(id) {
                 </Typography>
             </Box>
             
-            <div>
-                <div style={{ float : 'left' ,marginLeft: '5px'}}  className="mb-3 ">
-                    <label htmlFor="" >Name:</label><strong> {employee.empName}</strong>
-                </div>
-                <div style={{ float : 'right' ,marginLeft: '5px'}}>
-                    <label htmlFor="" >Designation:</label><strong> {employee.designation.desigName}</strong>
-                </div>
-                <div style={{ float : 'left' , clear : 'both'}} className="mb-3">
-                    <label htmlFor="" >Department:</label><strong> {employee.department.deptName}</strong>
-                </div>
-            </div>
+            <Box >
+                           
+                            <Box className="mb-5" sx={{borderBlockStyle: 'outset', p: 2}}>
+                                {/* Row 1 */}
+                            {/* Row 1 */}
+                            <Grid container sx={{ mb: 2 }}>
+                            <Grid item xs={6} sx={{ pr: 2 }}>
+                                <strong>Name: </strong> {employee.empName}
+                            </Grid>
+                            <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                                <strong>Employee Code: </strong> {employee.empCode}
+                            </Grid>
+                            </Grid>
+            
+                            {/* Row 2 */}
+                            <Grid container sx={{ mb: 2 }}>
+                            <Grid item xs={6} sx={{ pr: 2 }}>
+                                <strong>Designation: </strong> {employee.designation.desigName}
+                            </Grid>
+                            <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                                <strong>Category: </strong> {employee.designation.desigName}
+                            </Grid>
+                            </Grid>
+            
+                            {/* Row 3 */}
+                            <Grid container sx={{ mb: 2 }}>
+                            {/* <Grid item xs={6} sx={{ pr: 2 }}>
+                                <strong>Company: </strong> {employee.department.company.compName}
+                            </Grid> */}
+                            <Grid item xs={6} textAlign="right"  >
+                                <strong>Department: </strong> {employee.department.deptName}
+                            </Grid>
+                            </Grid>
+                                <Grid>
+                                    <Button variant="contained" color="success" onClick={()=>getTrainingHistoryByEmpId(employee.empId)}> <VisibilityIcon /> All Training History</Button>
+                                </Grid> 
+                        </Box>
+                    </Box>
+            
         </div>
-        <div><Divider></Divider> </div>
+        
         {/* <div className="mb-5"> */}
         <div style={{ width: "100%", height: 400 ,marginBottom: "100px"}}  >
                 <Typography variant="h5" gutterBottom>Competency Chart</Typography>
@@ -340,7 +376,23 @@ function getTrainingCountByTrainingHistId(id) {
                                                 <td>{training.competency.score}</td>
                                                 <td>{training.trainingCount}</td>
                                                 <td> 
-                                                    <Button variant="contained" color="primary" onClick={()=>handleClickOpen(training.emp_train_id)}>{training.emp_train_hist_id} <EditIcon /> Update</Button>
+                                                    {
+                                                        addTrainingDisabled ?(
+                                                          ''
+                                                        )
+                                                        : (
+                                                            <Button variant="contained" style={{marginRight : '5px'}} color="primary" onClick={()=>handleClickOpen(training.emp_train_id)}> <EditIcon /> Update</Button>
+                                                        )
+                                                    }
+                                                    
+                                                    <Button variant="contained" 
+                                                    sx={{ 
+                                                            backgroundColor: "#1c80a5ff",
+                                                            "&:hover": {
+                                                            backgroundColor: "#0e5c7aff",
+                                                            },
+                                                        }}
+                                                       onClick={()=>getTrainingHistoryByEmpAndTrainingId(training.employee.empId,training.training.training_id)}>  <VisibilityIcon /> View History</Button>
                                                 </td>
                                             </tr>
                             )

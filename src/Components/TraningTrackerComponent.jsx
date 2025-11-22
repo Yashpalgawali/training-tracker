@@ -27,6 +27,8 @@ import ChangePassword from './ChangePassword';
 import ConfirmOtp from './ConfirmOtp';
 import ChangeForgotPassword from './ChangeForgotPassword';
 import ViewEmployeehistory from './Employee/ViewEmployeehistory';
+import ViewEmployeeTrainingHistory from './Employee/ViewEmployeeTrainingHistory';
+import ViewTrainingHistory from './Employee/ViewTrainingHistory';
 
 function AuthenticateRoute({children}) {
    const authContext  = useAuth()
@@ -71,7 +73,8 @@ export default function TrainingTrackerComponent() {
                 
                 <Route path='/employee/:id' element={ <AuthenticateRoute><EmployeeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/viewemployees' element={ <AuthenticateRoute><ViewEmployeeComponent /></AuthenticateRoute> }> </Route>
-
+                <Route path='/history/employee/:id' element={<AuthenticateRoute> <ViewEmployeehistory /> </AuthenticateRoute>} ></Route>
+                
                 <Route path='/trainingtimeslot/:id' element={ <AuthenticateRoute><TrainingTimeSlotComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/trainingtimeslots' element={ <AuthenticateRoute><ViewTrainingTimeSlotComponent /></AuthenticateRoute> }> </Route>
 
@@ -85,8 +88,12 @@ export default function TrainingTrackerComponent() {
                 <Route path='/change/password' element={<AuthenticateRoute> <ChangePassword /> </AuthenticateRoute>}></Route>
                 <Route path='/confirm/otp' element={  <ConfirmOtp />  } ></Route>
 
+                <Route path='/training/history/:empid/:trainingid' element={ <AuthenticateRoute> <ViewEmployeeTrainingHistory /> </AuthenticateRoute>}></Route> 
+
+                <Route path='/training/history/:empid' element={ <AuthenticateRoute> <ViewTrainingHistory /> </AuthenticateRoute>}></Route> 
+                
                 <Route path='/forgot/password/change' element={  <ChangeForgotPassword />  } ></Route>
-                <Route path='/history/employee/:id' element={<AuthenticateRoute> <ViewEmployeehistory /> </AuthenticateRoute>} ></Route>
+                
                 <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>
                 <Route path='/login' element={ <LoginComponent /> }> </Route>
