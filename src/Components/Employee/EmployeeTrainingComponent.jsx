@@ -60,14 +60,11 @@ export default function EmployeeTrainingComponent(){
     }, [id] )
 
     function getAllDetails() {
-        
        
-        retrieveAllActiveEmployees().then((response) => {
-            
+        retrieveAllActiveEmployees().then((response) => {            
            setEmpDisabled(false)
            setEmployeeList(response.data)
         }).catch((error)=> {
-
             setEmpDisabled(true)
             showToast(error.response.data.errorMessage, "error")
         })
@@ -176,7 +173,6 @@ export default function EmployeeTrainingComponent(){
                 sessionStorage.setItem('training_id',values.training_ids)
             }).catch((error)=>{  })
 
-            
             if(sessionStorage.getItem('training_id')!=null) {
                 updateEmployeeTraining(employeeTraining).then((response) => {                   
                     showToast(response?.data?.responseMessage,"success")
@@ -319,7 +315,6 @@ export default function EmployeeTrainingComponent(){
                                             onChange={(option) =>   
                                                 {
                                                     setFieldValue('training_ids', option ? option.value : '')                                                    
-                                                 //   sessionStorage.setItem('training_id',option.value)                                                    
                                                 }
                                             }                                             
                                             placeholder="Select Training"

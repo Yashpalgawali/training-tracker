@@ -134,7 +134,7 @@ export default function ViewEmployeehistory() {
                         </tr>
                         ) : (
                         empList.map((emp,index) => (
-                            <tr key={emp.emp_hist_id}>
+                            <tr key={emp.emp_train_hist_id}>
                             <td>{index+1}</td>
                             <td>{emp.empName}</td>
                             <td>{emp.empCode}</td>

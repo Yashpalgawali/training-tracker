@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { executeJwtAuthentication , logoutFunction } from "../api/LoginApiService";
 import { jwtDecode } from "jwt-decode";
 import { apiClient } from "../api/apiClient"; 
+import { showToast } from "../SharedComponent/showToast";
 
 
 export const AuthContext = createContext()
@@ -23,7 +24,7 @@ export default function AuthProvider({children}) {
     const storedToken = localStorage.getItem("token");
     const storedUserId = localStorage.getItem("userid");
     const storedUsername = localStorage.getItem("username");
-
+ 
     if (storedToken && storedUserId) {
       setJwtToken(storedToken);
       setUserId(storedUserId);
@@ -41,7 +42,7 @@ export default function AuthProvider({children}) {
     const respInterceptor = apiClient.interceptors.response.use(
         (response) => response,
         (error) => {
-           
+           alert(error.response.status)
             if(error.response && error.response.status===401) {
                
                 logout()    
@@ -55,13 +56,15 @@ export default function AuthProvider({children}) {
         }
 
     )
-
       setLoading(false); // 👈 auth check done
 
       return ()=> {
         apiClient.interceptors.response.eject(respInterceptor)
       };
   }, []);
+
+ 
+
 
     async function login(username,password) {
        
@@ -104,17 +107,18 @@ export default function AuthProvider({children}) {
             return false
         }
     }
+
     async function logout()
     {      
         const result = await logoutFunction(jwtToken)
-      
-        sessionStorage.setItem('logout',result.data.message) 
-        
+
+        showToast(result.data.message,"success")
+
         setAuthenticated(false)
         setUserId('')
         setJwtToken(null)
         setUsername('')
-       
+
         sessionStorage.clear()
         localStorage.clear()
 

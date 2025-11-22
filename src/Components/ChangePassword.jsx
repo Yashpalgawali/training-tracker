@@ -15,7 +15,7 @@ export default function ChangePassword() {
     const navigate = useNavigate()
 
     useEffect(()=> {
-
+        
     },[])
 
     function handleSubmit(values) {
@@ -41,6 +41,7 @@ export default function ChangePassword() {
         })
        }
        else {
+        
             let user = {
                 email : sessionStorage.getItem('email'),
                 password : values.password
