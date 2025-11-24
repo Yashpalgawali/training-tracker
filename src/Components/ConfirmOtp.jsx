@@ -3,7 +3,6 @@ import { ErrorMessage, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { validateOtp } from "./api/ChangePasswordApiService"
-import { apiClient } from "./api/apiClient"
 
 export default function ConfirmOtp() {
 
@@ -11,18 +10,26 @@ export default function ConfirmOtp() {
     const [cnfOtp,setCnfOtp] = useState('')
 
     const navigate = useNavigate()
- 
+    const [maskedEmail,setMaskedEmail] = useState('')
+    
     useEffect(()=> {
+        
         if(sessionStorage.getItem('email')==null) {
             navigate(`/login`)
         }else {
-            let eml = sessionStorage.getItem('email')
-            
+            let email = sessionStorage.getItem('email')
+            const [name, domain] = email.split("@");
+          
+            const maskedName = name[0] + "*".repeat(name.length - 2) + name.slice(-1);
+            setMaskedEmail(maskedName + "@" + domain)
+
         }
     },[])
 
     function handleSubmit(values) {
         let email = sessionStorage.getItem('email')
+
+        alert('lenght of email '+email.length)
         let notp = values.otp
         validateOtp(email,notp).then((response)=> {
            
@@ -39,14 +46,13 @@ export default function ConfirmOtp() {
         if(values.otp=='') {
             errors.otp='OTP can\'t be blank'
         }
-
         return errors
     }
 
     return(
         <div className="container">
             <Box>
-                <Typography variant="h4" gutterBottom>Otp is sent to your email  </Typography>
+                <Typography variant="h5" gutterBottom>Otp is sent to your {maskedEmail}  </Typography>
             </Box>
             <div >
                 <Formik
