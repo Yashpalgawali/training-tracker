@@ -39,23 +39,50 @@ export default function AuthProvider({children}) {
       });
     }
 
-    const respInterceptor = apiClient.interceptors.response.use(
-        (response) => response,
-        (error) => {
-           alert(error.response.status)
-            if(error.response && error.response.status===401) {
+    // const respInterceptor = apiClient.interceptors.response.use(
+    //     (response) => response,
+    //     (error) => {
+           
+    //         if(error.response && error.response.status===401) {
                
-                logout()    
-                // 🔑 Hard refresh to login page
-                window.location.href = "/trainingtracker/login";
-                // 🔑 Prevent the error from bubbling to UI
-                return new Promise(() => { sessionStorage.setItem("reserr","You are not Authorized. Please Login to Continue")}); 
+    //             logout()    
+    //             // 🔑 Hard refresh to login page
+    //             window.location.href = "/trainingtracker/login";
+    //             // 🔑 Prevent the error from bubbling to UI
+    //             return new Promise(() => { sessionStorage.setItem("reserr","You are not Authorized. Please Login to Continue")}); 
                
-            }
-            return Promise.reject(error)
-        }
+    //         }
+    //         return Promise.reject(error)
+    //     }
+let isRedirecting = false;
 
-    )
+const respInterceptor = apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+
+    if (error.response && error.response.status === 401) {
+
+      if (!isRedirecting) {
+        isRedirecting = true;
+
+        // session message
+        sessionStorage.setItem("reserr", "You are not Authorized. Please Login to Continue");
+
+        // clear auth
+        logout();
+
+        // redirect
+        window.location.href = "/trainingtracker/login";
+      }
+
+      // stop further processing
+      return Promise.reject(null);
+    }
+
+    return Promise.reject(error);
+  }
+);
+     
       setLoading(false); // 👈 auth check done
 
       return ()=> {

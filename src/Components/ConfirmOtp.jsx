@@ -28,7 +28,7 @@ export default function ConfirmOtp() {
            
             navigate('/forgot/password/change')
         }).catch((error)=> {
-            alert('Error '+error.response)
+            alert('Error '+error.response.data.errorMessage)
             console.log('error is ',error)
         })
     }
