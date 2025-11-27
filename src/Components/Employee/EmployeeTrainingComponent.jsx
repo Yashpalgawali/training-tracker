@@ -24,7 +24,8 @@ export default function EmployeeTrainingComponent(){
     const [empList,setEmployeeList] = useState([]) 
     const [training_date , setTrainingDate] = useState('')
     const [completion_date , setCompletionDate] = useState('')
-    const [employee,setEmployee ] = useState('')
+    // const [employee,setEmployee ] = useState('')
+    const [employee,setEmployee ] = useState([])
     const [trainingTimeSlot,setTrainingTimeSlot] = useState('')
     const [btnValue,setBtnValue] = useState('Train Employee')
     const [score,setScore] =useState('')
@@ -51,7 +52,8 @@ export default function EmployeeTrainingComponent(){
     useEffect( ()=> {
      
         if(id != -1) {           
-            setDisabled(true)
+            setDisabled(true)          
+            setEmpDisabled(true)
             setBtnValue('Update Training')
                 getEmployeeById(id).then((response) => {
                         setEmployee(response.data)
@@ -61,8 +63,8 @@ export default function EmployeeTrainingComponent(){
 
     function getAllDetails() {
        
-        retrieveAllActiveEmployees().then((response) => {            
-           setEmpDisabled(false)
+        retrieveAllActiveEmployees().then((response) => {
+           empListDisabled && setEmpDisabled(false)
            setEmployeeList(response.data)
         }).catch((error)=> {
             setEmpDisabled(true)
@@ -127,72 +129,90 @@ export default function EmployeeTrainingComponent(){
             }) );
 
     async function onSubmit(values) {
+        console.log('training object is ',values)
+        // let competencyObj = {
+        //     competency_id : parseInt(values.score)
+        // }
+        // let timeSlotObj = {
+        //     training_time_slot_id : parseInt(values.trainingTimeSlot)
+        // }
 
-        let competencyObj = {
-            competency_id : parseInt(values.score)
-        }
-        let timeSlotObj = {
-            training_time_slot_id : parseInt(values.trainingTimeSlot)
-        }
+        let competencyObj =   parseInt(values.score)
+        
+        let timeSlotObj =  parseInt(values.trainingTimeSlot)
+        
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
 
-        let employeeObject = null
+        let employeeObject;
 
         if(id!= -1) {
-            employeeObject = {
-                empId : parseInt(id)
-            }
-        }
-        else {
-            employeeObject = {
-                empId : parseInt(values.employee)
-            }
-            // employeeObject = values.employee
-        }
+            // employeeObject = {
+            //     empId : parseInt(id)
+            // }
+            const employeeArray = [Number(id)];
+           employeeObject = employeeArray
+            
+            await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
 
-        let employeeTraining = {
-                employee : employeeObject,
-                trainingTimeSlot : timeSlotObj,
-                training_date : formattedTrainingDate,
-                training_ids : values.training_ids,
-                competency : competencyObj,
-                completion_date : formattedTrainingDate 
-            }
-
-        await getTrainingsByEmployeeIdAndTrainingId(employeeObject.empId,values.training_ids).then((result) => {
-
+            // employeeTraining = {
+            //         employee : employeeObject,
+            //         trainingTimeSlot : timeSlotObj,
+            //         training_date : formattedTrainingDate,
+            //         training_ids : values.training_ids,
+            //         competency : competencyObj,
+            //         completion_date : formattedTrainingDate,
+            //         emp_train_id : result.data.emp_train_id
+            // }
             employeeTraining = {
-                    employee : employeeObject,
-                    trainingTimeSlot : timeSlotObj,
-                    training_date : formattedTrainingDate,
-                    training_ids : values.training_ids,
-                    competency : competencyObj,
-                    completion_date : formattedTrainingDate,
+                    employeeIds : employeeObject,
+                    trainingTimeSlotId : timeSlotObj,
+                    trainingDate : formattedTrainingDate,
+                    trainingId : values.training_ids,
+                    competencyId : competencyObj,
+                    completionDate : formattedTrainingDate,
                     emp_train_id : result.data.emp_train_id
             }
                 sessionStorage.setItem('training_id',values.training_ids)
             }).catch((error)=>{  })
+        }
+
+        else {
+            // employeeObject = {
+            //     empId : parseInt(values.employee)
+            // }
+            employeeObject = values.employee
+            console.log('new object ',employeeObject)
+        }       
+        
+        let employeeTraining = {
+                employeeIds : employeeObject,
+                trainingTimeSlotId : timeSlotObj,
+                trainingDate : formattedTrainingDate,
+                trainingId : values.training_ids,
+                competencyId : competencyObj,
+                completionDate : formattedTrainingDate 
+            }
 
             if(sessionStorage.getItem('training_id')!=null) {
-                updateEmployeeTraining(employeeTraining).then((response) => {                   
+                updateEmployeeTraining(employeeTraining).then((response) => {
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
                 })
-                .catch((error) => {                
+                .catch((error) => {
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 }).finally(()=>{
                     sessionStorage.removeItem('training_id')
-                })                
+                })
             }
             else {
                    employeeTraining = {
-                    employee : employeeObject,
-                    trainingTimeSlot : timeSlotObj,
-                    training_date : formattedTrainingDate,
-                    training_ids : values.training_ids,
-                    competency : competencyObj,
-                    completion_date : formattedTrainingDate
+                    employeeIds : employeeObject,
+                    trainingTimeSlotId : timeSlotObj,
+                    trainingDate : formattedTrainingDate,
+                    trainingId : values.training_ids,
+                    competencyId : competencyObj,
+                    completionDate : formattedTrainingDate
                 }
                 saveEmployeeTraining(employeeTraining).then((response) => {
                     if(id!= -1) {
@@ -201,19 +221,19 @@ export default function EmployeeTrainingComponent(){
                         showToast(response?.data?.responseMessage,"success")
                     }
                     else {
-                            alert('training saved for multiple IDs')
+                        alert('training saved for multiple IDs')
                         navigate(`/viewemployees`)
                         showToast(response?.data?.responseMessage,"success")
                     }
                 })
                 .catch((error) => {
-                        alert('training saved error')
+                    alert('training saved error')
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/training/employee/${id}`)
                 })
             }
     }
-    
+
     function validate(values) {
         let errors = {}
         if(id == -1)
@@ -237,7 +257,7 @@ export default function EmployeeTrainingComponent(){
         if(values.training_date==null) {
            errors.training_date='No Training Date is Selected'
         }
-        
+
         return errors
     }
 
@@ -249,6 +269,7 @@ export default function EmployeeTrainingComponent(){
           styles={customStyles}
           name="employee"
           isMulti
+        
           options={options}
           className="basic-multi-select"
           classNamePrefix="select"
@@ -283,8 +304,8 @@ export default function EmployeeTrainingComponent(){
                         initialValues={{
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
-                           employee: employee ? id : '',
-                            // employee : [],
+                            //employee: employee ? id : '',
+                            employee : [],
                             competency : score ? score : '',
                             training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
@@ -363,13 +384,14 @@ export default function EmployeeTrainingComponent(){
                                             <TextField 
                                                 fullWidth
                                                 disabled="true"
-                                                placeholder="No Employees Present"
+                                                placeholder={id == -1 ? "No Employees Present" : employee.empName }
                                             />
                                             </>
                                         ) : (
                                         <>
-                                        {/* <EmployeeMultiSelect options={options} /> */}
-                                        <Select
+                                       
+                                        <EmployeeMultiSelect options={options} disabled={empListDisabled}/>
+                                        {/* <Select
                                             styles={customStyles}                                            
                                             hideSelectedOptions={true}
                                             isDisabled={disabled}                                    
@@ -389,7 +411,7 @@ export default function EmployeeTrainingComponent(){
                                         />                                
                                         <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                         <ErrorMessage name="employee" />
-                                        </FormHelperText>   
+                                        </FormHelperText>    */}
                                     </>
                                    )
                                 }

@@ -108,7 +108,7 @@ export default function EmployeeComponent() {
       };
     
     function  onSubmit(values) {
-      
+      alert('called')
        let designation = {
             desigId : values.designation,
             desigName : ''
@@ -123,7 +123,7 @@ export default function EmployeeComponent() {
             category_id : values.category,
             category : ''
        }
-   
+
     const formattedJoiningDate = dayjs(values.joiningDate).format("DD-MM-YYYY") 
     let employee = {
             empName : values.emp_name,
@@ -133,11 +133,10 @@ export default function EmployeeComponent() {
             category : category,
             contractorName : values.contractor_name,
             joiningDate : formattedJoiningDate,
-            status : values.status
-        }
- 
+            
+        } 
         if(id == -1) {
-            saveEmployee(employee).then((response) => {                
+               saveEmployee(employee).then((response) => {                
                   showToast(response?.data?.responseMessage,"success")
                   navigate(`/viewemployees`)
                 })
@@ -145,9 +144,11 @@ export default function EmployeeComponent() {
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 })
+           
         }
         else {
             employee.empId = id
+               
             updateEmployee(employee).then((response)=>{
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
@@ -286,7 +287,7 @@ export default function EmployeeComponent() {
                 {/* Designation */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.designation && Boolean(errors.designation)}>
-                    <InputLabel id="designation-label">Designation</InputLabel>
+                    <InputLabel id="designation-label">Please Select Designation</InputLabel>
                     <Select
                         labelId="designation-label"
                         id="designation"
@@ -296,7 +297,7 @@ export default function EmployeeComponent() {
                         onBlur={handleBlur}
                         label="Designation"
                     >
-                        <MenuItem value="">Please Select Designation</MenuItem>
+                        <MenuItem value="" >Please Select Designation</MenuItem>
                         {desiglist.map((desig) => (
                         <MenuItem key={desig.desigId} value={desig.desigId}>
                             {desig.desigName}
@@ -310,7 +311,7 @@ export default function EmployeeComponent() {
                 {/* Category */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.category && Boolean(errors.category)}>
-                    <InputLabel id="category-label">Category</InputLabel>
+                    <InputLabel id="category-label">Please Select Category</InputLabel>
                     <Select
                         labelId="category-label"
                         id="category"
@@ -334,7 +335,7 @@ export default function EmployeeComponent() {
                 {/* Company */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.company && Boolean(errors.company)}>
-                    <InputLabel id="company-label">Company</InputLabel>
+                    <InputLabel id="company-label">Please Select Company</InputLabel>
                     <Select
                         labelId="company-label"
                         id="company"
@@ -358,7 +359,7 @@ export default function EmployeeComponent() {
                 {/* Department */}
                 <Box mb={2}>
                     <FormControl fullWidth variant="standard" error={touched.department && Boolean(errors.department)}>
-                    <InputLabel id="department-label">Department</InputLabel>
+                    <InputLabel id="department-label">Please Select Department</InputLabel>
                     <Select
                         labelId="department-label"
                         id="department"
@@ -380,7 +381,7 @@ export default function EmployeeComponent() {
                 </Box>
 
                 {/* Employee Status */}
-                <Box mb={2}>
+                <Box>
                     <FormControl fullWidth variant="standard" error={touched.status && Boolean(errors.status)}>
                     <InputLabel id="status-label">Status</InputLabel>
                     <Select
@@ -401,7 +402,8 @@ export default function EmployeeComponent() {
                     </Select>
                     <FormHelperText><ErrorMessage name="status" /></FormHelperText>
                     </FormControl>
-                </Box>
+                </Box> 
+                
                 {/* Submit Button */}
                 <Box mt={3}>
                     <Button type="submit" variant="contained" color="primary">

@@ -182,42 +182,39 @@ export default function LoginComponent() {
                                     >
                                         Forgot Password?
                                     </Typography>
-                                                   
-                                </Box>
-
-                            {/* ======= DIALOG ======= */}
-                            <Dialog open={openDialog} onClose={handleClose}>
-                                <DialogTitle>Forgot Password</DialogTitle>
-                                <DialogContent>
-                                <Typography variant="body2" sx={{ mb: 2 }}>
-                                    Enter your registered email address to receive an OTP.
-                                </Typography>
-                                <TextField
-                                    autoFocus
-                                    margin="dense"
-                                    id="email"
-                                    label="Email Address"
-                                    type="email"
-                                    fullWidth
-                                    variant="outlined"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                />
-                                </DialogContent>
-                                <DialogActions>
-                                <Button onClick={handleClose}>Cancel</Button>
-                                <Button onClick={handleSendResetLink} variant="contained">
-                                    Send Otp
-                                </Button>
-                                </DialogActions>
-                            </Dialog>
-                          </Form>
-                        )
-                    }
-                </Formik>
-            </div>
-        </div> 
-        
+                </Box>
+                    {/* ======= DIALOG ======= */}
+                    <Dialog open={openDialog} onClose={handleClose}>
+                        <DialogTitle>Forgot Password</DialogTitle>
+                        <DialogContent>
+                        <Typography variant="body2" sx={{ mb: 2 }}>
+                            Enter your registered email address to receive an OTP.
+                        </Typography>
+                        <TextField
+                            autoFocus
+                            margin="dense"
+                            id="email"
+                            label="Email Address"
+                            type="email"
+                            fullWidth
+                            variant="outlined"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        </DialogContent>
+                        <DialogActions>
+                        <Button onClick={handleClose}>Cancel</Button>
+                        <Button onClick={handleSendResetLink} variant="contained">
+                            Send Otp
+                        </Button>
+                        </DialogActions>
+                    </Dialog>
+                    </Form>
+                    )
+                }
+            </Formik>
+        </div>
+       </div>
       </div>
     )
 }
