@@ -149,8 +149,8 @@ export default function EmployeeTrainingComponent(){
             // employeeObject = {
             //     empId : parseInt(id)
             // }
-            const employeeArray = [Number(id)];
-           employeeObject = employeeArray
+              
+           employeeObject = [Number(id)];
             
             await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
 
@@ -163,7 +163,7 @@ export default function EmployeeTrainingComponent(){
             //         completion_date : formattedTrainingDate,
             //         emp_train_id : result.data.emp_train_id
             // }
-            employeeTraining = {
+            updateEmployeeTraining = {
                     employeeIds : employeeObject,
                     trainingTimeSlotId : timeSlotObj,
                     trainingDate : formattedTrainingDate,
@@ -180,8 +180,7 @@ export default function EmployeeTrainingComponent(){
             // employeeObject = {
             //     empId : parseInt(values.employee)
             // }
-            employeeObject = values.employee
-            console.log('new object ',employeeObject)
+            employeeObject = values.employee           
         }       
         
         let employeeTraining = {
@@ -194,7 +193,7 @@ export default function EmployeeTrainingComponent(){
             }
 
             if(sessionStorage.getItem('training_id')!=null) {
-                updateEmployeeTraining(employeeTraining).then((response) => {
+                updateEmployeeTraining(updateEmployeeTraining).then((response) => {
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
                 })
@@ -205,15 +204,7 @@ export default function EmployeeTrainingComponent(){
                     sessionStorage.removeItem('training_id')
                 })
             }
-            else {
-                   employeeTraining = {
-                    employeeIds : employeeObject,
-                    trainingTimeSlotId : timeSlotObj,
-                    trainingDate : formattedTrainingDate,
-                    trainingId : values.training_ids,
-                    competencyId : competencyObj,
-                    completionDate : formattedTrainingDate
-                }
+            else {                   
                 saveEmployeeTraining(employeeTraining).then((response) => {
                     if(id!= -1) {
                         alert('training saved')
