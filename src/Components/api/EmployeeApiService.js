@@ -2,6 +2,8 @@ import { apiClient } from './apiClient';
 
 export const retrieveAllEmployees = () => apiClient.get('employee/')
 
+export const retrieveAllEmployeesUsingTrainingAndCompetencyId = (tid,cid) => apiClient.get(`employee/training/${tid}/competency/${cid}`)
+
 export const retrieveAllActiveEmployees = () => apiClient.get('employee/active')
 
 export const retrieveAllEmployeesWithPagination = (page , size) => apiClient.get(`employee/paged?page=${page}&size=${size}`)

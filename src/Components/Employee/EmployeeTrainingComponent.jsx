@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { getEmployeeById, retrieveAllActiveEmployees, retrieveAllEmployees } from "../api/EmployeeApiService"
+import { getEmployeeById, retrieveAllActiveEmployees, retrieveAllEmployees, retrieveAllEmployeesUsingTrainingAndCompetencyId } from "../api/EmployeeApiService"
 import { retrieveAllTraining } from "../api/TrainingApiService"
 import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
@@ -63,13 +63,13 @@ export default function EmployeeTrainingComponent(){
 
     function getAllDetails() {
        
-        retrieveAllActiveEmployees().then((response) => {
-           empListDisabled && setEmpDisabled(false)
-           setEmployeeList(response.data)
-        }).catch((error)=> {
-            setEmpDisabled(true)
-            showToast(error.response.data.errorMessage, "error")
-        })
+        // retrieveAllActiveEmployees().then((response) => {
+        //    empListDisabled && setEmpDisabled(false)
+        //    setEmployeeList(response.data)
+        // }).catch((error)=> {
+        //     setEmpDisabled(true)
+        //     showToast(error.response.data.errorMessage, "error")
+        // })
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
         }).catch((error)=> {
@@ -207,18 +207,17 @@ export default function EmployeeTrainingComponent(){
             else {                   
                 saveEmployeeTraining(employeeTraining).then((response) => {
                     if(id!= -1) {
-                        alert('training saved')
+                      
                         navigate(`/training/employee/${id}`)
                         showToast(response?.data?.responseMessage,"success")
                     }
                     else {
-                        alert('training saved for multiple IDs')
+                      
                         navigate(`/viewemployees`)
                         showToast(response?.data?.responseMessage,"success")
                     }
                 })
                 .catch((error) => {
-                    alert('training saved error')
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/training/employee/${id}`)
                 })
@@ -273,17 +272,23 @@ export default function EmployeeTrainingComponent(){
       );
     }
 
-    function getEmployeesByTrainingAndCompetencyId() {
-        retrieveAllEmployees().then((response) => {
-           setEmpDisabled(false)
-           setEmployeeList(response.data)
-        }).catch((error)=> {
-             
-            setEmpDisabled(true)
-            showToast(error.response.data.errorMessage, "error")
-        })
+    function getEmployeesByTrainingAndCompetencyId( ) {
+        
+       let tid = parseInt(sessionStorage.getItem('training_id'))
+       let cid = parseInt(sessionStorage.getItem('competency_id'))
+
+       retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid).then((response)=> {
+            console.log(response.data)
+            empListDisabled && setEmpDisabled(false)
+            setEmployeeList(response.data)
+       }).catch((error)=>{
+        setEmpDisabled(false)
+        console.log('error os ',error)
+            //showToast(error.data.errorMessage,'error')
+       })
     }
 
+    
     return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
@@ -298,7 +303,8 @@ export default function EmployeeTrainingComponent(){
                             //employee: employee ? id : '',
                             employee : [],
                             competency : score ? score : '',
-                            training_ids: [],
+                             training_ids: '',
+                            // training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
 
@@ -309,7 +315,7 @@ export default function EmployeeTrainingComponent(){
                         >
                         {({ setFieldValue, values, handleChange, handleBlur,  touched, errors }) => (
                             <Form>
-                                 {/* Training Select */}
+                            {/* Training Select */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Select Trainings</Typography>
                                 <Select   
@@ -324,17 +330,17 @@ export default function EmployeeTrainingComponent(){
                                                 .map(training => ({ value: training.training_id, label: training.training_name }))
                                                 .find(option => option.value === values.training_ids) || null
                                         }
-                                            onChange={(option) =>   
-                                                {
-                                                    setFieldValue('training_ids', option ? option.value : '')                                                    
-                                                }
-                                            }                                             
-                                            placeholder="Select Training"
+                                        onChange={(option) =>
+                                            {    
+                                                setFieldValue('training_ids', option ? option.value : null);
+                                                sessionStorage.setItem('training_id',option.value)
+                                            }
+                                        }                                             
+                                        placeholder="Select Training"
                                     />
                                 <FormHelperText error={touched.training_ids && Boolean(errors.training_ids)}>
                                 <ErrorMessage name="training_ids" />
-                                </FormHelperText>  
-                                
+                                </FormHelperText>
                             </Box>
 
                              {/* Competency Score */}
@@ -344,7 +350,7 @@ export default function EmployeeTrainingComponent(){
                                         styles={customStyles}                                     
                                         name="score"
                                         options={scoreList.map(scores => ({
-                                            value: scores.competency_id,
+                                            value: scores.competency_id,                                           
                                             label: scores.score
                                         }))}
                                         value={
@@ -353,10 +359,9 @@ export default function EmployeeTrainingComponent(){
                                                 .find(option => option.value === values.score) || null
                                         }
                                         onChange={(option) => {
-                                            
-                                            setFieldValue('score', option ? option.value : '')
+                                            setFieldValue('score', option ? option.value : '');
                                             sessionStorage.setItem('competency_id',option.value)
-                                           // getEmployeesByTrainingAndCompetencyId()
+                                            getEmployeesByTrainingAndCompetencyId()
                                         }}
                                         
                                         placeholder="Select Score"
