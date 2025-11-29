@@ -137,7 +137,6 @@ export default function ViewEmployeeTrainings() {
                     if(response.data[0].employee.status!=1) {
                         setAddTrainingDisabled(true)
                     }
-                    console.log(response.data)
                     setTrainingList(response.data)
                 });
         };
@@ -150,7 +149,6 @@ export default function ViewEmployeeTrainings() {
                 setAddTrainingDisabled(true)
             }
             setEmployee(response.data[0].employee)
-            console.log('training List is ',response.data)
             setTrainingList(response.data)
        })
        .catch((error) => {
@@ -165,7 +163,6 @@ export default function ViewEmployeeTrainings() {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = (id) => {
-        alert('Hist id '+id)
             sessionStorage.setItem('hist_id',id)
             setOpen(true);
     };
@@ -237,7 +234,6 @@ export default function ViewEmployeeTrainings() {
 function getTrainingCountByTrainingHistId(id) {
     
     getTrainingsCountByEmployeeTrainingId(id).then((response) => {
-        console.log(response.data)
         setTrainingCount(response.data)
     })
    

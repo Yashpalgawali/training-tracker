@@ -51,8 +51,9 @@ export default function EmployeeTrainingComponent(){
 
     useEffect( ()=> {
      
-        if(id != -1) {           
-            setDisabled(true)          
+        if(id != -1) {    
+            empList.length = 2   
+            setDisabled(false)          
             setEmpDisabled(true)
             setBtnValue('Update Training')
                 getEmployeeById(id).then((response) => {
@@ -129,7 +130,7 @@ export default function EmployeeTrainingComponent(){
             }) );
 
     async function onSubmit(values) {
-        console.log('training object is ',values)
+        // console.log('training object is ',values)
         // let competencyObj = {
         //     competency_id : parseInt(values.score)
         // }
@@ -144,27 +145,16 @@ export default function EmployeeTrainingComponent(){
         const formattedTrainingDate = dayjs(values.training_date).format('DD-MM-YYYY');
 
         let employeeObject;
-
+        let employeeTraining;
+        let updateEmpTraining;
         if(id!= -1) {
-            // employeeObject = {
-            //     empId : parseInt(id)
-            // }
               
-           employeeObject = [Number(id)];
-            
+            values.employee = [Number(id)]
+         
             await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
 
-            // employeeTraining = {
-            //         employee : employeeObject,
-            //         trainingTimeSlot : timeSlotObj,
-            //         training_date : formattedTrainingDate,
-            //         training_ids : values.training_ids,
-            //         competency : competencyObj,
-            //         completion_date : formattedTrainingDate,
-            //         emp_train_id : result.data.emp_train_id
-            // }
-            updateEmployeeTraining = {
-                    employeeIds : employeeObject,
+            updateEmpTraining = {
+                    employeeIds : values.employee,
                     trainingTimeSlotId : timeSlotObj,
                     trainingDate : formattedTrainingDate,
                     trainingId : values.training_ids,
@@ -172,28 +162,9 @@ export default function EmployeeTrainingComponent(){
                     completionDate : formattedTrainingDate,
                     emp_train_id : result.data.emp_train_id
             }
-                sessionStorage.setItem('training_id',values.training_ids)
             }).catch((error)=>{  })
-        }
-
-        else {
-            // employeeObject = {
-            //     empId : parseInt(values.employee)
-            // }
-            employeeObject = values.employee           
-        }       
-        
-        let employeeTraining = {
-                employeeIds : employeeObject,
-                trainingTimeSlotId : timeSlotObj,
-                trainingDate : formattedTrainingDate,
-                trainingId : values.training_ids,
-                competencyId : competencyObj,
-                completionDate : formattedTrainingDate 
-            }
-
-            if(sessionStorage.getItem('training_id')!=null) {
-                updateEmployeeTraining(updateEmployeeTraining).then((response) => {
+ 
+                updateEmployeeTraining(updateEmpTraining).then((response) => {
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
                 })
@@ -203,25 +174,41 @@ export default function EmployeeTrainingComponent(){
                 }).finally(()=>{
                     sessionStorage.removeItem('training_id')
                 })
+            
+        }
+
+        else {
+
+            employeeObject = values.employee
+            employeeTraining = {
+                employeeIds : employeeObject,
+                trainingTimeSlotId : timeSlotObj,
+                trainingDate : formattedTrainingDate,
+                trainingId : values.training_ids,
+                competencyId : competencyObj,
+                completionDate : formattedTrainingDate 
             }
-            else {                   
-                saveEmployeeTraining(employeeTraining).then((response) => {
-                    if(id!= -1) {
-                      
-                        navigate(`/training/employee/${id}`)
-                        showToast(response?.data?.responseMessage,"success")
-                    }
-                    else {
-                      
-                        navigate(`/viewemployees`)
-                        showToast(response?.data?.responseMessage,"success")
-                    }
-                })
-                .catch((error) => {
+            saveEmployeeTraining(employeeTraining).then((response) => {
+                if(id!= -1) {                      
+                    navigate(`/training/employee/${id}`)
+                    showToast(response?.data?.responseMessage,"success")
+                }
+                else {                      
+                    navigate(`/viewemployees`)
+                    showToast(response?.data?.responseMessage,"success")
+                }
+            })
+            .catch((error) => {
+                 if(id!= -1) {         
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/training/employee/${id}`)
-                })
-            }
+                 }
+                 else {
+                    showToast(error?.data?.errorMessage,"error")
+                    navigate(`/viewemployees`)
+                 }
+            })
+        }
     }
 
     function validate(values) {
@@ -236,7 +223,7 @@ export default function EmployeeTrainingComponent(){
         if(values.training_ids=='') {
            errors.training_ids='No Training is Selected'
         }
-      
+
         if(values.trainingTimeSlot=='') {
            errors.trainingTimeSlot='No Training Time Slot is Selected'
         }
@@ -277,15 +264,22 @@ export default function EmployeeTrainingComponent(){
        let tid = parseInt(sessionStorage.getItem('training_id'))
        let cid = parseInt(sessionStorage.getItem('competency_id'))
 
-       retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid).then((response)=> {
-            console.log(response.data)
-            empListDisabled && setEmpDisabled(false)
-            setEmployeeList(response.data)
-       }).catch((error)=>{
-        setEmpDisabled(false)
-        console.log('error os ',error)
-            //showToast(error.data.errorMessage,'error')
-       })
+       if(id == -1)
+       {
+            retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid).then((response)=> {                
+                empListDisabled && setEmpDisabled(false)
+                setEmployeeList(response.data)
+        }).catch((error)=>{
+                setEmpDisabled(false)
+                console.log(error.data )
+                //showToast(error.data.errorMessage,'error')
+        })
+       }
+       else {
+        
+            empListDisabled && setEmpDisabled(true)
+       }
+       
     }
 
     
@@ -451,7 +445,7 @@ export default function EmployeeTrainingComponent(){
 
                             {/* Submit Button */}
                             <Box mt={2}>
-                                <Button type="submit" variant="contained" disabled={!empList || empList.length === 0}  color="primary">
+                                <Button type="submit" variant="contained" disabled={!empList || empList.length === 0 || disabled }  color="primary">
                                 {btnValue}
                                 </Button>
                             </Box>

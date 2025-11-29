@@ -34,7 +34,7 @@ export default function EmployeeComponent() {
     const [categorylist , setCategoryList] = useState([])
     const [statusList, setStatusList] = useState([
         { statusId: 1, statusLabel: "Active" },
-        { statusId: 2, statusLabel: "Inactive" }
+        { statusId: 0, statusLabel: "Inactive" }
     ])
 
     const [status,setStatus] = useState('')
@@ -60,7 +60,7 @@ export default function EmployeeComponent() {
             setBtnValue('Update Employee') 
 
             getEmployeeById(id).then((response) => {
-
+                console.log('Employee Object ',response.data)
                 setEmpName(response.data.empName)
                 setEmpCode(response.data.empCode)              
                 setContractorName(response.data?.contractorName)
@@ -108,7 +108,7 @@ export default function EmployeeComponent() {
       };
     
     function  onSubmit(values) {
-      alert('called')
+     
        let designation = {
             desigId : values.designation,
             desigName : ''
@@ -124,7 +124,7 @@ export default function EmployeeComponent() {
             category : ''
        }
 
-    const formattedJoiningDate = dayjs(values.joiningDate).format("DD-MM-YYYY") 
+    const formattedJoiningDate = dayjs(values.joiningDate).format("DD-MM-YYYY")
     let employee = {
             empName : values.emp_name,
             empCode : values.emp_code,
@@ -133,18 +133,17 @@ export default function EmployeeComponent() {
             category : category,
             contractorName : values.contractor_name,
             joiningDate : formattedJoiningDate,
-            
-        } 
+            status : values.status
+        }
         if(id == -1) {
-               saveEmployee(employee).then((response) => {                
-                  showToast(response?.data?.responseMessage,"success")
-                  navigate(`/viewemployees`)
-                })
-               .catch((error) => {        
-                    showToast(error?.data?.errorMessage,"error")
-                    navigate(`/viewemployees`)
-                })
-           
+            saveEmployee(employee).then((response) => {                
+                showToast(response?.data?.responseMessage,"success")
+                navigate(`/viewemployees`)
+            })
+            .catch((error) => {        
+                showToast(error?.data?.errorMessage,"error")
+                navigate(`/viewemployees`)
+            })
         }
         else {
             employee.empId = id
@@ -192,8 +191,8 @@ export default function EmployeeComponent() {
         if(values.department=="") {
             errors.department = "Please Select Department "
         }
-
-        if(values.status=="") {
+        
+        if(values.status==null) {
             errors.status = "Please Select Status of the Employee "
         }
 
