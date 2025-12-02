@@ -99,6 +99,12 @@ export default function HeaderComponent() {
                                    <Link className="nav-link" to="/competencies">Competency</Link>
                               </li>
                         }
+
+                        { isAuthenticated &&
+                              <li className="nav-item fs-5">
+                                   <Link className="nav-link" to="/holidays">Holiday</Link>
+                              </li>
+                        }
                        
                     { !isAuthenticated &&
                          <li className="nav-item fs-5">

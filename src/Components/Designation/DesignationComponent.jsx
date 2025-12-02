@@ -69,12 +69,12 @@ export default function DesignationComponent() {
             })
         }
     }
-    
+   
     return(
         <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik
-                initialValues={ { desigId  ,desigName } }
+                initialValues={ { desigId  , desigName } }
                 enableReinitialize={true}
                 validate={validate}
                 onSubmit={onSubmit}

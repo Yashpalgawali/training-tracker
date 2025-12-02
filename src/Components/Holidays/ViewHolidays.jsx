@@ -1,0 +1,96 @@
+import { useEffect, useRef, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { getAllHolidays, retrieveAllHolidays }  from "../api/HolidayApiService"
+
+import $ from 'jquery'; // jQuery is required for DataTables to work
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+
+import { Box, Button, Tooltip, Typography } from "@mui/material"
+import { showToast } from "../SharedComponent/showToast";
+import EditIcon from '@mui/icons-material/Edit';
+
+export default function ViewHolidays() {
+
+    const [holidaylist,setHolidayList] = useState([])
+    const navigate = useNavigate()
+    const tableRef = useRef(null)
+
+    const didFetchRef = useRef(false);
+
+    useEffect(
+    () => 
+        {               
+            if (!didFetchRef.current) {
+                didFetchRef.current = true;                            
+                retrieveAllHolidaysFunction()
+            }
+        },[]) 
+
+    useEffect(() => {
+        // Initialize DataTable only after the component has mounted
+        if (tableRef.current && holidaylist.length >0 ) {
+          $(tableRef.current).DataTable(); // Initialize DataTables
+        }
+      }, [holidaylist]); // Re-initialize DataTables when activities data changes
+   
+
+    function retrieveAllHolidaysFunction() {
+        
+        retrieveAllHolidays().then(
+            (response) => {   
+                console.log(response.data) 
+               setHolidayList(response.data) 
+            })
+            .catch((error)=> {
+                showToast(error.response.data.errorMessage, "error")
+            })
+    }
+
+    function updateHoliday(id) {
+        navigate(`/holiday/${id}`)
+    }
+    
+    function addNewHoliday() {
+        //navigate(`/holiday/-1`)
+    }
+    
+   return(
+        <div className="container">
+            <Box>
+                <Typography variant="h4" gutterBottom>View Holidays <Button type="submit" variant="contained" color="primary" style={ { float: 'right' } } className="m-2" onClick={addNewHoliday} > <Tooltip title="Add Holiday" arrow> Add Holiday</Tooltip></Button>    </Typography>
+            </Box>
+
+            <table ref={tableRef} className="table table-striped table-hover display">
+                <thead>
+                    <tr >
+                        <th>Sr No.</th>
+                        <th>Holiday</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {
+                  holidaylist.length === 0 ? (
+                        <tr>
+                            <td colSpan="3" style={{ textAlign: 'center' }}>
+                                No Data available
+                            </td>
+                        </tr>
+                        ) : (
+                        holidaylist.map((holiday,index) => (
+                            <tr key={holiday.holidayId}>
+                            <td>{index+1}</td>
+                            <td>{holiday.holidayName}</td>
+                            <td>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateHoliday(holiday.holidayId)} > <Tooltip arrow placement="left" title={`Update ${holiday.holidayName}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
+                            </td>
+                            </tr>
+                        ))
+                      )
+                    }    
+                </tbody>
+            </table>
+        </div>
+    )
+}

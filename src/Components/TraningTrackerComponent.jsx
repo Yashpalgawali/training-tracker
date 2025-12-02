@@ -29,6 +29,8 @@ import ChangeForgotPassword from './ChangeForgotPassword';
 import ViewEmployeehistory from './Employee/ViewEmployeehistory';
 import ViewEmployeeTrainingHistory from './Employee/ViewEmployeeTrainingHistory';
 import ViewTrainingHistory from './Employee/ViewTrainingHistory';
+import HolidayComponent from './Holidays/HolidayComponent';
+import ViewHolidays from './Holidays/ViewHolidays';
 
 function AuthenticateRoute({children}) {
    const authContext  = useAuth()
@@ -93,6 +95,9 @@ export default function TrainingTrackerComponent() {
                 <Route path='/training/history/:empid' element={ <AuthenticateRoute> <ViewTrainingHistory /> </AuthenticateRoute>}></Route> 
                 
                 <Route path='/forgot/password/change' element={  <ChangeForgotPassword />  } ></Route>
+
+                <Route path='/holiday/:id' element={ <AuthenticateRoute><HolidayComponent /></AuthenticateRoute> }> </Route>
+                <Route path='/holidays' element={ <AuthenticateRoute><ViewHolidays /></AuthenticateRoute> }> </Route>
                 
                 <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>

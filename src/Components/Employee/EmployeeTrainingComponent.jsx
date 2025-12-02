@@ -4,10 +4,12 @@ import { retrieveAllTraining } from "../api/TrainingApiService"
 import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
 
+import * as Yup from "yup";
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
-import dayjs  from "dayjs";
+import dayjs, { Dayjs }  from "dayjs";
 
 import { Box, Button, FormControl, FormHelperText,  TextField,  Typography } from "@mui/material";
 
@@ -16,6 +18,38 @@ import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
+
+const isWeekend = (date) => {
+  if (!date || !date.isValid()) return false;
+  const d = date.day();
+  return d === 0 || d === 6; // Sun = 0, Sat = 6
+};
+
+const isHoliday = (date) => {
+  if (!date || !date.isValid()) return false;
+
+  const day = date.date();
+  const month = date.month() + 1; // 1–12
+
+  // Independence Day
+  if (day === 15 && month === 8) return true;
+
+  // Republic Day
+  if (day === 26 && month === 1) return true;
+
+  // International Workers Day
+  if (day === 1 && month === 5) return true;
+
+  return false;
+};
+
+const validationSchema = Yup.object({
+  training_date: Yup.mixed()
+    .required("Training date is required")
+    .test("valid-format", "Invalid date", (value) => value && value.isValid && value.isValid())
+    .test("not-weekend", "Weekends not allowed", (value) => value && !isWeekend(value))
+    .test("not-holiday", "This date is a holiday", (value) => value && !isHoliday(value)),
+});
 
 export default function EmployeeTrainingComponent(){
 
@@ -39,7 +73,6 @@ export default function EmployeeTrainingComponent(){
     
     const navigate = useNavigate()
     const {id} = useParams()
-   
     
     useEffect(() => {        
         
@@ -174,7 +207,6 @@ export default function EmployeeTrainingComponent(){
                 }).finally(()=>{
                     sessionStorage.removeItem('training_id')
                 })
-            
         }
 
         else {
@@ -260,7 +292,7 @@ export default function EmployeeTrainingComponent(){
     }
 
     function getEmployeesByTrainingAndCompetencyId( ) {
-        
+
        let tid = parseInt(sessionStorage.getItem('training_id'))
        let cid = parseInt(sessionStorage.getItem('competency_id'))
 
@@ -276,13 +308,20 @@ export default function EmployeeTrainingComponent(){
         })
        }
        else {
-        
             empListDisabled && setEmpDisabled(true)
        }
-       
     }
 
-    
+    // function checkHolidays(date) {
+
+    //     const cdate = date.date();
+    //     const cmonth = date.month+1
+    //     if(cdate==15 && cmonth==8)
+    //     {
+    //        alert("Independence day")
+    //     }
+    // }
+
     return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
@@ -291,7 +330,7 @@ export default function EmployeeTrainingComponent(){
                 <div>
                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                    <Formik                       
-                        initialValues={{
+                        initialValues={{                            
                             training_date: training_date ? dayjs(training_date) : null,
                             completion_date: completion_date ? dayjs(completion_date) : null,
                             //employee: employee ? id : '',
@@ -301,7 +340,7 @@ export default function EmployeeTrainingComponent(){
                             // training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
-
+                        validationSchema={validationSchema}
                         validate={validate}
                         validateOnBlur={false}
                         validateOnChange={false}
@@ -405,15 +444,17 @@ export default function EmployeeTrainingComponent(){
                                     </>
                                    )
                                 }
-                            </Box>
-                             
+                            </Box>                             
                               {/* Training Date Picker */}
                                 <Box mb={2}  >
                                 <DatePicker                                    
+                                    shouldDisableDate={(date)=> isWeekend(date) || isHoliday(date) }
                                     format="DD/MM/YYYY"
                                     label="Training Date"
                                     value={values.training_date}
-                                    onChange={(date) => setFieldValue('training_date', date)}
+                                    onChange={(date) => {
+                                        setFieldValue('training_date', date)
+                                    }}
                                     slotProps={{
                                     textField: { 
                                         error: touched.training_date && Boolean(errors.training_date),
