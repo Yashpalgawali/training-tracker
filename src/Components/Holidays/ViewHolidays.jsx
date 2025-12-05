@@ -52,7 +52,7 @@ export default function ViewHolidays() {
     }
     
     function addNewHoliday() {
-        //navigate(`/holiday/-1`)
+            navigate(`/holiday/-1`)
     }
     
    return(
@@ -65,6 +65,7 @@ export default function ViewHolidays() {
                 <thead>
                     <tr >
                         <th>Sr No.</th>
+                        <th>Date</th>
                         <th>Holiday</th>
                         <th>Action</th>
                     </tr>
@@ -81,7 +82,8 @@ export default function ViewHolidays() {
                         holidaylist.map((holiday,index) => (
                             <tr key={holiday.holidayId}>
                             <td>{index+1}</td>
-                            <td>{holiday.holidayName}</td>
+                            <td>{holiday.holidayDate}</td>
+                            <td>{holiday.holiday}</td>
                             <td>
                                 <Button type="submit" variant="contained" color="success" onClick={() => updateHoliday(holiday.holidayId)} > <Tooltip arrow placement="left" title={`Update ${holiday.holidayName}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
