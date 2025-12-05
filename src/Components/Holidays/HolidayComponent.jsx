@@ -80,11 +80,9 @@ export default function HolidayComponent() {
             holiday : values.holiday,
             holidayDate : formattedDate          
         }
-       
-        console.log('holiday to be saved ',values)
 
         if(id == -1) {
-            alert(id)
+
             saveHoliday(holiday).then((response)=> {
                 showToast(response.data.responseMessage, "success")
                 navigate(`/holidays`)
@@ -95,8 +93,6 @@ export default function HolidayComponent() {
         }
         
     }
-
-    
 
     return(
         <div className="container">
