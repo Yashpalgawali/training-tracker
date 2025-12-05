@@ -108,10 +108,8 @@ export default function CompanyComponent () {
                                             error={props.touched.compName && Boolean(props.errors.compName)}
                                             helperText={<ErrorMessage name="compName" />}
                                             fullWidth />
-                               
                         </Box>
-                      
-                         <Box className="btnvalue">
+                        <Box className="btnvalue">
                                     <Button
                                         type="submit"
                                         style={{ float: 'left' }}
@@ -120,13 +118,11 @@ export default function CompanyComponent () {
                                     >
                                     {btnValue}
                                     </Button>
-                                    
                          </Box>
                     </Form>
                   )
                }
             </Formik>
         </div>
-    ); 
- 
+    );
 }

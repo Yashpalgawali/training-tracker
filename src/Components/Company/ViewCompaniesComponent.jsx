@@ -19,8 +19,6 @@ export default function ViewCompanyComponent() {
 
     useEffect(()=> refreshCompanies() , [] )
 
- 
-
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
        if (tableRef.current) {

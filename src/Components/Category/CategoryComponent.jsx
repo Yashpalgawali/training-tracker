@@ -121,7 +121,7 @@ export default function CategoryComponent () {
                                 color="primary"                                   
                             >
                             {btnValue}
-                            </Button>                                    
+                            </Button>
                          </Box>
                     </Form>
                   )

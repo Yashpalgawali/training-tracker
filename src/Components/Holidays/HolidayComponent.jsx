@@ -12,32 +12,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs"
 
 
-// const isWeekend = (date) => {
-//   if (!date || !date.isValid()) return false;
-//   const d = date.day();
-//   return d === 0 ; // Sun = 0, Sat = 6
-// };
-
-// const isHoliday = (date) => {
-//   if (!date || !date.isValid()) return false;
-
-//   const day = date.date();
-//   const month = date.month() + 1; // 1–12
-//   const year = date.year();
-  
-
-//   // Independence Day
-//   if (day === 15 && month === 8) return true;
-
-//   // Republic Day
-//   if (day === 26 && month === 1) return true;
-
-//   // International Workers Day
-//   if (day === 1 && month === 5) return true;
-
-//   return false;
-// };
-
 const validationSchema = Yup.object({
         holiday : Yup.mixed()
                     .required("Holiday can't be blank"),
@@ -57,21 +31,7 @@ export default function HolidayComponent() {
 
     const {id} = useParams()
 
-    function validate(values) {
-
-        let errors = {}
-
-        if(values.holiday=='') {
-            return  errors.holiday = "Holiday can't be blank"
-        }
-        
-        if(values.holidayDate=='') {
-            return  errors.holidayDate = "Please enter holiday date"
-        }
-
-        return errors
-    }
-
+    
     function onSubmit(values) {
         
         let formattedDate = dayjs(values.holidayDate).format('DD-MM-YYYY')
@@ -101,7 +61,6 @@ export default function HolidayComponent() {
             <Formik
                 initialValues={{ holiday , holidayDate : holidayDate ? dayjs(holidayDate) : null}}
                 validationSchema={validationSchema}
-                validate={validate}
                 validateOnBlur={false}
                 validateOnChange={false}
                 onSubmit={onSubmit}

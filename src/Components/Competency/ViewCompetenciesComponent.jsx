@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import $, { error } from 'jquery'; // jQuery is required for DataTables to work
+import $ from 'jquery'; // jQuery is required for DataTables to work
   
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
@@ -54,27 +54,7 @@ export default function ViewCompetenciesComponent() {
          
         </Typography>
     </Box>
-
-        {/* <DataTable  
-            data={complist}
-            columns={[
-                {title : 'Sr' , data: 'comp_id'},
-                {title : 'Company Name' , data: 'comp_name'},
-                {title : 'Action' , data: 'comp_id',render : function(data,type ,row){
-                    return `<Button type="submit" variant="contained" color="primary" className="m-3" data-id="${row.id}"><EditSquareIcon /> Update</Button>`
-                    // return `<button className="btn btn-primary" data-id="${row.id}" >Update</button>`
-                } } 
-            ]}
-            options={{
-                searching: true,
-                paging: true,
-                ordering: true,
-                info: true,
-                responsive: true
-            }}
-        /> */}
-
-            <table ref={tableRef} className="table table-striped table-hover display">
+        <table ref={tableRef} className="table table-striped table-hover display">
                 <thead>
                     <tr >
                         <th>Sr No.</th>

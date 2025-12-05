@@ -99,14 +99,7 @@ const validationSchema = Yup.object({
       }
     )
 });
-   
-    // useEffect(() => {
-
-    //     retrieveAllHolidays().then((response) =>{
-    //         setHolidayList(response.data)
-    //     })
-    // }, [holidayList])
-
+  
     useEffect(() => {        
         
         if(!didFetchRun.current) {
@@ -149,7 +142,7 @@ const validationSchema = Yup.object({
         })
 
          retrieveAllHolidays().then((response) =>{
-            console.log('Holiday List ',response.data)
+            
             setHolidayList(response.data)
         })
 
@@ -344,8 +337,7 @@ const validationSchema = Yup.object({
                 setEmployeeList(response.data)
         }).catch((error)=>{
                 setEmpDisabled(false)
-                console.log(error.data )
-                //showToast(error.data.errorMessage,'error')
+                
         })
        }
        else {
@@ -353,17 +345,6 @@ const validationSchema = Yup.object({
        }
     }
 
-    // function checkHolidays(date) {
-
-    //     const cdate = date.date();
-    //     const cmonth = date.month+1
-    //     if(cdate==15 && cmonth==8)
-    //     {
-    //        alert("Independence day")
-    //     }
-    // }
-
-    
     return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>

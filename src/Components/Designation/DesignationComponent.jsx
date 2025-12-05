@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { getDesignationById, saveDesignation, updateDesignation } from "../api/DesignationApiService"
 import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
+import * as Yup from "yup";
 
 export default function DesignationComponent() {
     const [btnValue,setBtnValue] = useState('Add Designtion')
@@ -32,15 +33,11 @@ export default function DesignationComponent() {
         }
     }
 
-    function validate(values) {
-        
-        let errors  = {} 
-
-        if(values.desigName.length<2) {
-            errors.desigName="Enter at least 3 characters"
-        }
-        return errors
-    }
+    const validationSchema = Yup.object({
+        desigName : Yup.string()
+                    .required('Designation can\'t be blank')
+                    .min(2,'Designation should have at least 2 characters')
+    })
 
     function onSubmit(values) {
         let designation = {
@@ -76,8 +73,8 @@ export default function DesignationComponent() {
             <Formik
                 initialValues={ { desigId  , desigName } }
                 enableReinitialize={true}
-                validate={validate}
                 onSubmit={onSubmit}
+                validationSchema={validationSchema}
                 validateOnChange={false}
                 validateOnBlur={false}
             >

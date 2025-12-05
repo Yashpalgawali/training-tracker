@@ -4,6 +4,7 @@ import { ErrorMessage,  Formik,Form } from "formik"
 import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 import { retrievecompetencyById, savecompetency, updatecompetency } from "../api/CompetencyApiService"
+import * as Yup from "yup";
 
 export default function CompetencyComponent () {
 
@@ -68,24 +69,21 @@ export default function CompetencyComponent () {
                     })
             }
          }
-  
-   function validate(values) {
-        let errors = { }
-  
-        if(values.score.length<0) {
-            errors.comp_name = 'Please Enter some values'
-        }
-        return errors
-   }
 
+    const validationSchema = Yup.object({
+         score: Yup.mixed()
+            .required("Competency Score is required")
+
+    })
+ 
      return (
         <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik initialValues={ { competency_id,score} }
                 enableReinitialize={true}
                 onSubmit={onSubmit}
-                validate={validate}
                 validateOnBlur={false}
+                validationSchema={validationSchema}
                 validateOnChange={false}
             >
                {
