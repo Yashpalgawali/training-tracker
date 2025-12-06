@@ -14,6 +14,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import * as Yup from "yup";
 
 export default function EmployeeComponent() {
 
@@ -108,7 +109,7 @@ export default function EmployeeComponent() {
       };
     
     function  onSubmit(values) {
-     
+        setLoading(true)
        let designation = {
             desigId : values.designation,
             desigName : ''
@@ -157,47 +158,31 @@ export default function EmployeeComponent() {
             })
         }
     }
-    function validate(values) {
-        let errors = {}
+  
+    const validationSchema = Yup.object({
+        emp_name : Yup.string()
+                    .required('Employee Name can\'t be blank')
+                    .min(3, 'Employee name must have at least two characters'),
 
-        if(values.emp_name=="") {
-            errors.emp_name = "Please enter Employee Name "
-        }
+        emp_code : Yup.string()
+                    .required('Employee code can\'t be blank'),
 
-        if(values.emp_code=="") {
-            errors.emp_code = "Please enter Employee Code "
-        }
+        contractor_name : Yup.string()
+                        .required('Contractor name can\'t be blank'),
+        company : Yup.string()
+                .required('Please Select Company'),
+        department : Yup.string()
+                .required('Please Select Department'),
+        category : Yup.string()
+                .required('Please Select Category'),
+        designation : Yup.string()
+                        .required('Please Select Designation'),
+        joiningDate : Yup.string()
+                .required('Please Enter Joinining Date'),
+        status : Yup.string()
+                .required('Please select status of the employee')                
+            })
 
-        if(values.contractor_name=="") {
-            errors.contractor_name = "Please enter Contractor Name "
-        }
-
-        if(values.joiningDate==null) {
-            errors.joiningDate = "Please Select Joining Date "
-        }
-
-        if(values.designation=="") {
-            errors.designation = "Please Select Designation "
-        }
-
-        if(values.category=="") {
-            errors.category = "Please Select Category "
-        }
-
-        if(values.company=="") {
-            errors.company = "Please Select Company "
-        }
-
-        if(values.department=="") {
-            errors.department = "Please Select Department "
-        }
-        
-        if(values.status==null) {
-            errors.status = "Please Select Status of the Employee "
-        }
-
-        return errors
-    }
     return(
         <div className="container">
            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
@@ -210,7 +195,7 @@ export default function EmployeeComponent() {
                                 }}
                     validateOnBlur={false}
                     validateOnChange={false}
-                    validate={validate}
+                    validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
             {({ setFieldValue, values, handleChange, handleBlur, errors, touched }) => (
@@ -405,7 +390,7 @@ export default function EmployeeComponent() {
                 
                 {/* Submit Button */}
                 <Box mt={3}>
-                    <Button type="submit" variant="contained" color="primary">
+                    <Button type="submit" variant="contained" disabled={loading} color="primary">
                     {btnValue}
                     </Button>
                 </Box>
@@ -413,130 +398,7 @@ export default function EmployeeComponent() {
             )}
             </Formik>
             </LocalizationProvider>
-                {/* <Formik
-                    enableReinitialize={true}
-                    initialValues={ { emp_name, emp_code, designation , department , company } }
-                    validateOnBlur={false}
-                    validateOnChange={false}
-                    onSubmit={onSubmit}
-                >
-                {
-                    ({ setFieldValue, values }) =>( 
-                        <Form> */}
-                            {/* <fieldset className="form-group">
-                                <label htmlFor="emp_name">Employee Name</label>
-                                <Field name="emp_name" className="form-control" value={values.emp_name} placeholder="Enter Employee Name" type="text"></Field>
-                            </fieldset>
-                            <fieldset className="form-group">
-                                <label htmlFor="emp_code">Employee Code</label>
-                                <Field name="emp_code" className="form-control" value={values.emp_code} placeholder="Enter Employee Code" type="text"></Field>
-                            </fieldset>
-
-                            <fieldset>
-                                <label htmlFor="designation" ></label>
-                                <Field as="select" name="designation" className="form-control"  value={values.designation}>
-                                    <option>Please Select Designation</option>
-                                    {
-                                        desiglist.map(
-                                            (desig)=> (
-                                                <option key={desig.desigId} value={desig.desigId}>{desig.desigName}</option>
-                                            )
-                                        )
-                                    }
-                                </Field>
-                            </fieldset>
-                            <fieldset>
-                                <label htmlFor="company" ></label>
-                                <Field as="select" name="company" className="form-control" value={values.company}  onChange={(e) => handleCompanyChange(e, setFieldValue)} >
-                                    <option>Please Select Company</option>
-                                    {
-                                        complist.map(
-                                            (company)=>(
-                                                <option key={company.companyId} value={company.companyId}>{company.comp_name}</option>
-                                            )
-                                        )
-                                    }
-                                </Field>
-                            </fieldset>
-                             <fieldset>
-                                <label htmlFor="department" ></label>
-                                <Field as="select" name="department" className="form-control" value={values.department}   >
-                                    <option>Please Select Department</option>
-                                    {
-                                        deptlist.map(
-                                            (dept)=>(
-                                                <option key={dept.deptId} value={dept.deptId}>{dept.deptName}</option>
-                                            )
-                                        )
-                                    }
-                                </Field>
-                            </fieldset>
-
-                            <div>
-                                <Button type="submit" variant="contained" color="primary" className="mt-2" >{btnValue}</Button>
-                            </div> */}
-                            {/* <Box
-                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                    > */}
-                               {/* Dropdown Select */}
-                                {/* <FormControl
-                                    variant="filled"
-                                    fullWidth
-                                    error={props.touched.companies && Boolean(props.errors.companies)}
-                                >
-                                    <InputLabel id="companies">Company</InputLabel>
-                                    <Select
-                                    labelId="companies"
-                                    id="companies"
-                                    name="companies"
-                                    value={props.values.companies}
-                                    onChange={props.handleChange}
-                                    onBlur={props.handleBlur}
-                                    >
-                                        {
-                                            companies.map(
-                                                        (company) =>(
-                                                            <MenuItem key={company.companyId} value={company.companyId}>{company.comp_name}</MenuItem>
-                                                        )
-                                                        )   
-                                        }
-                                    
-                                    </Select>
-                                    <FormHelperText>
-                                    <ErrorMessage name="companies" />
-                                    </FormHelperText>
-                                </FormControl>
-                                    <TextField  id="deptName"
-                                                name="deptName"
-                                                label="Department Name"
-                                                variant="filled"
-                                                placeholder="Enter Department Name"
-                                                value={props.values.deptName}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                error={props.touched.deptName && Boolean(props.errors.deptName)}
-                                                helperText={<ErrorMessage name="deptName" />}
-                                                fullWidth />
-                                
-                                       
-                            </Box>
-                  
-                            <Box className="btnvalue">
-                                    <Button
-                                        type="submit"
-                                        style={{ float: 'left' }}
-                                        variant="contained"
-                                        color="primary"                                   
-                                    >
-                                    {btnValue}
-                                    </Button>
-                            </Box>
-                        </Form>
-                    )
-                }
-                </Formik> */}
+                
             </div>
         </div>
     )

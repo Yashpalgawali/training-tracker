@@ -58,15 +58,15 @@ export default function ViewEmployeehistory() {
    
 
     function getEmployeeHistoryByEmpId() {
-        retrieveEmployeeHistoryByEmpId(id).then(
-            (response) => {
-                 
-                setEmployee(response.data[0].employee)
-                setEmpList(response.data) 
-            })
-            .catch((error)=> {
-                showToast(error.response.data.errorMessage, "error")
-            })
+        retrieveEmployeeHistoryByEmpId(id).then((response) => {                
+            setEmployee(response.data[0].employee)
+            setEmpList(response.data) 
+        })
+        .catch((error)=> {
+            
+            showToast(error.response.data.errorMessage, "error")
+            navigate(`/viewemployees`)
+        })
     }
 
     
@@ -128,13 +128,13 @@ export default function ViewEmployeehistory() {
                   {
                   empList.length === 0 ? (
                         <tr>
-                            <td colSpan="8" style={{ textAlign: 'center' }}>
+                            <td colSpan="10" style={{ textAlign: 'center' }}>
                                 No data available
                             </td>
                         </tr>
                         ) : (
                         empList.map((emp,index) => (
-                            <tr key={emp.emp_train_hist_id}>
+                            <tr key={emp.empHistId}>
                             <td>{index+1}</td>
                             <td>{emp.empName}</td>
                             <td>{emp.empCode}</td>
