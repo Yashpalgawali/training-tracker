@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { getAllHolidays, retrieveAllHolidays }  from "../api/HolidayApiService"
+import { retrieveAllHolidays }  from "../api/HolidayApiService"
 
 import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
@@ -39,8 +39,7 @@ export default function ViewHolidays() {
         
         retrieveAllHolidays().then(
             (response) => {   
-                console.log(response.data) 
-               setHolidayList(response.data) 
+                setHolidayList(response.data) 
             })
             .catch((error)=> {
                 showToast(error.response.data.errorMessage, "error")

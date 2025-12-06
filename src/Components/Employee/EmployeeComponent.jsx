@@ -7,7 +7,7 @@ import { retrieveAllCompanies } from "../api/CompanyApiService";
 import { getDepartmentByCompanyId } from "../api/DepartmentApiService";
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 
-import { getEmployeeById, saveEmployee, updateEmployee } from "../api/EmployeeApiService";
+import { getEmployeeByEmpCode, getEmployeeById, saveEmployee, updateEmployee } from "../api/EmployeeApiService";
 import { showToast } from "../SharedComponent/showToast"
 import { retrieveAllCategories } from "../api/CategoryApiService";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -141,8 +141,10 @@ export default function EmployeeComponent() {
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
             })
-            .catch((error) => {        
-                showToast(error?.data?.errorMessage,"error")
+            .catch((error) => {
+                 
+                console.log(error)
+                showToast(error.response.data?.errorMessage,"error")
                 navigate(`/viewemployees`)
             })
         }
@@ -158,15 +160,24 @@ export default function EmployeeComponent() {
             })
         }
     }
-  
+ 
     const validationSchema = Yup.object({
         emp_name : Yup.string()
                     .required('Employee Name can\'t be blank')
                     .min(3, 'Employee name must have at least two characters'),
 
         emp_code : Yup.string()
-                    .required('Employee code can\'t be blank'),
-
+                    .required('Employee code can\'t be blank')
+                    .test("is-employee-present","Employee already registered with this code", async (code)=> {
+                        try{
+                            await getEmployeeByEmpCode(code)
+                            return true
+                        }
+                        catch(e) {
+                            return false
+                        }
+                    }),
+            
         contractor_name : Yup.string()
                         .required('Contractor name can\'t be blank'),
         company : Yup.string()
@@ -198,7 +209,7 @@ export default function EmployeeComponent() {
                     validationSchema={validationSchema}
                     onSubmit={onSubmit}
                 >
-            {({ setFieldValue, values, handleChange, handleBlur, errors, touched }) => (
+            {({ setFieldValue, setFieldError, values, handleChange, handleBlur, errors, touched }) => (
                 <Form>
                 {/* Employee Name */}
                 <Box mb={2}>
