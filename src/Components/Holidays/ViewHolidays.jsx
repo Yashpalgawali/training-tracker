@@ -85,7 +85,7 @@ export default function ViewHolidays() {
                             <td>{holiday.holidayDate}</td>
                             <td>{holiday.holiday}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => updateHoliday(holiday.holidayId)} > <Tooltip arrow placement="left" title={`Update ${holiday.holidayName}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => updateHoliday(holiday.holidayId)} > <Tooltip arrow placement="left" title={`Update ${holiday.holiday}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

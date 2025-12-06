@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router-dom"
 import { getTrainingById, saveTraining, updateTraining } from "../api/TrainingApiService"
 import { showToast } from "../SharedComponent/showToast"
 
+import * as Yup from "yup"
+
 export default function TrainingComponent() {
     const [btnValue,setBtnValue] = useState('Add Training')
     const [training_id,setTrainingId] = useState('')
@@ -22,8 +24,7 @@ export default function TrainingComponent() {
                 setTrainingId(response.data.training_id)
                 setTrainingName(response.data.training_name)
             })
-        }
-        
+        }        
     },[id])
 
     function onSubmit(values) {
@@ -34,24 +35,20 @@ export default function TrainingComponent() {
 
         if(id == -1) {
             saveTraining(training).then((response) => {
-                console.log('Success ',response)
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewtraining`)
             })
             .catch((error)=>{
-                console.log('error in training ',error)
                 showToast(error?.data?.errorMessage,"error")
                 navigate(`/viewtraining`)
             })
         }
         else {
            updateTraining(training).then((response) => {
-                console.log('Success ',response)
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewtraining`)
             })
             .catch((error)=>{
-                console.log('error in training ',error)
                 showToast(error?.data?.errorMessage,"error")
                 navigate(`/viewtraining`)
             }) 
@@ -62,16 +59,19 @@ export default function TrainingComponent() {
 
         let errors = {} 
         if(values.training_name == '') {
-            errors.training_name = 'Please Enter training name'
+            errors.training_name = 'Please Enter Training name'
         }
         return errors
     }
+
+    const validationSchema = Yup.object({
+        training_name : Yup.string()
+                        .required('Please Enter Training Name ')
+    })
+
     return(
-        <div className="container">
-            
-               <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-                
-            
+        <div className="container">            
+            <Typography variant="h4" gutterBottom>{btnValue}</Typography>               
             <div>
                <Formik
                     initialValues={ { training_id, training_name } }
@@ -79,19 +79,12 @@ export default function TrainingComponent() {
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={onSubmit}
-                    validate={validate}
+                    // validate={validate}
+                    validationSchema={validationSchema}
                >
                 {
                      (props) => (
                         <Form>
-                            {/* <fieldset>
-                                    <label htmlFor="training_name"></label>
-                                    <Field type="text" name="training_name" className="form-control"   placeholder="Enter Training name" ></Field>
-                            </fieldset>
-                            <div>
-                                <Button type="submit" variant="contained" color="primary" className="mt-2" >{btnValue}</Button>
-                            </div> */}
-
                             <Box
                                  sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
                                 noValidate
