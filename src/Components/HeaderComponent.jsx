@@ -106,11 +106,11 @@ export default function HeaderComponent() {
                               </li>
                         }
                        
-                    { !isAuthenticated &&
+                    {/* { !isAuthenticated &&
                          <li className="nav-item fs-5">
                               <Link className="nav-link" to="/login"><LoginIcon color="success"/> Login</Link>  
                          </li>
-                    }
+                    } */}
                     {isAuthenticated && (
                          <li className="nav-item dropdown fs-5">
                               <a

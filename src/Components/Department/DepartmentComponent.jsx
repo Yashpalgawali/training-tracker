@@ -44,19 +44,7 @@ export default function DepartmentComponent() {
             retrieveDepartmentById()
         }
     }, [id])
-         
-    function validate(values) {
-         
-        let errors ={}
-        // if(values.deptName.length <=1 ) {
-        //     errors.deptName='Department Name should be at least 2 characters'
-        // }
-        if(values.companies=='') {
-            errors.companies='Please Select Company'
-        }
-        return errors
-    }
- 
+   
     const validationSchema =  Yup.object({
         deptName : Yup.string()
                     .required('Department name can\'t be blank')
@@ -71,8 +59,7 @@ export default function DepartmentComponent() {
             setIsDisabled(false)
         }, 2000);
 
-        retrieveCompanyById(values.companies).then((response) => {
-            
+        retrieveCompanyById(values.companies).then((response) => {            
              const compObj = {
                 companyId   : response.data.companyId,
                 compName : response.data.compName
@@ -111,7 +98,6 @@ export default function DepartmentComponent() {
             <Formik
                 initialValues={ {  deptId , deptName , companies:'' } }
                 enableReinitialize={true}
-                // validate={validate}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
                 validateOnBlur={false}

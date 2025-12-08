@@ -13,7 +13,9 @@ export default function LoginComponent() {
     const [username , setUsername] = useState('')
     const [password , setPassword] = useState('')
     const authContext  = useAuth()
-  
+    
+    const [disabled,setDisabled] = useState(false)
+
     const navigate = useNavigate()
     
     const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -65,7 +67,7 @@ export default function LoginComponent() {
   };
 
   const handleSendResetLink = () => {
-    
+    setDisabled(true)
     sendOtp(email).then((response)=> {
         sessionStorage.setItem('email',email)        
         showToast(response.data.responseMessage,'success')
@@ -204,7 +206,7 @@ export default function LoginComponent() {
                         </DialogContent>
                         <DialogActions>
                         <Button onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleSendResetLink} variant="contained">
+                        <Button onClick={handleSendResetLink} disabled={disabled} variant="contained">
                             Send Otp
                         </Button>
                         </DialogActions>

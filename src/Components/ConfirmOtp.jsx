@@ -3,6 +3,7 @@ import { ErrorMessage, Form, Formik } from "formik"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { validateOtp } from "./api/ChangePasswordApiService"
+import { showToast } from "./SharedComponent/showToast"
 
 export default function ConfirmOtp() {
 
@@ -27,16 +28,13 @@ export default function ConfirmOtp() {
     },[])
 
     function handleSubmit(values) {
-        let email = sessionStorage.getItem('email')
-
-        alert('lenght of email '+email.length)
+        let email = sessionStorage.getItem('email') 
+        
         let notp = values.otp
         validateOtp(email,notp).then((response)=> {
-           
             navigate('/forgot/password/change')
         }).catch((error)=> {
-            alert('Error '+error.response.data.errorMessage)
-            console.log('error is ',error)
+            showToast(error.response.data?.errorMessage,"error")
         })
     }
 
@@ -85,10 +83,21 @@ export default function ConfirmOtp() {
                                             variant="standard"
                                             placeholder="Enter Otp"
                                             value={props.values.otp}
-                                            onChange={props.handleChange}
+                                            onChange={(e)=> {
+                                                const otp = e.target.value.replace(/[^0-9]/g, "")
+                                                props.setFieldValue("otp",otp)
+                                              }
+                                            }
                                             onBlur={props.handleBlur}
                                             error={props.touched.otp && Boolean(props.errors.otp)}
                                             helperText={<ErrorMessage name="otp" />}
+                                            slotProps={{
+                                                input : {
+                                                    inputMode : "numeric",
+                                                    pattern : "[0-9]*"
+
+                                                }
+                                            }}
                                             fullWidth />  
                                 
                                     <Button 
