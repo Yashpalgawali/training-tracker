@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom"
 import { validateOtp } from "./api/ChangePasswordApiService"
 import { showToast } from "./SharedComponent/showToast"
 
+import * as Yup from "yup";
+
 export default function ConfirmOtp() {
 
     const [otp,setOtp] = useState('')
@@ -38,14 +40,10 @@ export default function ConfirmOtp() {
         })
     }
 
-    function validate(values) {
-        let errors = {}
-
-        if(values.otp=='') {
-            errors.otp='OTP can\'t be blank'
-        }
-        return errors
-    }
+    const validationSchema = Yup.object({
+        otp : Yup.string()
+                .required('OTP can\'t be blank')
+    })
 
     return(
         <div className="container">
@@ -59,7 +57,7 @@ export default function ConfirmOtp() {
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={handleSubmit}
-                    validate={validate}
+                    validationSchema={validationSchema}
                 >
                     {
                         (props) => (
@@ -95,11 +93,9 @@ export default function ConfirmOtp() {
                                                 input : {
                                                     inputMode : "numeric",
                                                     pattern : "[0-9]*"
-
                                                 }
                                             }}
-                                            fullWidth />  
-                                
+                                            fullWidth />
                                     <Button 
                                         sx={{ mt: 1,
                                             alignSelf: 'flex-start', // 👈 ensures button aligns to left
