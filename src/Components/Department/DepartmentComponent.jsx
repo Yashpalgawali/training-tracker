@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { getDepartmentById, saveDepartment, updateDepartment } from "../api/DepartmentApiService"
-import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
+import { ErrorMessage, Form, Formik } from "formik"
 import { retrieveAllCompanies, retrieveCompanyById } from "../api/CompanyApiService"
 import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
@@ -21,6 +21,9 @@ export default function DepartmentComponent() {
         companyId : '',
         compName : ''
     })
+    
+    const [selectedCompanyId, setSelectedCompanyId] = useState('');
+
     const navigate = useNavigate()
     
     
@@ -36,7 +39,8 @@ export default function DepartmentComponent() {
               
                 setCompany(response.data.company)
                 setDeptId(response.data.deptId)
-                setDeptName(response.data.deptName)    
+                setDeptName(response.data.deptName)  
+                setSelectedCompanyId(response.data.company.companyId);  // << key  
            })
         }
      } 
@@ -65,7 +69,7 @@ export default function DepartmentComponent() {
                 compName : response.data.compName
              }
             const dept = {
-                 deptId : values. deptId , deptName : values.deptName , company : compObj
+                 deptId : values.deptId , deptName : values.deptName , company : compObj
             }
             if(id == -1) {
                 saveDepartment(dept).then((response)=> {
@@ -96,7 +100,7 @@ export default function DepartmentComponent() {
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
        
             <Formik
-                initialValues={ {  deptId , deptName , companies:'' } }
+                initialValues={ {  deptId , deptName , companies: selectedCompanyId } }
                 enableReinitialize={true}
                 validationSchema={validationSchema}
                 onSubmit={onSubmit}
@@ -119,43 +123,43 @@ export default function DepartmentComponent() {
                                 >
                                     <InputLabel id="company-label">Select Company</InputLabel>
                                     <Select
-                                    labelId="company-label"
-                                    id="companies"
-                                    name="companies"
-                                    value={props.values.companies}
-                                    onChange={props.handleChange}
-                                    onBlur={props.handleBlur}
-                                    >
+                                        labelId="company-label"
+                                        id="companies"
+                                        name="companies"
+                                        value={props.values.companies}
+                                        onChange={props.handleChange}
+                                        onBlur={props.handleBlur}
+                                        >
                                         {
                                             companies.map(
                                                 (company) =>(
                                                     <MenuItem key={company.companyId} value={company.companyId}>{company.compName}</MenuItem>
                                                 ) )   
-                                        }
-                                    
+                                        }                                    
                                     </Select>
                                     <FormHelperText>
                                     <ErrorMessage name="companies" />
                                     </FormHelperText>
                                 </FormControl>
-                                    <TextField  id="deptName"
-                                                name="deptName"
-                                                label="Department Name"
-                                                variant="standard"
-                                                placeholder="Enter Department Name"
-                                                value={props.values.deptName}
-                                                onChange={props.handleChange}
-                                                onBlur={props.handleBlur}
-                                                error={props.touched.deptName && Boolean(props.errors.deptName)}
-                                                helperText={<ErrorMessage name="deptName" />}
-                                                fullWidth />                                       
+                                <TextField  id="deptName"
+                                            name="deptName"
+                                            label="Department Name"
+                                            variant="standard"
+                                            placeholder="Enter Department Name"
+                                            value={props.values.deptName}
+                                            onChange={props.handleChange}
+                                            onBlur={props.handleBlur}
+                                            error={props.touched.deptName && Boolean(props.errors.deptName)}
+                                            helperText={<ErrorMessage name="deptName" />}
+                                            fullWidth />
                             </Box>
                             <Box className="btnvalue">
                                     <Button
                                         type="submit"
                                         style={{ float: 'left' }}
                                         variant="contained"
-                                        color="primary"                                   
+                                        color="primary"
+                                        disabled={isDisabled}
                                     >
                                     {btnValue}
                                     </Button>

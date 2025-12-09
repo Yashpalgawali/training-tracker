@@ -316,7 +316,7 @@ export default function EmployeeComponent() {
                         onBlur={handleBlur}
                         label="Category"
                     >
-                        <MenuItem value="">Please Select Category</MenuItem>
+                      <MenuItem value="">Please Select Category</MenuItem>
                         {categorylist.map((cate) => (
                         <MenuItem key={cate.category_id} value={cate.category_id}>
                             {cate.category}
