@@ -45,6 +45,7 @@ export default function EmployeeTrainingComponent(){
     const {id} = useParams()
     
     const [holidayList, setHolidayList] = useState([])
+    const [loading, setLoading] = useState(false)
 
 const isWeekend = (date) => {
   if (!date || !date.isValid()) return false;
@@ -63,7 +64,6 @@ const getHoliday = (date) => {
   month = month<10 ? '0'+month : '' + month
 
   let ndate = `${cdate}-${month}-${year}`
-
      
   if(cdate == '15' && month=='08') return true;
 
@@ -194,14 +194,8 @@ const validationSchema = Yup.object({
             }) );
 
     async function onSubmit(values) {
-        // console.log('training object is ',values)
-        // let competencyObj = {
-        //     competency_id : parseInt(values.score)
-        // }
-        // let timeSlotObj = {
-        //     training_time_slot_id : parseInt(values.trainingTimeSlot)
-        // }
-
+        setDisabled(true)
+       
         let competencyObj = parseInt(values.score)
 
         let timeSlotObj =  parseInt(values.trainingTimeSlot)
@@ -336,8 +330,7 @@ const validationSchema = Yup.object({
                 empListDisabled && setEmpDisabled(false)
                 setEmployeeList(response.data)
         }).catch((error)=>{
-                setEmpDisabled(false)
-                
+                setEmpDisabled(false)                
         })
        }
        else {
