@@ -24,7 +24,7 @@ export default function AuthProvider({children}) {
     const storedToken = localStorage.getItem("token");
     const storedUserId = localStorage.getItem("userid");
     const storedUsername = localStorage.getItem("username");
- 
+  
     if (storedToken && storedUserId) {
       setJwtToken(storedToken);
       setUserId(storedUserId);
@@ -59,25 +59,43 @@ let isRedirecting = false;
 const respInterceptor = apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+      const isLoginApi =
+        error.config?.url?.includes("/authenticate");
 
-    if (error.response && error.response.status === 401) {
-
-      if (!isRedirecting) {
-        isRedirecting = true;
-
-        // session message
-        sessionStorage.setItem("reserr", "You are not Authorized. Please Login to Continue");
-
-        // clear auth
-        logout();
-
-        // redirect
-        window.location.href = "/trainingtracker/login";
-      }
-
-      // stop further processing
-      return Promise.reject(null);
+    // 🔴 Allow login() to handle wrong password
+    if (isLoginApi) {
+      return Promise.reject(error);
     }
+
+    // 🔐 Token expired / unauthorized for protected APIs
+    if (error.response?.status === 401) {
+      showToast("Session expired. Please login again.","error");
+      return Promise.reject(error);
+    }
+
+    // 🌐 Backend down
+    if (!error.response) {
+      showToast("Server unavailable","error");
+      return Promise.reject(error);
+    }
+    // if (error.response && error.response.status === 401) {
+
+    //   if (!isRedirecting) {
+    //     isRedirecting = true;
+
+    //     // session message
+    //     sessionStorage.setItem("reserr", "You are not Authorized. Please Login to Continue");
+
+    //     // clear auth
+    //     logout();
+
+    //     // redirect
+    //     window.location.href = "/trainingtracker/login";
+    //   }
+
+    //   // stop further processing
+    //   return Promise.reject(null);
+    // }
 
     return Promise.reject(error);
   }
@@ -90,14 +108,11 @@ const respInterceptor = apiClient.interceptors.response.use(
       };
   }, []);
 
- 
-
-
     async function login(username,password) {
        
         try{ 
             const resp = await executeJwtAuthentication(username,password)
-          
+         
             if(resp.status==200) {
               
                 const jwtToken =  resp.data.token
@@ -127,12 +142,27 @@ const respInterceptor = apiClient.interceptors.response.use(
                 logout()
                 return false
             }
+             
         }
         catch(error) {
-            
-            logout()
+           // 🚨 Wrong password or unauthorized
+            if (error.response && error.response.status === 401) {
+              showToast(error.response.data.message || "Invalid username or password","error");
+            }
+            // 🚨 Backend down
+            else {
+              showToast("Server unavailable. Please try again later.","error");
+            }
+             setAuthenticated(false)
+             setUserId('')
+             setJwtToken(null)
+             setUsername('')
+
+             sessionStorage.clear()
+             localStorage.clear()
             return false
         }
+        
     }
 
     async function logout()

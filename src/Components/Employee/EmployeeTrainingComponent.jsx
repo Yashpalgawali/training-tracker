@@ -11,7 +11,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
 import dayjs, { Dayjs }  from "dayjs";
 
-import { Box, Button, FormControl, FormHelperText,  TextField,  Typography } from "@mui/material";
+import { Box, Button, CircularProgress, FormControl, FormHelperText,  TextField,  Typography } from "@mui/material";
 
 import { getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
@@ -195,7 +195,7 @@ const validationSchema = Yup.object({
 
     async function onSubmit(values) {
         setDisabled(true)
-       
+        setLoading(true)
         let competencyObj = parseInt(values.score)
 
         let timeSlotObj =  parseInt(values.trainingTimeSlot)
@@ -221,7 +221,7 @@ const validationSchema = Yup.object({
                     emp_train_id : result.data.emp_train_id
             }
             }).catch((error)=>{  })
- 
+                setLoading(false)
                 updateEmployeeTraining(updateEmpTraining).then((response) => {
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
@@ -246,7 +246,8 @@ const validationSchema = Yup.object({
                 completionDate : formattedTrainingDate 
             }
             saveEmployeeTraining(employeeTraining).then((response) => {
-                if(id!= -1) {                      
+                if(id!= -1) {             
+                    setLoading(false)         
                     navigate(`/training/employee/${id}`)
                     showToast(response?.data?.responseMessage,"success")
                 }
@@ -508,8 +509,11 @@ const validationSchema = Yup.object({
 
                             {/* Submit Button */}
                             <Box mt={2}>
-                                <Button type="submit" variant="contained" disabled={!empList || empList.length === 0 || disabled }  color="primary">
-                                {btnValue}
+                                <Button type="submit" variant="contained" disabled={!empList || empList.length === 0 || disabled }                                    
+                                    startIcon= {
+                                          disabled ? <CircularProgress size={20} color="teal" /> : null
+                                        } color="primary">
+                                {loading ? "Giving Training..." : btnValue }
                                 </Button>
                             </Box>
                             </Form>
