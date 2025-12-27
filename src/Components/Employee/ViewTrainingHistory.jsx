@@ -131,10 +131,9 @@ export default function ViewTrainingHistory() {
                             <tr key={emp.emp_train_hist_id}>
                                 <td>{index+1}</td>
                                 <td>{emp.training.training_name}</td>
-                                 <td>{emp.competency.score}</td>
+                                <td>{emp.competency.score}</td>
                                 <td>{emp.training_date}</td>
                                 <td>{emp.training_date}</td>
-                                
                             </tr>
                         ))
                       )

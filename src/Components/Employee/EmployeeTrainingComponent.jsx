@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { getEmployeeById, retrieveAllActiveEmployees, retrieveAllEmployees, retrieveAllEmployeesUsingTrainingAndCompetencyId } from "../api/EmployeeApiService"
+import { getEmployeeById,   retrieveAllEmployeesUsingTrainingAndCompetencyId } from "../api/EmployeeApiService"
 import { retrieveAllTraining } from "../api/TrainingApiService"
 import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
@@ -9,17 +9,16 @@ import * as Yup from "yup";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'; 
-import dayjs, { Dayjs }  from "dayjs";
+import dayjs   from "dayjs";
 
-import { Box, Button, CircularProgress, FormControl, FormHelperText,  TextField,  Typography } from "@mui/material";
+import { Box, Button, CircularProgress,  FormHelperText,  TextField,  Typography } from "@mui/material";
 
 import { getTrainingsByEmployeeIdAndTrainingId, saveEmployeeTraining, updateEmployeeTraining } from "../api/EmployeeTrainingApiService";
 import { showToast } from "../SharedComponent/showToast";
 import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
-import { retrieveAllHolidays, retrieveHolidayByDate } from "../api/HolidayApiService";
-import { error } from "jquery";
+import { retrieveAllHolidays  } from "../api/HolidayApiService";
 
 
 export default function EmployeeTrainingComponent(){
@@ -110,9 +109,7 @@ const validationSchema = Yup.object({
     },[])
 
     useEffect( ()=> {
-     
         if(id != -1) {
-            alert(id)
             empList.length = 2   
             setDisabled(false)          
             setEmpDisabled(true)
