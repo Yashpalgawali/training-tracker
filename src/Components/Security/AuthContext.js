@@ -9,6 +9,10 @@ export const AuthContext = createContext()
 
 export const useAuth = ()=> useContext(AuthContext)
 
+export const redirectToLogin= () => {
+  window.location.href = "/trainingtracker/";
+};
+
 export default function AuthProvider({children}) { 
  
     const [isAuthenticated , setAuthenticated] = useState(false)
@@ -70,6 +74,17 @@ const respInterceptor = apiClient.interceptors.response.use(
     // 🔐 Token expired / unauthorized for protected APIs
     if (error.response?.status === 401) {
       showToast("Session expired. Please login again.","error");
+
+       // Optional: clear auth data
+      // localStorage.removeItem("token");
+      // localStorage.removeItem("userid");
+      // localStorage.removeItem("username");
+
+      localStorage.clear()
+      sessionStorage.clear();
+      // 🚀 Redirect to login
+      redirectToLogin();
+
       return Promise.reject(error);
     }
 
@@ -78,25 +93,7 @@ const respInterceptor = apiClient.interceptors.response.use(
       showToast("Server unavailable","error");
       return Promise.reject(error);
     }
-    // if (error.response && error.response.status === 401) {
-
-    //   if (!isRedirecting) {
-    //     isRedirecting = true;
-
-    //     // session message
-    //     sessionStorage.setItem("reserr", "You are not Authorized. Please Login to Continue");
-
-    //     // clear auth
-    //     logout();
-
-    //     // redirect
-    //     window.location.href = "/trainingtracker/login";
-    //   }
-
-    //   // stop further processing
-    //   return Promise.reject(null);
-    // }
-
+     
     return Promise.reject(error);
   }
 );
@@ -148,6 +145,7 @@ const respInterceptor = apiClient.interceptors.response.use(
            // 🚨 Wrong password or unauthorized
             if (error.response && error.response.status === 401) {
               showToast(error.response.data.message || "Invalid username or password","error");
+              logout()
             }
             // 🚨 Backend down
             else {

@@ -19,6 +19,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { retrieveAllTrainingTimeSlots } from "../api/TrainingTimeSlotApiService";
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
 import { retrieveAllHolidays, retrieveHolidayByDate } from "../api/HolidayApiService";
+import { error } from "jquery";
 
 
 export default function EmployeeTrainingComponent(){
@@ -110,7 +111,8 @@ const validationSchema = Yup.object({
 
     useEffect( ()=> {
      
-        if(id != -1) {    
+        if(id != -1) {
+            alert(id)
             empList.length = 2   
             setDisabled(false)          
             setEmpDisabled(true)
@@ -194,6 +196,7 @@ const validationSchema = Yup.object({
             }) );
 
     async function onSubmit(values) {
+  
         setDisabled(true)
         setLoading(true)
         let competencyObj = parseInt(values.score)
@@ -205,68 +208,205 @@ const validationSchema = Yup.object({
         let employeeObject;
         let employeeTraining;
         let updateEmpTraining;
-        if(id!= -1) {
-              
-            values.employee = [Number(id)]
-         
-            await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
 
-            updateEmpTraining = {
+        if(id!= -1) {
+
+            values.employee = [Number(id)]
+
+            await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((response) => {
+
+                updateEmpTraining = {
                     employeeIds : values.employee,
                     trainingTimeSlotId : timeSlotObj,
                     trainingDate : formattedTrainingDate,
                     trainingId : values.training_ids,
                     competencyId : competencyObj,
                     completionDate : formattedTrainingDate,
-                    emp_train_id : result.data.emp_train_id
-            }
-            }).catch((error)=>{  })
-                setLoading(false)
+                    emp_train_id : response.data.emp_train_id
+                }
+               
                 updateEmployeeTraining(updateEmpTraining).then((response) => {
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
-                })
-                .catch((error) => {
+                }).catch((error) => {
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
-                }).finally(()=>{
-                    sessionStorage.removeItem('training_id')
                 })
-        }
 
+            }).catch((error) => {
+               
+                employeeObject = values.employee
+
+                getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((response) => {
+                  employeeTraining = {
+                        employeeIds : employeeObject,
+                        trainingTimeSlotId : timeSlotObj,
+                        trainingDate : formattedTrainingDate,
+                        trainingId : values.training_ids,
+                        competencyId : competencyObj,
+                        completionDate : formattedTrainingDate,
+                        emp_train_id : response.data.emp_train_id 
+                  }
+
+                   updateEmployeeTraining(employeeTraining).then((response) => {
+                        showToast(response?.data?.responseMessage,"success")
+                        navigate(`/viewemployees`)
+                    }).catch((error) => {
+                        showToast(error?.data?.errorMessage,"error")
+                        navigate(`/viewemployees`)
+                    })
+                }).catch((error) => {
+
+                     employeeTraining = {
+                        employeeIds : employeeObject,
+                        trainingTimeSlotId : timeSlotObj,
+                        trainingDate : formattedTrainingDate,
+                        trainingId : values.training_ids,
+                        competencyId : competencyObj,
+                        completionDate : formattedTrainingDate 
+                  }
+
+                    saveEmployeeTraining(employeeTraining).then((response) => { 
+                        showToast(`Training started of ${employee.empName}`,"success")
+                        navigate(`/training/employee/${id}`)
+                    
+                    }).catch((error) => {
+                        showToast(`Training is not started of ${employee.empName}`,"error")
+                        navigate(`/training/employee/${id}`)
+                    })
+                })                
+            })
+
+        }
         else {
-
-            employeeObject = values.employee
-            employeeTraining = {
-                employeeIds : employeeObject,
-                trainingTimeSlotId : timeSlotObj,
-                trainingDate : formattedTrainingDate,
-                trainingId : values.training_ids,
-                competencyId : competencyObj,
-                completionDate : formattedTrainingDate 
-            }
-            saveEmployeeTraining(employeeTraining).then((response) => {
-                if(id!= -1) {             
-                    setLoading(false)         
+                employeeObject = values.employee
+                employeeTraining = {
+                        employeeIds : employeeObject,
+                        trainingTimeSlotId : timeSlotObj,
+                        trainingDate : formattedTrainingDate,
+                        trainingId : values.training_ids,
+                        competencyId : competencyObj,
+                        completionDate : formattedTrainingDate 
+                }
+                
+                saveEmployeeTraining(employeeTraining).then((response) => { 
+                    showToast(response?.data?.responseMessage,"success")
                     navigate(`/training/employee/${id}`)
-                    showToast(response?.data?.responseMessage,"success")
-                }
-                else {                      
-                    navigate(`/viewemployees`)
-                    showToast(response?.data?.responseMessage,"success")
-                }
-            })
-            .catch((error) => {
-                 if(id!= -1) {         
+                    
+                }).catch((error) => {
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/training/employee/${id}`)
-                 }
-                 else {
-                    showToast(error?.data?.errorMessage,"error")
-                    navigate(`/viewemployees`)
-                 }
-            })
+                } )
         }
+
+        // if(id!= -1) {
+        //     setLoading(false)
+
+        //     values.employee = [Number(id)]
+  
+        //     await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
+        //     updateEmpTraining = {
+        //             employeeIds : values.employee,
+        //             trainingTimeSlotId : timeSlotObj,
+        //             trainingDate : formattedTrainingDate,
+        //             trainingId : values.training_ids,
+        //             competencyId : competencyObj,
+        //             completionDate : formattedTrainingDate,
+        //             emp_train_id : result.data.emp_train_id
+        //     }
+
+        //      updateEmployeeTraining(updateEmpTraining).then((response) => {
+        //             showToast(response?.data?.responseMessage,"success")
+        //             navigate(`/viewemployees`)
+        //         })
+        //         .catch((error) => {
+        //             employeeObject = values.employee
+        //             employeeTraining = {
+        //             employeeIds : employeeObject,
+        //             trainingTimeSlotId : timeSlotObj,
+        //             trainingDate : formattedTrainingDate,
+        //             trainingId : values.training_ids,
+        //             competencyId : competencyObj,
+        //             completionDate : formattedTrainingDate 
+        //         }
+                
+        //         console.log('employee training to be saved Object ',employeeTraining)
+        //         saveEmployeeTraining(employeeTraining).then((response) => {
+        //             if(id!= -1) {             
+        //                 setLoading(false)         
+        //                 navigate(`/training/employee/${id}`)
+        //                 showToast(response?.data?.responseMessage,"success")
+        //             }
+        //             else {                      
+        //                 navigate(`/viewemployees`)
+        //                 showToast(response?.data?.responseMessage,"success")
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             if(id!= -1) {         
+        //                 showToast(error?.data?.errorMessage,"error")
+        //                 navigate(`/training/employee/${id}`)
+        //             }
+        //             else {
+        //                 showToast(error?.data?.errorMessage,"error")
+        //                 navigate(`/viewemployees`)
+        //             }
+        //         })
+                  
+        //         }).finally(()=> {
+        //             sessionStorage.removeItem('training_id')
+        //         })
+        //     }).catch((error) => {
+        //         alert('no training found ')
+        //     })
+            
+                // updateEmployeeTraining(updateEmpTraining).then((response) => {
+                //     showToast(response?.data?.responseMessage,"success")
+                //     navigate(`/viewemployees`)
+                // })
+                // .catch((error) => {
+                //     showToast(error?.data?.errorMessage,"error")
+                //     navigate(`/viewemployees`)
+                // }).finally(()=> {
+                //     sessionStorage.removeItem('training_id')
+                // })
+        // }
+
+        // else {
+
+        //     employeeObject = values.employee
+        //     employeeTraining = {
+        //         employeeIds : employeeObject,
+        //         trainingTimeSlotId : timeSlotObj,
+        //         trainingDate : formattedTrainingDate,
+        //         trainingId : values.training_ids,
+        //         competencyId : competencyObj,
+        //         completionDate : formattedTrainingDate 
+        //     }
+
+        //     console.log('employee training to be saved Object ',employeeTraining)
+        //     saveEmployeeTraining(employeeTraining).then((response) => {
+        //         if(id!= -1) {             
+        //             setLoading(false)         
+        //             navigate(`/training/employee/${id}`)
+        //             showToast(response?.data?.responseMessage,"success")
+        //         }
+        //         else {                      
+        //             navigate(`/viewemployees`)
+        //             showToast(response?.data?.responseMessage,"success")
+        //         }
+        //     })
+        //     .catch((error) => {
+        //          if(id!= -1) {         
+        //             showToast(error?.data?.errorMessage,"error")
+        //             navigate(`/training/employee/${id}`)
+        //          }
+        //          else {
+        //             showToast(error?.data?.errorMessage,"error")
+        //             navigate(`/viewemployees`)
+        //          }
+        //     })
+        // }
     }
 
     function validate(values) {

@@ -62,7 +62,6 @@ export default function ViewTrainingHistory() {
 
         getTrainingHistoryByEmpId(empid).then(
             (response) => {
-                console.log('Emp training History ',response.data)
                 setEmployee(response.data[0].employee)
                 setEmpHistList(response.data) 
             })
@@ -79,30 +78,30 @@ export default function ViewTrainingHistory() {
                     {/* Row 1 */}
                 {/* Row 1 */}
                 <Grid container sx={{ mb: 2 }}>
-                <Grid item xs={6} sx={{ pr: 2 }}>
+                <Grid  xs={6} sx={{ pr: 2 }}>
                     <strong>Name: </strong> {employee.empName}
                 </Grid>
-                <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                <Grid  xs={6} textAlign="right" sx={{ pl: 2 }}>
                     <strong>Employee Code: </strong> {employee.empCode}
                 </Grid>
                 </Grid>
 
                 {/* Row 2 */}
                 <Grid container sx={{ mb: 2 }}>
-                <Grid item xs={6} sx={{ pr: 2 }}>
+                <Grid  xs={6} sx={{ pr: 2 }}>
                     <strong>Designation: </strong> {employee.designation.desigName}
                 </Grid>
-                <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                <Grid  xs={6} textAlign="right" sx={{ pl: 2 }}>
                     <strong>Category: </strong> {employee.category.category}
                 </Grid>
                 </Grid>
 
                 {/* Row 3 */}
                 <Grid container sx={{ mb: 2 }}>
-                <Grid item xs={6} sx={{ pr: 2 }}>
+                <Grid  xs={6} sx={{ pr: 2 }}>
                     <strong>Company: </strong> {employee.department.company.compName}
                 </Grid>
-                <Grid item xs={6} textAlign="right" sx={{ pl: 2 }}>
+                <Grid  xs={6} textAlign="right" sx={{ pl: 2 }}>
                     <strong>Department: </strong> {employee.department.deptName}
                 </Grid>
                 </Grid>
@@ -129,7 +128,7 @@ export default function ViewTrainingHistory() {
                         </tr>
                         ) : (
                         empHistList.map((emp,index) => (
-                            <tr key={emp.emp_hist_id}>
+                            <tr key={emp.emp_train_hist_id}>
                                 <td>{index+1}</td>
                                 <td>{emp.training.training_name}</td>
                                  <td>{emp.competency.score}</td>
