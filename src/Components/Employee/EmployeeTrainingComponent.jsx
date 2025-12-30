@@ -47,36 +47,37 @@ export default function EmployeeTrainingComponent(){
     const [holidayList, setHolidayList] = useState([])
     const [loading, setLoading] = useState(false)
 
-const isWeekend = (date) => {
-  if (!date || !date.isValid()) return false;
-  const d = date.day();
-  return d === 0  ; // Sun = 0, Sat = 6
-};
+    const isWeekend = (date) => {
+        if (!date || !date.isValid()) return false;
+        const d = date.day();
+        return d === 0  ; // Sun = 0, Sat = 6
+    };
 
-const getHoliday = (date) => {
-  if (!date || !date.isValid()) return false;
+    const getHoliday = (date) => {
+        if (!date || !date.isValid()) return false;
 
-  let cdate = date.date();
-  let month = date.month() + 1; // 1–12
-  let year = date.year();
-  
-  cdate = cdate<10 ? '0'+cdate : '' + cdate
-  month = month<10 ? '0'+month : '' + month
+        let cdate = date.date();
+        let month = date.month() + 1; // 1–12
+        let year = date.year();
+        
+        cdate = cdate<10 ? '0'+cdate : '' + cdate
+        month = month<10 ? '0'+month : '' + month
 
-  let ndate = `${cdate}-${month}-${year}`
-     
-  if(cdate == '15' && month=='08') return true;
+        let ndate = `${cdate}-${month}-${year}`
+            
+        if(cdate == '15' && month=='08') return true;
 
-  if(cdate == '01' && month=='05') return true;
+        if(cdate == '01' && month=='05') return true;
 
-  if(cdate == '26' && month=='01') return true;
+        if(cdate == '26' && month=='01') return true;
 
-  return holidayList.some(h => h.holidayDate === ndate)
+        return holidayList.some(h => h.holidayDate === ndate)
 
-};
+    };
 
 const validationSchema = Yup.object({
   training_date: Yup.mixed()
+    .nullable()
     .required("Training date is required")
     .test("valid-format", "Invalid date", (value) => value && value.isValid && value.isValid())
     .test("not-weekend", "Weekends not allowed", (value) => value && !isWeekend(value))
@@ -97,11 +98,18 @@ const validationSchema = Yup.object({
         const formatted = `${d}-${m}-${y}`;        
         return !holidayList.some(h => h.holidayDate === formatted);
       }
+    ),
+    trainingTimeSlot : Yup.mixed()
+            .required('No Training Time Slot is Selected'),
+    employee: Yup.mixed().test(
+        'employee-required',
+        'No Employee(s) selected',
+        (value) => Array.isArray(value) && value.length > 0
     )
 });
   
     useEffect(() => {        
-        
+
         if(!didFetchRun.current) {
             didFetchRun.current = true
             getAllDetails()
@@ -121,14 +129,7 @@ const validationSchema = Yup.object({
     }, [id] )
 
     function getAllDetails() {
-       
-        // retrieveAllActiveEmployees().then((response) => {
-        //    empListDisabled && setEmpDisabled(false)
-        //    setEmployeeList(response.data)
-        // }).catch((error)=> {
-        //     setEmpDisabled(true)
-        //     showToast(error.response.data.errorMessage, "error")
-        // })
+
         retrieveAllTraining().then((response) => {
             setTrainingList(response.data)
         }).catch((error)=> {
@@ -141,7 +142,6 @@ const validationSchema = Yup.object({
         })
 
          retrieveAllHolidays().then((response) =>{
-            
             setHolidayList(response.data)
         })
 
@@ -221,7 +221,7 @@ const validationSchema = Yup.object({
                     completionDate : formattedTrainingDate,
                     emp_train_id : response.data.emp_train_id
                 }
-               
+
                 updateEmployeeTraining(updateEmpTraining).then((response) => {
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
@@ -231,49 +231,26 @@ const validationSchema = Yup.object({
                 })
 
             }).catch((error) => {
-               
+
                 employeeObject = values.employee
-
-                getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((response) => {
-                  employeeTraining = {
-                        employeeIds : employeeObject,
-                        trainingTimeSlotId : timeSlotObj,
-                        trainingDate : formattedTrainingDate,
-                        trainingId : values.training_ids,
-                        competencyId : competencyObj,
-                        completionDate : formattedTrainingDate,
-                        emp_train_id : response.data.emp_train_id 
-                  }
-
-                   updateEmployeeTraining(employeeTraining).then((response) => {
-                        showToast(response?.data?.responseMessage,"success")
-                        navigate(`/viewemployees`)
-                    }).catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
-                        navigate(`/viewemployees`)
-                    })
-                }).catch((error) => {
-
-                     employeeTraining = {
+                employeeTraining = {
                         employeeIds : employeeObject,
                         trainingTimeSlotId : timeSlotObj,
                         trainingDate : formattedTrainingDate,
                         trainingId : values.training_ids,
                         competencyId : competencyObj,
                         completionDate : formattedTrainingDate 
-                  }
+                }
 
-                    saveEmployeeTraining(employeeTraining).then((response) => { 
-                        showToast(`Training started of ${employee.empName}`,"success")
-                        navigate(`/training/employee/${id}`)
-                    
-                    }).catch((error) => {
-                        showToast(`Training is not started of ${employee.empName}`,"error")
-                        navigate(`/training/employee/${id}`)
-                    })
-                })                
+                saveEmployeeTraining(employeeTraining).then((response) => { 
+                    showToast(`Training started of ${employee.empName}`,"success")
+                    navigate(`/training/employee/${id}`)
+                
+                }).catch((error) => {
+                    showToast(`Training is not started of ${employee.empName}`,"error")
+                    navigate(`/training/employee/${id}`)
+                })
             })
-
         }
         else {
                 employeeObject = values.employee
@@ -294,142 +271,7 @@ const validationSchema = Yup.object({
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/training/employee/${id}`)
                 } )
-        }
-
-        // if(id!= -1) {
-        //     setLoading(false)
-
-        //     values.employee = [Number(id)]
-  
-        //     await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((result) => {
-        //     updateEmpTraining = {
-        //             employeeIds : values.employee,
-        //             trainingTimeSlotId : timeSlotObj,
-        //             trainingDate : formattedTrainingDate,
-        //             trainingId : values.training_ids,
-        //             competencyId : competencyObj,
-        //             completionDate : formattedTrainingDate,
-        //             emp_train_id : result.data.emp_train_id
-        //     }
-
-        //      updateEmployeeTraining(updateEmpTraining).then((response) => {
-        //             showToast(response?.data?.responseMessage,"success")
-        //             navigate(`/viewemployees`)
-        //         })
-        //         .catch((error) => {
-        //             employeeObject = values.employee
-        //             employeeTraining = {
-        //             employeeIds : employeeObject,
-        //             trainingTimeSlotId : timeSlotObj,
-        //             trainingDate : formattedTrainingDate,
-        //             trainingId : values.training_ids,
-        //             competencyId : competencyObj,
-        //             completionDate : formattedTrainingDate 
-        //         }
-                
-        //         console.log('employee training to be saved Object ',employeeTraining)
-        //         saveEmployeeTraining(employeeTraining).then((response) => {
-        //             if(id!= -1) {             
-        //                 setLoading(false)         
-        //                 navigate(`/training/employee/${id}`)
-        //                 showToast(response?.data?.responseMessage,"success")
-        //             }
-        //             else {                      
-        //                 navigate(`/viewemployees`)
-        //                 showToast(response?.data?.responseMessage,"success")
-        //             }
-        //         })
-        //         .catch((error) => {
-        //             if(id!= -1) {         
-        //                 showToast(error?.data?.errorMessage,"error")
-        //                 navigate(`/training/employee/${id}`)
-        //             }
-        //             else {
-        //                 showToast(error?.data?.errorMessage,"error")
-        //                 navigate(`/viewemployees`)
-        //             }
-        //         })
-                  
-        //         }).finally(()=> {
-        //             sessionStorage.removeItem('training_id')
-        //         })
-        //     }).catch((error) => {
-        //         alert('no training found ')
-        //     })
-            
-                // updateEmployeeTraining(updateEmpTraining).then((response) => {
-                //     showToast(response?.data?.responseMessage,"success")
-                //     navigate(`/viewemployees`)
-                // })
-                // .catch((error) => {
-                //     showToast(error?.data?.errorMessage,"error")
-                //     navigate(`/viewemployees`)
-                // }).finally(()=> {
-                //     sessionStorage.removeItem('training_id')
-                // })
-        // }
-
-        // else {
-
-        //     employeeObject = values.employee
-        //     employeeTraining = {
-        //         employeeIds : employeeObject,
-        //         trainingTimeSlotId : timeSlotObj,
-        //         trainingDate : formattedTrainingDate,
-        //         trainingId : values.training_ids,
-        //         competencyId : competencyObj,
-        //         completionDate : formattedTrainingDate 
-        //     }
-
-        //     console.log('employee training to be saved Object ',employeeTraining)
-        //     saveEmployeeTraining(employeeTraining).then((response) => {
-        //         if(id!= -1) {             
-        //             setLoading(false)         
-        //             navigate(`/training/employee/${id}`)
-        //             showToast(response?.data?.responseMessage,"success")
-        //         }
-        //         else {                      
-        //             navigate(`/viewemployees`)
-        //             showToast(response?.data?.responseMessage,"success")
-        //         }
-        //     })
-        //     .catch((error) => {
-        //          if(id!= -1) {         
-        //             showToast(error?.data?.errorMessage,"error")
-        //             navigate(`/training/employee/${id}`)
-        //          }
-        //          else {
-        //             showToast(error?.data?.errorMessage,"error")
-        //             navigate(`/viewemployees`)
-        //          }
-        //     })
-        // }
-    }
-
-    function validate(values) {
-        let errors = {}
-        if(id == -1)
-        {
-            if(values.employee=='') {
-                errors.employee='No Employee Selected'
-            }
-        }
-
-        if(values.training_ids=='') {
-           errors.training_ids='No Training is Selected'
-        }
-
-        if(values.trainingTimeSlot=='') {
-           errors.trainingTimeSlot='No Training Time Slot is Selected'
-        }
-        // if(values.competency=='') {
-        //    errors.competency='No Competency is Selected'
-        // }
-
-        if(values.training_date==null) {
-           errors.training_date='No Training Date is Selected'
-        }
-        return errors
+        }        
     }
 
     const isHoliday = (date) => {
@@ -459,17 +301,24 @@ const validationSchema = Yup.object({
 
     function getEmployeesByTrainingAndCompetencyId( ) {
 
-       let tid = parseInt(sessionStorage.getItem('training_id'))
-       let cid = parseInt(sessionStorage.getItem('competency_id'))
+        let tid = parseInt(sessionStorage.getItem('training_id'))
+        let cid = parseInt(sessionStorage.getItem('competency_id'))
+        let tdate = sessionStorage.getItem('training_date')
+        const formattedTrainingDate = dayjs(tdate).format('DD-MM-YYYY');
+        let timeslot = parseInt(sessionStorage.getItem('timeslot'))
 
-       if(id == -1)
-       {
-            retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid).then((response)=> {                
+        if(id == -1)
+        { 
+            retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid,formattedTrainingDate,timeslot).then((response)=> {                
                 empListDisabled && setEmpDisabled(false)
                 setEmployeeList(response.data)
-        }).catch((error)=>{
+            }).catch((error)=> {
+                sessionStorage.removeItem('training_id')
+                sessionStorage.removeItem('competency_id')
+                sessionStorage.removeItem('training_date')
+                sessionStorage.removeItem('timeslot')
                 setEmpDisabled(false)                
-        })
+            })
        }
        else {
             empListDisabled && setEmpDisabled(true)
@@ -495,14 +344,64 @@ const validationSchema = Yup.object({
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
                         validationSchema={validationSchema}
-                        validate={validate}
+                        // validate={validate}
                         validateOnBlur={false}
                         validateOnChange={false}
                         onSubmit={onSubmit}
                         >
                         {({ setFieldValue, values, handleChange, handleBlur,  touched, errors }) => (
                             <Form>
-                            {/* Training Select */}
+
+                                 {/* Training Date Picker */}
+                                <Box mb={2}  >
+                                <DatePicker                                    
+                                    shouldDisableDate={(date)=> isWeekend(date) || isHoliday(date) }
+                                    format="DD-MM-YYYY"
+                                    label="Training Date"
+                                    value={values.training_date}
+                                    onChange={(date) => {
+                                        setFieldValue('training_date', date)
+                                        sessionStorage.setItem('training_date',date)
+                                    }}
+                                    slotProps={{
+                                    textField: { 
+                                        error:  Boolean(errors.training_date),
+                                        helperText:( () => {
+                                            const h = getHoliday(values.training_date)
+                                            if(h) return `${h.holiday} (${h.holidayDate})`
+                                            return <ErrorMessage name="training_date" /> 
+                                          }
+                                        )
+                                    }
+                                    }}
+                                />
+                            </Box>
+                                
+                            <Box mb={2}>
+                                <Typography variant="subtitle1">Training Time Slot</Typography>
+                                <Select  
+                                    styles={customStyles}                                                                   
+                                    name="trainingTimeSlot"
+                                    options={trainingTimeSlotList.map(timeslot => ({
+                                        value: timeslot.training_time_slot_id,
+                                        label: timeslot.training_time_slot
+                                    }))}
+                                    value={
+                                        trainingTimeSlotList
+                                        .map(timeslot => ({ value: timeslot.training_time_slot_id, label: timeslot.training_time_slot }))
+                                        .find(option => option.value === values.trainingTimeSlot) || null
+                                    }
+                                    onChange={(option) => {
+                                        setFieldValue('trainingTimeSlot', option ? option.value : '')
+                                        sessionStorage.setItem('timeslot',option.value)
+                                     }
+                                    }
+                                    placeholder="Select Training Time Slot"
+                                />
+                                <FormHelperText error={touched.trainingTimeSlot && Boolean(errors.trainingTimeSlot)}><ErrorMessage name="trainingTimeSlot" /></FormHelperText>
+                            </Box>
+
+                            {/* Training Select */}                            
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Select Trainings</Typography>
                                 <Select   
@@ -529,7 +428,6 @@ const validationSchema = Yup.object({
                                 <ErrorMessage name="training_ids" />
                                 </FormHelperText>
                             </Box>
-
                              {/* Competency Score */}
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Competency Score</Typography>
@@ -557,7 +455,7 @@ const validationSchema = Yup.object({
                                 <ErrorMessage name="competency" />
                                 </FormHelperText>
                             </Box>
-
+                            
                             {/* Employee Dropdown */}
                             <Box mb={2}>
                                     <Typography variant="subtitle1">Employee</Typography>
@@ -599,50 +497,7 @@ const validationSchema = Yup.object({
                                    )
                                 }
                             </Box>                             
-                              {/* Training Date Picker */}
-                                <Box mb={2}  >
-                                <DatePicker                                    
-                                    shouldDisableDate={(date)=> isWeekend(date) || isHoliday(date) }
-                                    format="DD-MM-YYYY"
-                                    label="Training Date"
-                                    value={values.training_date}
-                                    onChange={(date) => {
-                                        setFieldValue('training_date', date)
-
-                                    }}
-                                    slotProps={{
-                                    textField: { 
-                                        error: touched.training_date && Boolean(errors.training_date),
-                                        helperText:( () => {
-                                            const h = getHoliday(values.training_date)
-                                            if(h) return `${h.holiday} (${h.holidayDate})`
-                                            return <ErrorMessage name="training_date" /> 
-                                          }
-                                        )
-                                    }
-                                    }}
-                                />
-                            </Box>
-                                
-                            <Box mb={2}>
-                                <Typography variant="subtitle1">Training Time Slot</Typography>
-                                <Select  
-                                    styles={customStyles}                                                                   
-                                    name="trainingTimeSlot"
-                                    options={trainingTimeSlotList.map(timeslot => ({
-                                        value: timeslot.training_time_slot_id,
-                                        label: timeslot.training_time_slot
-                                    }))}
-                                    value={
-                                        trainingTimeSlotList
-                                        .map(timeslot => ({ value: timeslot.training_time_slot_id, label: timeslot.training_time_slot }))
-                                        .find(option => option.value === values.trainingTimeSlot) || null
-                                    }
-                                    onChange={(option) => setFieldValue('trainingTimeSlot', option ? option.value : '')}
-                                    placeholder="Select Training time Slot"
-                                />
-                                <FormHelperText error={touched.trainingTimeSlot && Boolean(errors.trainingTimeSlot)}><ErrorMessage name="trainingTimeSlot" /></FormHelperText>
-                            </Box>
+                             
 
                             {/* Submit Button */}
                             <Box mt={2}>
@@ -657,7 +512,6 @@ const validationSchema = Yup.object({
                         )}
                         </Formik>
                 </LocalizationProvider>
-
                </div>
            </div>
        )
