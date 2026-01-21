@@ -6,6 +6,8 @@ export const retrieveAllEmployees = () => apiClient.get('employee/')
 
 export const retrieveAllEmployeesUsingTrainingAndCompetencyId = (tid,cid,tdate,timeslot) => apiClient.get(`employee/training/${tid}/competency/${cid}/trainingdate/${tdate}/timeslot/${timeslot}`)
 
+export const retrieveEmployeePresentForOtherTraining = (id,tdate,timeslot) => apiClient.get(`employee/${id}/trainingdate/${tdate}/timeslot/${timeslot}`)
+
 export const retrieveAllActiveEmployees = () => apiClient.get('employee/active')
 
 export const retrieveAllEmployeesWithPagination = (page , size) => apiClient.get(`employee/paged?page=${page}&size=${size}`)

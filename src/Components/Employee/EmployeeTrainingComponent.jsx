@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { getEmployeeById,   retrieveAllEmployeesUsingTrainingAndCompetencyId } from "../api/EmployeeApiService"
+import { getEmployeeById,   retrieveAllEmployeesUsingTrainingAndCompetencyId, retrieveEmployeePresentForOtherTraining } from "../api/EmployeeApiService"
 import { retrieveAllTraining } from "../api/TrainingApiService"
 import { ErrorMessage, Form, Formik, useFormikContext } from "formik"
 import Select from 'react-select';
@@ -101,11 +101,19 @@ const validationSchema = Yup.object({
     ),
     trainingTimeSlot : Yup.mixed()
             .required('No Training Time Slot is Selected'),
+
     employee: Yup.mixed().test(
-        'employee-required',
-        'No Employee(s) selected',
-        (value) => Array.isArray(value) && value.length > 0
-    )
+            'employee-required',
+            'No Employee(s) selected',
+            function (value) {
+                const { id } = this.options.context;
+
+                // If updating, skip validation
+                if (id !== -1) return true;
+
+                return Array.isArray(value) && value.length > 0;
+            }
+        )
 });
   
     useEffect(() => {        
@@ -118,11 +126,11 @@ const validationSchema = Yup.object({
 
     useEffect( ()=> {
         if(id != -1) {
-            empList.length = 2   
-            setDisabled(false)          
+            empList.length = 2
+            setDisabled(false)
             setEmpDisabled(true)
             setBtnValue('Update Training')
-                getEmployeeById(id).then((response) => {
+                getEmployeeById(id).then((response) => {                   
                         setEmployee(response.data)
                 })
         }
@@ -193,7 +201,7 @@ const validationSchema = Yup.object({
             }) );
 
     async function onSubmit(values) {
-  
+       
         setDisabled(true)
         setLoading(true)
         let competencyObj = parseInt(values.score)
@@ -211,7 +219,7 @@ const validationSchema = Yup.object({
             values.employee = [Number(id)]
 
             await getTrainingsByEmployeeIdAndTrainingId(id,values.training_ids).then((response) => {
-
+                
                 updateEmpTraining = {
                     employeeIds : values.employee,
                     trainingTimeSlotId : timeSlotObj,
@@ -231,7 +239,7 @@ const validationSchema = Yup.object({
                 })
 
             }).catch((error) => {
-
+ 
                 employeeObject = values.employee
                 employeeTraining = {
                         employeeIds : employeeObject,
@@ -241,7 +249,6 @@ const validationSchema = Yup.object({
                         competencyId : competencyObj,
                         completionDate : formattedTrainingDate 
                 }
-
                 saveEmployeeTraining(employeeTraining).then((response) => { 
                     showToast(`Training started of ${employee.empName}`,"success")
                     navigate(`/training/employee/${id}`)
@@ -286,7 +293,6 @@ const validationSchema = Yup.object({
           styles={customStyles}
           name="employee"
           isMulti
-        
           options={options}
           className="basic-multi-select"
           classNamePrefix="select"
@@ -299,7 +305,7 @@ const validationSchema = Yup.object({
       );
     }
 
-    function getEmployeesByTrainingAndCompetencyId( ) {
+    function getEmployeesByTrainingAndCompetencyId() {
 
         let tid = parseInt(sessionStorage.getItem('training_id'))
         let cid = parseInt(sessionStorage.getItem('competency_id'))
@@ -325,6 +331,23 @@ const validationSchema = Yup.object({
        }
     }
 
+    function getEmployeePresentForOtherTraining(setFieldValue) {
+         
+        let tdate = sessionStorage.getItem('training_date')
+        const formattedTrainingDate = dayjs(tdate).format('DD-MM-YYYY');
+        let timeslot = parseInt(sessionStorage.getItem('timeslot'))
+
+        retrieveEmployeePresentForOtherTraining(id,formattedTrainingDate,timeslot).then((response) => {
+            if(response.data > 0)
+            {   
+                showToast("Employee attended other Training \n Please Select different Date or Time Slot","error")
+                setFieldValue("training_date", null);
+                setFieldValue("trainingTimeSlot","")
+            }
+            
+        })
+    }
+
     return(
            <div className="container">
                 <Typography variant="h4" gutterBottom>
@@ -339,7 +362,7 @@ const validationSchema = Yup.object({
                             //employee: employee ? id : '',
                             employee : [],
                             competency : score ? score : '',
-                             training_ids: '',
+                            training_ids: '',
                             // training_ids: [],
                             trainingTimeSlot : trainingTimeSlot? trainingTimeSlot.training_time_slot_id :''
                         }}
@@ -394,6 +417,10 @@ const validationSchema = Yup.object({
                                     onChange={(option) => {
                                         setFieldValue('trainingTimeSlot', option ? option.value : '')
                                         sessionStorage.setItem('timeslot',option.value)
+                                        if(id!= -1) {
+                                            getEmployeePresentForOtherTraining(setFieldValue)
+                                        }
+                                         
                                      }
                                     }
                                     placeholder="Select Training Time Slot"
@@ -404,14 +431,14 @@ const validationSchema = Yup.object({
                             {/* Training Select */}                            
                             <Box mb={2}>
                                 <Typography variant="subtitle1">Select Trainings</Typography>
-                                <Select   
+                                <Select
                                         styles={customStyles}                                     
                                         name="training_ids"
                                         options={trainingList.map(training => ({
                                             value: training.training_id,
                                             label: training.training_name
                                         }))}
-                                        value={
+                                        value= {
                                             trainingList
                                                 .map(training => ({ value: training.training_id, label: training.training_name }))
                                                 .find(option => option.value === values.training_ids) || null
@@ -464,13 +491,12 @@ const validationSchema = Yup.object({
                                             <>
                                             <TextField 
                                                 fullWidth
-                                                disabled="true"
+                                                disabled={true}
                                                 placeholder={id == -1 ? "No Employees Present" : employee.empName }
                                             />
                                             </>
                                         ) : (
-                                        <>
-                                       
+                                        <>                                       
                                         <EmployeeMultiSelect options={options} disabled={empListDisabled}/>
                                         {/* <Select
                                             styles={customStyles}                                            
@@ -487,8 +513,7 @@ const validationSchema = Yup.object({
                                                 .find(option => option.value === values.employee) || null
                                             }
                                             onChange={(option) => setFieldValue('employee', option ? option.value : '')}
-                                            placeholder="Select Employee"
-                                            
+                                            placeholder="Select Employee"                                            
                                         />                                
                                         <FormHelperText error={touched.employee && Boolean(errors.employee)}>
                                         <ErrorMessage name="employee" />
@@ -496,8 +521,7 @@ const validationSchema = Yup.object({
                                     </>
                                    )
                                 }
-                            </Box>                             
-                             
+                            </Box>
 
                             {/* Submit Button */}
                             <Box mt={2}>
