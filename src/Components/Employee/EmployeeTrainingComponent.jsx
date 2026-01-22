@@ -339,7 +339,7 @@ const validationSchema = Yup.object({
 
         retrieveEmployeePresentForOtherTraining(id,formattedTrainingDate,timeslot).then((response) => {
             if(response.data > 0)
-            {   
+            {
                 showToast("Employee attended other Training \n Please Select different Date or Time Slot","error")
                 setFieldValue("training_date", null);
                 setFieldValue("trainingTimeSlot","")

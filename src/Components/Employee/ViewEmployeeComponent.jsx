@@ -273,7 +273,7 @@ export default function ViewEmployeeComponent() {
 function downloadAllEmployees() {
     setDownloadEmployee(true)
     downAllEmployeesList().then((response)=> {
-            
+
             // Convert the array buffer to a Blob
             const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 
@@ -369,11 +369,11 @@ function downloadAllEmployees() {
         {loading ? "Uploading..." : "Upload to Server"}
       </Button>
     </Box>
-   
+
       <div className="mt-3">
         <table ref={tableRef} className="display" style={{ width: "100%" }}></table>
       </div>
-         
+
     </div>
   )
 }
