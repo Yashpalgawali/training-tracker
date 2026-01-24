@@ -148,11 +148,9 @@ const validationSchema = Yup.object({
         }).catch((error)=> {
              showToast(error.response.data.errorMessage, "error")
         })
-
-         retrieveAllHolidays().then((response) =>{
+        retrieveAllHolidays().then((response) =>{
             setHolidayList(response.data)
         })
-
         retrieveAllCompetencies().then((response) => {
            setScoreList(response.data)
         }).catch((error)=> {
@@ -234,6 +232,7 @@ const validationSchema = Yup.object({
                     showToast(response?.data?.responseMessage,"success")
                     navigate(`/viewemployees`)
                 }).catch((error) => {
+                   
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/viewemployees`)
                 })
@@ -269,12 +268,15 @@ const validationSchema = Yup.object({
                         competencyId : competencyObj,
                         completionDate : formattedTrainingDate 
                 }
-                
-                saveEmployeeTraining(employeeTraining).then((response) => { 
+               
+                saveEmployeeTraining(employeeTraining).then((response) => {
+                    console.log('response is ',response)
                     showToast(response?.data?.responseMessage,"success")
+                   
                     navigate(`/training/employee/${id}`)
                     
                 }).catch((error) => {
+                   
                     showToast(error?.data?.errorMessage,"error")
                     navigate(`/training/employee/${id}`)
                 } )
@@ -340,11 +342,11 @@ const validationSchema = Yup.object({
         retrieveEmployeePresentForOtherTraining(id,formattedTrainingDate,timeslot).then((response) => {
             if(response.data > 0)
             {
-                showToast("Employee attended other Training \n Please Select different Date or Time Slot","error")
+                showToast("Employee attended other Training","error")
+                showToast("Please Select different Date or Time Slot","error")
                 setFieldValue("training_date", null);
                 setFieldValue("trainingTimeSlot","")
-            }
-            
+            }            
         })
     }
 

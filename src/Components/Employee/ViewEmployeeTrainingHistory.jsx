@@ -63,7 +63,9 @@ export default function ViewEmployeeTrainingHistory() {
         getTrainingHistoryByEmpAndTrainingId(empid,trainingid).then(
             (response) => {
                 setEmployee(response.data[0].employee)
+                
                 setEmpHistList(response.data) 
+
             })
             .catch((error)=> {
                 showToast(error.response.data.errorMessage, "error")
@@ -116,6 +118,7 @@ export default function ViewEmployeeTrainingHistory() {
                         <th>Competency</th>
                         <th>Training Date</th>
                         <th>Completion Date</th>
+                        <th>Time</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -133,7 +136,8 @@ export default function ViewEmployeeTrainingHistory() {
                                 <td>{emp.training.training_name}</td>
                                 <td>{emp.competency.score}</td>
                                 <td>{emp.training_date}</td>
-                                <td>{emp.training_date}</td>                                
+                                <td>{emp.training_date}</td>
+                                <td>{emp.trainingTimeSlot.training_time_slot}</td>
                             </tr>
                         ))
                       )
