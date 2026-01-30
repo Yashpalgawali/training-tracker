@@ -115,7 +115,7 @@ const validationSchema = Yup.object({
             }
         )
 });
-  
+
     useEffect(() => {        
 
         if(!didFetchRun.current) {
@@ -319,6 +319,8 @@ const validationSchema = Yup.object({
         { 
             retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid,formattedTrainingDate,timeslot).then((response)=> {                
                 empListDisabled && setEmpDisabled(false)
+                console.log('found emps are ',response.data)
+
                 setEmployeeList(response.data)
             }).catch((error)=> {
                 sessionStorage.removeItem('training_id')
@@ -336,7 +338,9 @@ const validationSchema = Yup.object({
     function getEmployeePresentForOtherTraining(setFieldValue) {
          
         let tdate = sessionStorage.getItem('training_date')
+        
         const formattedTrainingDate = dayjs(tdate).format('DD-MM-YYYY');
+
         let timeslot = parseInt(sessionStorage.getItem('timeslot'))
 
         retrieveEmployeePresentForOtherTraining(id,formattedTrainingDate,timeslot).then((response) => {
