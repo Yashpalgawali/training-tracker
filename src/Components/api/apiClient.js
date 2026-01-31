@@ -4,7 +4,7 @@ import axios from 'axios';
 export const apiClient = axios.create({
     baseURL : 'http://192.168.0.219:8081/trainingtrackerrest/'
 })
-
+   
 // For Local Tomcat (STS)
 // export const apiClient = axios.create({
 //     baseURL : 'http://localhost:7878/trainingtrackerrest/'
