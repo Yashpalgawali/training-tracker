@@ -130,8 +130,15 @@ const validationSchema = Yup.object({
             setDisabled(false)
             setEmpDisabled(true)
             setBtnValue('Update Training')
-                getEmployeeById(id).then((response) => {                   
-                        setEmployee(response.data)
+                getEmployeeById(id).then((response) => {
+                        if(response.data.status!=0)
+                        {
+                            setEmployee(response.data)
+                        }
+                        else {
+                            showToast("Employee is not active","error")
+                            navigate(`/viewemployees`)
+                        }
                 })
         }
     }, [id] )
@@ -319,8 +326,6 @@ const validationSchema = Yup.object({
         { 
             retrieveAllEmployeesUsingTrainingAndCompetencyId(tid,cid,formattedTrainingDate,timeslot).then((response)=> {                
                 empListDisabled && setEmpDisabled(false)
-                console.log('found emps are ',response.data)
-
                 setEmployeeList(response.data)
             }).catch((error)=> {
                 sessionStorage.removeItem('training_id')
