@@ -97,8 +97,9 @@ export default function ViewEmployeeComponent() {
             }; 
             const response = await apiClient.get("employee/paged", { params });
            // setEmpList(response.data.data)
-           
+            
             setEmpListLength(response.data.data.length)
+            
             // DataTables expects this exact structure
             callback({
               draw: data.draw,
@@ -116,6 +117,7 @@ export default function ViewEmployeeComponent() {
           { data: "empName", title: "Name" },
           { data: "empCode", title: "Employee Code" },
           { data: "joiningDate", title: "Joining Date" },
+          { data: "leaveDate", title: "Leaving Date" },
           { data: "contractorName", title: "Contractor Name" },
           { data: "designation", title: "Designation" },
           { data: "department", title: "Department" },
@@ -209,7 +211,7 @@ export default function ViewEmployeeComponent() {
     }
     
     function downloadAllTrainings() {
-       setDownloadTraining(true)
+        setDownloadTraining(true)
         getAllTrainingHistory().then((response)=> {
                 // Convert the array buffer to a Blob
                 const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

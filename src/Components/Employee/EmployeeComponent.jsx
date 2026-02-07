@@ -109,7 +109,7 @@ export default function EmployeeComponent() {
       };
     
     function  onSubmit(values) {
-        setLoading(true)
+       setLoading(true)
        let designation = {
             desigId : values.designation,
             desigName : ''
@@ -150,8 +150,8 @@ export default function EmployeeComponent() {
         }
         else {
             employee.empId = id
-               
             updateEmployee(employee).then((response)=>{
+               
                 showToast(response?.data?.responseMessage,"success")
                 navigate(`/viewemployees`)
             }).catch((error) => {
@@ -167,17 +167,21 @@ export default function EmployeeComponent() {
                     .min(3, 'Employee name must have at least two characters'),
 
         emp_code : Yup.string()
-                    .required('Employee code can\'t be blank')
-                    .test("is-employee-present","Employee already registered with this code", async (code)=> {
-                        try{
-                            await getEmployeeByEmpCode(code)
-                            return true
-                        }
-                        catch(e) {
-                            return false
-                        }
-                    }),
-            
+                    .required('Employee Code can\'t be blank')
+                    .test("is-employee-present","Employee already registered with this code "+emp_code, 
+                        async (code)=> {
+                            try{
+                                    const found = await getEmployeeByEmpCode(code)
+                                    console.log('FOUND EMPLOYEE ',found)
+                                    if(found.empCode==emp_code){
+                                        return false
+                                    }
+                                    else  return true
+                            }
+                            catch(e) {
+                                return false
+                            }
+                    }),       
         contractor_name : Yup.string()
                         .required('Contractor name can\'t be blank'),
         company : Yup.string()
@@ -277,7 +281,7 @@ export default function EmployeeComponent() {
                             }
                         }}
                     />
-                    </Box>
+                </Box>
                 {/* COmment added */}
                 {/* Designation */}
                 <Box mb={2}>

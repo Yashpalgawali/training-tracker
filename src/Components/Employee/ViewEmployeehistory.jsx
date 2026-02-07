@@ -60,6 +60,8 @@ export default function ViewEmployeehistory() {
     function getEmployeeHistoryByEmpId() {
         retrieveEmployeeHistoryByEmpId(id).then((response) => {                
             setEmployee(response.data[0].employee)
+            console.log(response.data)
+
             setEmpList(response.data) 
         })
         .catch((error)=> {
@@ -121,6 +123,7 @@ export default function ViewEmployeehistory() {
                         <th>Department</th>
                         <th>Company</th>
                         <th>Joining Date</th>
+                        <th>Leaving Date</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -144,6 +147,7 @@ export default function ViewEmployeehistory() {
                             <td>{emp.deptName}</td>
                             <td>{emp.compName}</td>
                             <td>{emp.joiningDate}</td>
+                            <td>{emp.leaveDate}</td>
                             <td><span
                                 style={{
                                     padding : "4px 10px",
@@ -152,12 +156,11 @@ export default function ViewEmployeehistory() {
                                     backgroundColor : emp.status ===1 ? "green" : "red",
                                     fontSize: "0.85rem"
                                 }}
-                            > {(emp.status==1 ? 'Active' : 'InActive') }</span></td>
-                             
+                            > {(emp.status==1 ? 'Active' : 'InActive') }</span></td>                             
                             </tr>
                         ))
                       )
-                    }    
+                    }
                 </tbody>
             </table>
         </div>
