@@ -218,7 +218,7 @@ const validationSchema = Yup.object({
         let employeeObject;
         let employeeTraining;
         let updateEmpTraining;
-
+     
         if(id!= -1) {
 
             values.employee = [Number(id)]
@@ -266,7 +266,7 @@ const validationSchema = Yup.object({
             })
         }
         else {
-                employeeObject = values.employee
+              employeeObject = values.employee
                 employeeTraining = {
                         employeeIds : employeeObject,
                         trainingTimeSlotId : timeSlotObj,
@@ -275,17 +275,14 @@ const validationSchema = Yup.object({
                         competencyId : competencyObj,
                         completionDate : formattedTrainingDate 
                 }
-               
-                saveEmployeeTraining(employeeTraining).then((response) => {
-                    console.log('response is ',response)
-                    showToast(response?.data?.responseMessage,"success")
-                   
-                    navigate(`/training/employee/${id}`)
+                
+                saveEmployeeTraining(employeeTraining).then((response) => {                    
+                    showToast(response?.data?.responseMessage,"success")                   
+                    navigate(`/viewemployees`)
                     
                 }).catch((error) => {
-                   
                     showToast(error?.data?.errorMessage,"error")
-                    navigate(`/training/employee/${id}`)
+                    navigate(`/viewemployees`)
                 } )
         }        
     }
