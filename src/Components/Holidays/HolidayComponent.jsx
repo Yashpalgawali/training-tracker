@@ -1,8 +1,8 @@
 import { Box, Button, TextField, Typography } from "@mui/material" 
 import { ErrorMessage, Form, Formik } from "formik"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { saveHoliday } from "../api/HolidayApiService"
+import { retrieveHolidayById, saveHoliday, updateHoliday } from "../api/HolidayApiService"
 import { showToast } from "../SharedComponent/showToast"
 
 import * as Yup from "yup";
@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
 import dayjs from "dayjs"
+import { error } from "jquery"
 
 
 const validationSchema = Yup.object({
@@ -31,6 +32,15 @@ export default function HolidayComponent() {
 
     const {id} = useParams()
 
+    useEffect(()=> {
+       
+        if(id != -1) {
+            retrieveHolidayById(id).then((response) => {
+                setHoliday(response.data.holiday)
+                setHolidayDate(response.data.holidayDate)
+            })
+        }
+    })
     
     function onSubmit(values) {
         
@@ -38,7 +48,8 @@ export default function HolidayComponent() {
 
         let holiday = {
             holiday : values.holiday,
-            holidayDate : formattedDate          
+            holidayDate : formattedDate,
+            holidayId : -1
         }
 
         if(id == -1) {
@@ -51,7 +62,16 @@ export default function HolidayComponent() {
                 navigate(`/holidays`)
             })
         }
-        
+        else {
+            holiday.holidayId=id
+            updateHoliday(holiday).then((response)=> {
+                showToast(response.data.responseMessage, "success")
+                navigate(`/holidays`)
+            }).catch((error)=>{
+                showToast(error.response.data.errorMessage,"error")
+                navigate("/holidays")
+            })
+        }
     }
 
     return(
@@ -59,7 +79,8 @@ export default function HolidayComponent() {
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
              <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Formik
-                initialValues={{ holiday , holidayDate : holidayDate ? dayjs(holidayDate) : null}}
+                enableReinitialize={true}
+                initialValues={{ holiday : holiday || "" , holidayDate : holidayDate ? dayjs(holidayDate, "DD/MM/YYYY") : null}}
                 validationSchema={validationSchema}
                 validateOnBlur={false}
                 validateOnChange={false}

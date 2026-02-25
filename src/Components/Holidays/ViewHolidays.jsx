@@ -9,6 +9,8 @@ import 'datatables.net'; // DataTables core functionality
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast";
 
+import EditIcon from '@mui/icons-material/Edit';
+
 export default function ViewHolidays() {
 
     const [holidaylist,setHolidayList] = useState([])
@@ -48,7 +50,9 @@ export default function ViewHolidays() {
     function addNewHoliday() {
             navigate(`/holiday/-1`)
     }
-    
+    function updateHoliday(id) {
+          navigate(`/holiday/${id}`)
+    }
    return(
         <div className="container">
             <Box>
@@ -61,7 +65,7 @@ export default function ViewHolidays() {
                         <th>Sr No.</th>
                         <th>Date</th>
                         <th>Holiday</th>
-                        
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,7 +81,8 @@ export default function ViewHolidays() {
                             <tr key={holiday.holidayId}>
                                 <td>{index+1}</td>
                                 <td>{holiday.holidayDate}</td>
-                                <td>{holiday.holiday}</td>                             
+                                <td>{holiday.holiday}</td>
+                                <td><Button className="btn btn-primary" type="submit" variant="contained" color="success" onClick={()=>updateHoliday(holiday.holidayId)}><EditIcon /> Update</Button></td>
                             </tr>
                         ))
                       )
