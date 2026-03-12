@@ -31,6 +31,7 @@ import ViewEmployeeTrainingHistory from './Employee/ViewEmployeeTrainingHistory'
 import ViewTrainingHistory from './Employee/ViewTrainingHistory';
 import HolidayComponent from './Holidays/HolidayComponent';
 import ViewHolidays from './Holidays/ViewHolidays';
+import DashboardLayout from './Layout/DashboardLayout';
 
 function AuthenticateRoute({children}) {
    const authContext  = useAuth()
@@ -49,57 +50,59 @@ export default function TrainingTrackerComponent() {
       <AuthProvider>
        <BrowserRouter basename="/trainingtracker">
        {/* <HashRouter> */}
-        <HeaderComponent />
+        {/* <HeaderComponent /> */}
           <ToastContainer position="top-center" autoClose={2500} />
             <Routes>
               
                 <Route path='/company/:id' element={ 
-                   <AuthenticateRoute> 
+                   <AuthenticateRoute>
+                      <DashboardLayout>
                       <CompanyComponent /> 
+                      </DashboardLayout> 
                    </AuthenticateRoute>
                   }>
                  </Route>                
-                <Route path='/companies' element={ <AuthenticateRoute> <ViewCompanyComponent /> </AuthenticateRoute> }> </Route>
+                <Route path='/companies' element={ <AuthenticateRoute><DashboardLayout> <ViewCompanyComponent /> </DashboardLayout> </AuthenticateRoute> }> </Route>
 
-                <Route path='/competency/:id' element={  <AuthenticateRoute>  <CompetencyComponent />  </AuthenticateRoute> }> </Route>                
-                <Route path='/competencies' element={ <AuthenticateRoute> <ViewCompetenciesComponent /> </AuthenticateRoute> }> </Route>
+                <Route path='/competency/:id' element={  <AuthenticateRoute> <DashboardLayout><CompetencyComponent /> </DashboardLayout>  </AuthenticateRoute> }> </Route>                
+                <Route path='/competencies' element={ <AuthenticateRoute> <DashboardLayout> <ViewCompetenciesComponent /></DashboardLayout>  </AuthenticateRoute> }> </Route>
 
-                <Route path='/designation/:id' element={ <AuthenticateRoute><DesignationComponent /> </AuthenticateRoute>}> </Route>
-                <Route path='/viewdesignations' element={ <AuthenticateRoute><ViewDesignation /> </AuthenticateRoute>}> </Route>
+                <Route path='/designation/:id' element={ <AuthenticateRoute><DashboardLayout> <DesignationComponent /> </DashboardLayout> </AuthenticateRoute>}> </Route>
+                <Route path='/viewdesignations' element={ <AuthenticateRoute><DashboardLayout> <ViewDesignation /></DashboardLayout>  </AuthenticateRoute>}> </Route>
 
-                <Route path='/department/:id' element={ <AuthenticateRoute><DepartmentComponent /> </AuthenticateRoute>}> </Route>
-                <Route path='/viewdepartments' element={ <AuthenticateRoute><ViewDepartmentComponent /></AuthenticateRoute> }></Route>
+                <Route path='/department/:id' element={ <AuthenticateRoute><DashboardLayout> <DepartmentComponent /> </DashboardLayout> </AuthenticateRoute>}> </Route>
+                <Route path='/viewdepartments' element={ <AuthenticateRoute><DashboardLayout> <ViewDepartmentComponent /></DashboardLayout> </AuthenticateRoute> }></Route>
                 
-                <Route path='/training/:id' element={<AuthenticateRoute> <TrainingComponent /> </AuthenticateRoute>}> </Route>
-                <Route path='/viewtraining' element={ <AuthenticateRoute><ViewTrainingComponent /> </AuthenticateRoute>}> </Route>
+                <Route path='/training/:id' element={<AuthenticateRoute> <DashboardLayout> <TrainingComponent /> </DashboardLayout> </AuthenticateRoute>}> </Route>
+                <Route path='/viewtraining' element={ <AuthenticateRoute><DashboardLayout> <ViewTrainingComponent /></DashboardLayout>  </AuthenticateRoute>}> </Route>
                 
-                <Route path='/employee/:id' element={ <AuthenticateRoute><EmployeeComponent /></AuthenticateRoute> }> </Route>
-                <Route path='/viewemployees' element={ <AuthenticateRoute><ViewEmployeeComponent /></AuthenticateRoute> }> </Route>
-                <Route path='/history/employee/:id' element={<AuthenticateRoute> <ViewEmployeehistory /> </AuthenticateRoute>} ></Route>
+                <Route path='/employee/:id' element={ <AuthenticateRoute><DashboardLayout> <EmployeeComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
+                <Route path='/viewemployees' element={ <AuthenticateRoute><DashboardLayout> <ViewEmployeeComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
+                <Route path='/history/employee/:id' element={<AuthenticateRoute> <DashboardLayout> <ViewEmployeehistory /></DashboardLayout>  </AuthenticateRoute>} ></Route>
                 
-                <Route path='/trainingtimeslot/:id' element={ <AuthenticateRoute><TrainingTimeSlotComponent /></AuthenticateRoute> }> </Route>
-                <Route path='/trainingtimeslots' element={ <AuthenticateRoute><ViewTrainingTimeSlotComponent /></AuthenticateRoute> }> </Route>
+                <Route path='/trainingtimeslot/:id' element={ <AuthenticateRoute><DashboardLayout> <TrainingTimeSlotComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
+                <Route path='/trainingtimeslots' element={ <AuthenticateRoute><DashboardLayout> <ViewTrainingTimeSlotComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
 
-                <Route path='/training/employee/:id' element={ <AuthenticateRoute><ViewEmployeeTrainings /> </AuthenticateRoute>}> </Route>
+                <Route path='/training/employee/:id' element={ <AuthenticateRoute><DashboardLayout> <ViewEmployeeTrainings /></DashboardLayout>  </AuthenticateRoute>}> </Route>
                 
-                <Route path='/train/employee/:id' element={<AuthenticateRoute> <EmployeeTrainingComponent /> </AuthenticateRoute>}> </Route>
+                <Route path='/train/employee/:id' element={<AuthenticateRoute> <DashboardLayout> <EmployeeTrainingComponent /></DashboardLayout>  </AuthenticateRoute>}> </Route>
 
-                <Route path='/category/:id' element={ <AuthenticateRoute><CategoryComponent /></AuthenticateRoute> }> </Route>
-                <Route path='/viewcategories' element={ <AuthenticateRoute><ViewCategoriesComponent /></AuthenticateRoute> }> </Route>
+                <Route path='/category/:id' element={ <AuthenticateRoute><DashboardLayout> <CategoryComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
+                <Route path='/viewcategories' element={ <AuthenticateRoute><DashboardLayout> <ViewCategoriesComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
                 
-                <Route path='/change/password' element={<AuthenticateRoute> <ChangePassword /> </AuthenticateRoute>}></Route>
+                <Route path='/change/password' element={<AuthenticateRoute> <DashboardLayout> <ChangePassword /></DashboardLayout>  </AuthenticateRoute>}></Route>
                 <Route path='/confirm/otp' element={  <ConfirmOtp />  } ></Route>
 
-                <Route path='/training/history/:empid/:trainingid' element={ <AuthenticateRoute> <ViewEmployeeTrainingHistory /> </AuthenticateRoute>}></Route> 
+                <Route path='/training/history/:empid/:trainingid' element={ <AuthenticateRoute><DashboardLayout>  <ViewEmployeeTrainingHistory /></DashboardLayout>  </AuthenticateRoute>}></Route> 
 
-                <Route path='/training/history/:empid' element={ <AuthenticateRoute> <ViewTrainingHistory /> </AuthenticateRoute>}></Route> 
+                <Route path='/training/history/:empid' element={ <AuthenticateRoute> <DashboardLayout> <ViewTrainingHistory /></DashboardLayout>  </AuthenticateRoute>}></Route> 
                 
                 <Route path='/forgot/password/change' element={  <ChangeForgotPassword />  } ></Route>
 
-                <Route path='/holiday/:id' element={ <AuthenticateRoute><HolidayComponent /></AuthenticateRoute> }> </Route>
-                <Route path='/holidays' element={ <AuthenticateRoute><ViewHolidays /></AuthenticateRoute> }> </Route>
+                <Route path='/holiday/:id' element={ <AuthenticateRoute><DashboardLayout> <HolidayComponent /></DashboardLayout> </AuthenticateRoute> }> </Route>
+                <Route path='/holidays' element={ <AuthenticateRoute><DashboardLayout>  <ViewHolidays /> </DashboardLayout> </AuthenticateRoute> }> </Route>
                 
-                <Route path='/home' element={<AuthenticateRoute> <HomeComponent /></AuthenticateRoute> }> </Route>
+                <Route path='/home' element={<AuthenticateRoute><DashboardLayout>  <HomeComponent /> </DashboardLayout> </AuthenticateRoute> }> </Route>
                 <Route path='/' element={ <LoginComponent /> }> </Route>
                 <Route path='/login' element={ <LoginComponent /> }> </Route>
                 <Route path='*' element={ <ErrorComponent /> }> </Route>
@@ -108,9 +111,9 @@ export default function TrainingTrackerComponent() {
           </BrowserRouter>
           {/* </HashRouter> */}
           
-          <footer className='footer' style={{ marginTop : '50px' }}   >
+          {/* <footer className='footer' style={{ marginTop : '50px' }}   >
             <p><strong>&copy;</strong> All Rights Reserved @<strong>Company Pvt. Ltd</strong></p>
-          </footer> 
+          </footer>  */}
        </AuthProvider>
     )
 }

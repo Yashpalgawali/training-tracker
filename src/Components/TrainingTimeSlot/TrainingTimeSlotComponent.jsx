@@ -1,16 +1,23 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ErrorMessage,  Formik,Form } from "formik"
-import { Box, Button, TextField, Typography } from "@mui/material"
+import { Box, Button, TextField, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
-import { retrieveTrainingTimeSlotById, saveTrainingTimeSlot, updateTrainingTimeSlot } from "../api/TrainingTimeSlotApiService"
+import { retrieveAllTrainingTimeSlots, retrieveTrainingTimeSlotById, saveTrainingTimeSlot, updateTrainingTimeSlot } from "../api/TrainingTimeSlotApiService"
+import EditIcon from '@mui/icons-material/Edit';
+
+import $ from 'jquery'; // jQuery is required for DataTables to work
+  
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+import { toast } from "react-toastify"
 
 export default function TrainingTimeSlotComponent () {
 
     const {id} =  useParams()
     const [training_time_slot ,setTrainingTimeSlot] = useState('')
     const [training_time_slot_id ,setTrainingTimeSlotId] = useState('')
-    const navigate = useNavigate()
+    
     const [isDisabled, setIsDisabled] = useState(false)
     const [btnValue, setBtnValue] = useState('Add Training Time Slot')
 
@@ -35,11 +42,43 @@ export default function TrainingTimeSlotComponent () {
         }
     }, [id] ) 
        
+ const [trainingTimeSlotList,setTrainingTimeSlotList] = useState([])
+
+    const tableRef = useRef(null); // Ref for the table
+    const navigate = useNavigate()
+
+    useEffect(()=> refreshTrainingTimeSlots() , [] )
+    
+    useEffect(() => {
+        // Initialize DataTable only after the component has mounted
+        if (tableRef.current && trainingTimeSlotList.length > 0 ) {
+          $(tableRef.current).DataTable(); // Initialize DataTables
+        }
+      }, [trainingTimeSlotList]); // Re-initialize DataTables when activities data changes
+
+    function refreshTrainingTimeSlots() {
+     
+        retrieveAllTrainingTimeSlots().then((response)=> {
+            setTrainingTimeSlotList(response.data)
+        }).catch((error) => {             
+             toast.error(error?.data?.errorMessage)
+        })
+    }  
+
+    function addNewTrainingTimeSlot() {
+        navigate(`/trainingtimeslot/-1`)
+    }
+
+    function editTrainingTimeSlot(id) {
+        navigate(`/trainingtimeslot/${id}`)
+    }
 
     function onSubmit(values) {
         setIsDisabled(true)
+        let new_id = Number(id)
             const trainingTimeSlot = {
-                training_time_slot_id : id , training_time_slot: values.training_time_slot
+                training_time_slot_id : new_id , 
+                training_time_slot: values.training_time_slot
             }
 
             setTimeout(() => {
@@ -47,25 +86,30 @@ export default function TrainingTimeSlotComponent () {
             }, 1000);
 
             if(id == -1) {
+                 
                 saveTrainingTimeSlot(trainingTimeSlot)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
-                        navigate('/trainingtimeslots')
+                        toast.success(response?.data?.responseMessage)
+                        refreshTrainingTimeSlots()
+                        navigate(`/trainingtimeslot/-1`)
                         })
                     .catch((error) => {   
-                        showToast(error?.data?.errorMessage,"error")
-                        navigate('/trainingtimeslots')
+                        toast.error(error?.data?.errorMessage)
+                        refreshTrainingTimeSlots()
+                        navigate(`/trainingtimeslot/-1`)
                     }) 
             }
             else {
                 updateTrainingTimeSlot(trainingTimeSlot)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
-                        navigate('/trainingtimeslots')
+                        
+                        toast.success(response?.data?.responseMessage)
+                        refreshTrainingTimeSlots()
+                        navigate(`/trainingtimeslot/-1`)
                     })
                     .catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
-                        navigate('/trainingtimeslots')
+                        toast.error(error?.data?.errorMessage)
+                        navigate(`/trainingtimeslot/-1`)
                     })                    
             }
          }
@@ -97,7 +141,7 @@ export default function TrainingTimeSlotComponent () {
    
 //   );
      return (
-        <div className="container">
+         <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik initialValues={ { training_time_slot_id,training_time_slot} }
                 enableReinitialize={true}
@@ -109,11 +153,7 @@ export default function TrainingTimeSlotComponent () {
                {
                 (props) => (
                     <Form>                       
-                        <Box
-                                sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                noValidate
-                                autoComplete="off"
-                                >
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                 <TextField  id="training_time_slot"
                                             name="training_time_slot"
                                             label="Time Slot"
@@ -126,23 +166,58 @@ export default function TrainingTimeSlotComponent () {
                                             helperText={<ErrorMessage name="training_time_slot" />}
                                             fullWidth />
                                
-                        </Box>
-
-                         <Box className="btnvalue">
+                          <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 2 }}>
                                     <Button
-                                        type="submit"
-                                        style={{ float: 'left' }}
+                                        type="submit"                                         
                                         variant="contained"
                                         color="primary"                                   
                                     >
                                     {btnValue}
-                                    </Button>                                    
-                         </Box>
+                                    </Button>
+                        </Box>
+                       </Box>
                     </Form>
                   )
                }
             </Formik>
-        </div>
+
+              
+            <Box
+                sx={{marginTop : "30px"}}
+            >
+                <Typography variant="h4" gutterBottom>View Training Time Slots  </Typography>
+            </Box>
+
+            <table ref={tableRef} className="table table-striped table-hover display">
+                <thead>
+                    <tr >
+                        <th>Sr No.</th>
+                        <th>Training Time Slot</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {trainingTimeSlotList.length === 0 ? (
+                        <tr>
+                            <td colSpan="3" style={{ textAlign: 'center' }}>
+                                No data available
+                            </td>
+                        </tr>
+                        ) : (
+                        trainingTimeSlotList.map((training,index) => (
+                            <tr key={training.training_time_slot_id}>
+                            <td>{index+1}</td>
+                            <td>{training.training_time_slot}</td>
+                            <td>
+                                <Button type="submit" variant="contained" color="success" onClick={() => editTrainingTimeSlot(training.training_time_slot_id)} > <Tooltip title="Update Training Time Slot" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                            </td>
+                            </tr>
+                        ))
+                      )}
+                </tbody>
+            </table>
+        </Box>         
+            
     ); 
  
 }

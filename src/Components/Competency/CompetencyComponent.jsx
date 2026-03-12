@@ -5,6 +5,7 @@ import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 import { retrievecompetencyById, savecompetency, updatecompetency } from "../api/CompetencyApiService"
 import * as Yup from "yup";
+import { toast } from "react-toastify"
 
 export default function CompetencyComponent () {
 
@@ -49,22 +50,22 @@ export default function CompetencyComponent () {
             if(id == -1) {
                 savecompetency(competency)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
+                        toast.success(response?.data?.responseMessage)
                         navigate('/competencies')
                         })
                     .catch((error) => {   
-                        showToast(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage)
                         navigate('/competencies')
                     }) 
             }
             else {
                 updatecompetency(competency)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
+                        toast.success(response?.data?.responseMessage)
                         navigate('/competencies')
                     })
                     .catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage)
                         navigate('/competencies')
                     })
             }
@@ -73,11 +74,11 @@ export default function CompetencyComponent () {
     const validationSchema = Yup.object({
          score: Yup.mixed()
             .required("Competency Score is required")
-
     })
  
      return (
-        <div className="container">
+         
+          <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik initialValues={ { competency_id,score} }
                 enableReinitialize={true}
@@ -89,11 +90,7 @@ export default function CompetencyComponent () {
                {
                 (props) => (
                     <Form>                       
-                        <Box
-                            sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                            noValidate
-                            autoComplete="off"
-                            >
+                       <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                 <TextField  id="score"
                                             name="score"
                                             label="Score"
@@ -123,7 +120,8 @@ export default function CompetencyComponent () {
                   )
                }
             </Formik>
-        </div>
+            </Box>
+         
     ); 
  
 }

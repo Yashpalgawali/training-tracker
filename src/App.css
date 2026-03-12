@@ -22,7 +22,7 @@ body {
   100% {color: green;}
 }
 
-.btnvalue {
+/* .btnvalue {
   justify-self: start !important;
   margin-left: 216px;
 }
@@ -34,4 +34,4 @@ body {
 
 .navbar.fixed-top {
   z-index: 1200 !important;
-}
+} */

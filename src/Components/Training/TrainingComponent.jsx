@@ -70,7 +70,7 @@ export default function TrainingComponent() {
     })
 
     return(
-        <div className="container">            
+         <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", p: 2 }}>         
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>               
             <div>
                <Formik
@@ -85,11 +85,7 @@ export default function TrainingComponent() {
                 {
                      (props) => (
                         <Form>
-                            <Box
-                                 sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                noValidate
-                                autoComplete="off"
-                            >
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                 <TextField
                                         id="training_name"
                                         name="training_name"
@@ -120,6 +116,6 @@ export default function TrainingComponent() {
                </Formik>
               
             </div>
-        </div>
+        </Box>
     )
 }

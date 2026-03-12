@@ -68,7 +68,7 @@ export default function DesignationComponent() {
     }
    
     return(
-        <div className="container">
+         <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik
                 initialValues={ { desigId  , desigName } }
@@ -81,11 +81,7 @@ export default function DesignationComponent() {
                 {
                     (props) => (
                         <Form>
-                            <Box
-                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                    >
+                             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                                     <TextField  id="desigName"
                                                 name="desigName"
                                                 label="Designation Name"
@@ -115,6 +111,6 @@ export default function DesignationComponent() {
                 }
             </Formik>
           
-        </div>
+        </Box>
     )
 }

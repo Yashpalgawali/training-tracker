@@ -4,6 +4,7 @@ import { retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyA
 import { ErrorMessage,  Formik,Form } from "formik"
 import { Box, Button, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
+import { toast } from "react-toastify"
 
 export default function CompanyComponent () {
 
@@ -48,23 +49,23 @@ export default function CompanyComponent () {
 
             if(id == -1) {
                 saveCompany(company)
-                    .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
+                    .then((response)=> {                          
+                        toast.success(response?.data?.responseMessage)
                         navigate('/companies')
                         })
                     .catch((error) => {   
-                        showToast(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage,"error")
                         navigate('/companies')
                     }) 
             }
             else {
                 updateCompany(company)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
+                        toast.success(response?.data?.responseMessage)
                         navigate('/companies')
                     })
                     .catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage,"error")
                         navigate('/companies')
                     })
             }
@@ -79,50 +80,100 @@ export default function CompanyComponent () {
         return errors
    }
 
-     return (
-        <div className="container">
-            <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-            <Formik initialValues={ { companyId,compName} }
-                enableReinitialize={true}
-                onSubmit={onSubmit}
-                validate={validate}
-                validateOnBlur={false}
-                validateOnChange={false}
-            >
-               {
-                (props) => (
-                    <Form>                       
-                        <Box
-                                sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                noValidate
-                                autoComplete="off"
-                                >
-                                <TextField  id="compName"
-                                            name="compName"
-                                            label="Company Name"
-                                            variant="standard"
-                                            placeholder="Enter Company Name"
-                                            value={props.values.compName}
-                                            onChange={props.handleChange}
-                                            onBlur={props.handleBlur}
-                                            error={props.touched.compName && Boolean(props.errors.compName)}
-                                            helperText={<ErrorMessage name="compName" />}
-                                            fullWidth />
-                        </Box>
-                        <Box className="btnvalue">
-                                    <Button
-                                        type="submit"
-                                        style={{ float: 'left' }}
-                                        variant="contained"
-                                        color="primary"                                   
-                                    >
-                                    {btnValue}
-                                    </Button>
-                         </Box>
-                    </Form>
-                  )
-               }
-            </Formik>
-        </div>
-    );
+    //  return (
+    //     <div className="container">
+    //         <Typography variant="h4" gutterBottom>{btnValue}</Typography>
+    //         <Formik initialValues={ { companyId,compName} }
+    //             enableReinitialize={true}
+    //             onSubmit={onSubmit}
+    //             validate={validate}
+    //             validateOnBlur={false}
+    //             validateOnChange={false}
+    //         >
+    //            {
+    //             (props) => (
+    //                 <Form>                       
+    //                     <Box
+    //                             sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
+    //                             noValidate
+    //                             autoComplete="off"
+    //                             >
+    //                             <TextField  id="compName"
+    //                                         name="compName"
+    //                                         label="Company Name"
+    //                                         variant="standard"
+    //                                         placeholder="Enter Company Name"
+    //                                         value={props.values.compName}
+    //                                         onChange={props.handleChange}
+    //                                         onBlur={props.handleBlur}
+    //                                         error={props.touched.compName && Boolean(props.errors.compName)}
+    //                                         helperText={<ErrorMessage name="compName" />}
+    //                                         fullWidth />
+    //                     </Box>
+    //                     <Box className="btnvalue">
+    //                                 <Button
+    //                                     type="submit"
+    //                                     style={{ float: 'left' }}
+    //                                     variant="contained"
+    //                                     color="primary"                                   
+    //                                 >
+    //                                 {btnValue}
+    //                                 </Button>
+    //                      </Box>
+    //                 </Form>
+    //               )
+    //            }
+    //         </Formik>
+    //     </div>
+    // );
+    return (
+        <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}>
+            <Typography variant="h4" gutterBottom>
+            {btnValue}
+            </Typography>
+
+    <Formik
+      initialValues={{ companyId, compName }}
+      enableReinitialize={true}
+      onSubmit={onSubmit}
+      validate={validate}
+      validateOnBlur={false}
+      validateOnChange={false}
+    >
+      {(props) => (
+        <Form>
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+            <TextField
+              id="compName"
+              name="compName"
+              label="Company Name"
+              variant="standard"
+              placeholder="Enter Company Name"
+              value={props.values.compName}
+              onChange={props.handleChange}
+              onBlur={props.handleBlur}
+              error={props.touched.compName && Boolean(props.errors.compName)}
+              helperText={<ErrorMessage name="compName" />}
+              fullWidth
+            />
+
+            <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 2 }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+              >
+                {btnValue}
+              </Button>
+            </Box>
+
+          </Box>
+
+        </Form>
+      )}
+    </Formik>
+  </Box>
+);
 }

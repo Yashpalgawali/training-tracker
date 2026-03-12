@@ -24,8 +24,7 @@ export default function DepartmentComponent() {
     
     const [selectedCompanyId, setSelectedCompanyId] = useState('');
 
-    const navigate = useNavigate()
-    
+    const navigate = useNavigate()    
     
     useEffect(() => {
      const retrieveDepartmentById = async() =>{
@@ -98,7 +97,7 @@ export default function DepartmentComponent() {
     return(
           <div className="container">
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-       
+            <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}></Box>
             <Formik
                 initialValues={ {  deptId , deptName , companies: selectedCompanyId } }
                 enableReinitialize={true}
@@ -110,11 +109,10 @@ export default function DepartmentComponent() {
                 {
                     (props)=> (
                         <Form>
-                            <Box
-                                    sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                    noValidate
-                                    autoComplete="off"
-                                    >
+                            
+                                
+                                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
                                 {/* Dropdown Select */}
                                 <FormControl
                                     variant="standard"
@@ -164,10 +162,12 @@ export default function DepartmentComponent() {
                                     {btnValue}
                                     </Button>
                             </Box>
+                            
                         </Form>
                     )
                 }                
-            </Formik>      
+            </Formik>
+                 
       </div>
     );
 }

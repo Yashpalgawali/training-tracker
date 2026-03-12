@@ -75,7 +75,7 @@ export default function HolidayComponent() {
     }
 
     return(
-        <div className="container">
+        <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
              <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Formik
@@ -88,11 +88,7 @@ export default function HolidayComponent() {
             >
              {({ setFieldValue, values, handleChange, handleBlur,  touched, errors }) => (
                     <Form>
-                        <Box
-                            sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                            noValidate
-                            autoComplete="off"
-                            >
+                         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                             <TextField  id="holiday"
                                         name="holiday"
                                         label="Holiday"
@@ -137,6 +133,6 @@ export default function HolidayComponent() {
             }
             </Formik>
           </LocalizationProvider>
-        </div>
+        </Box>
     )
 }
