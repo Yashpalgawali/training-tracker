@@ -19,6 +19,7 @@ export default function TrainingComponent() {
     const [btnValue,setBtnValue] = useState('Add Training')
     const [training_id,setTrainingId] = useState('')
     const [training_name,setTrainingName] = useState('')
+    const [isDisabled,setIsDisabled] = useState(false)
 
     const {id} = useParams()
 
@@ -41,9 +42,7 @@ export default function TrainingComponent() {
             retrieveAllTraining().then((response)=> {             
                 setTrainingList(response.data)
             }).catch((error)=>{           
-               const message =  error?.response?.data?.errorMessage
-               showToast(message , "error")
-               
+               toast.error(error?.response?.data?.errorMessage)               
             })
         }
     
@@ -66,6 +65,7 @@ export default function TrainingComponent() {
     },[id])
 
     function onSubmit(values) {
+        setIsDisabled(true)
         let training = {
             training_id : values.training_id,
             training_name : values.training_name
@@ -74,12 +74,14 @@ export default function TrainingComponent() {
         if(id == -1) {
             saveTraining(training).then((response) => {
                 toast.success(response?.data?.responseMessage)
+                setIsDisabled(false)
                 retrieveAllTrainings()
                 setTrainingName("")
                 navigate(`/training/-1`)
             })
             .catch((error)=>{
                 toast.error(error?.data?.errorMessage)
+                setIsDisabled(false)
                 setTrainingName("")
                 navigate(`/training/-1`)
             })
@@ -87,26 +89,21 @@ export default function TrainingComponent() {
         else {
            updateTraining(training).then((response) => {
                 toast.success(response?.data?.responseMessage)
+                setIsDisabled(false)
                 retrieveAllTrainings()
                 setBtnValue("Add Training")
                 setTrainingName("")
                 navigate(`/training/-1`)
             })
             .catch((error)=>{
-                toast.error(error?.data?.errorMessage)                
+                setIsDisabled(false)
+                toast.error(error?.data?.errorMessage)
                 setTrainingName("")
+                retrieveAllTrainings()
+                setBtnValue("Add Training")
                 navigate(`/training/-1`)
             }) 
         }
-    }
-
-    function validate(values) {
-
-        let errors = {} 
-        if(values.training_name == '') {
-            errors.training_name = 'Please Enter Training name'
-        }
-        return errors
     }
 
     const validationSchema = Yup.object({
@@ -124,7 +121,6 @@ export default function TrainingComponent() {
                     validateOnBlur={false}
                     validateOnChange={false}
                     onSubmit={onSubmit}
-                    // validate={validate}
                     validationSchema={validationSchema}
                >
                 {
@@ -149,49 +145,48 @@ export default function TrainingComponent() {
                                         type="submit"
                                         style={{ float: 'left' }}
                                         variant="contained"
-                                        color="primary"                                   
+                                        color="primary"
+                                        disabled={isDisabled}
                                     >
                                     {btnValue}
                                     </Button>
-                         </Box>
-                        </Form> 
-
+                           </Box>
+                        </Form>
                      )
                 }
                </Formik>
               
-                <Box sx={{ marginTop : "100px"}}>
-                            <Typography variant="h4" gutterBottom>View Trainings </Typography>
-                        </Box>
-            
-                        <table ref={tableRef} className="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Sr</th>
-                                    <th>Training</th>
-                                    <th>Action</th>
+            <Box sx={{ marginTop : "50px"}}>
+                    <Typography variant="h4" gutterBottom>View Trainings </Typography>
+                <table ref={tableRef} className="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Sr</th>
+                            <th>Training</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        (training_list.length == 0) ? (
+                            <tr>
+                                <td colSpan={3}> No Data Available</td>
+                            </tr>
+                        ) : (
+                            training_list.map((train,index)=>(
+                                <tr key={train.training_id}>
+                                    <td> {index+1} </td>
+                                    <td>{train.training_name}</td>
+                                    <td>
+                                        <Button variant="contained" color="success" className="m-2"  onClick={()=> navigate(`/training/${train.training_id}`)}> <Tooltip title={`Update ${train.training_name}`} placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                (training_list.length == 0) ? (
-                                    <tr>
-                                        <td colSpan={3}> No Data Available</td>
-                                    </tr>
-                                ) : (
-                                    training_list.map((train,index)=>(
-                                        <tr key={train.training_id}>
-                                            <td> {index+1} </td>
-                                            <td>{train.training_name}</td>
-                                            <td>
-                                                <Button variant="contained" color="success" className="m-2"  onClick={()=> navigate(`/training/${train.training_id}`)}> <Tooltip title={`Update ${train.training_name}`} placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )
-                            }
-                            </tbody>
-                        </table>
+                            ))
+                        )
+                    }
+                    </tbody>
+                </table>
+            </Box>
         </Box>
     )
 }

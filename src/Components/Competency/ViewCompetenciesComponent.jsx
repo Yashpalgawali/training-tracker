@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import $ from 'jquery'; // jQuery is required for DataTables to work
-  
+
+import $ from 'jquery'; // jQuery is required for DataTables to work  
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
+
 import { Box, Button, Tooltip, Typography } from "@mui/material"
 import EditIcon from '@mui/icons-material/Edit';
 import { retrieveAllCompetencies } from "../api/CompetencyApiService";
@@ -17,7 +18,7 @@ export default function ViewCompetenciesComponent() {
     const tableRef = useRef(null); // Ref for the table
     const navigate = useNavigate()
 
-    useEffect(()=> refreshCompanies() , [] )
+    useEffect(()=> refreshCompetencies() , [] )
     
     useEffect(() => {
         // Initialize DataTable only after the component has mounted
@@ -27,7 +28,7 @@ export default function ViewCompetenciesComponent() {
       }, [competencylist]); // Re-initialize DataTables when activities data changes
    
 
-    function refreshCompanies() {
+    function refreshCompetencies() {
      
         retrieveAllCompetencies().then((response)=> {
             setCompetencyList(response.data)

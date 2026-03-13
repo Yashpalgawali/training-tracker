@@ -7,6 +7,7 @@ import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select,
 import { showToast } from "../SharedComponent/showToast"
 
 import * as Yup from "yup";
+import { toast } from "react-toastify"
 
 export default function DepartmentComponent() {
     
@@ -58,9 +59,6 @@ export default function DepartmentComponent() {
 
     function onSubmit(values) {
         setIsDisabled(true)
-        setTimeout(() => {
-            setIsDisabled(false)
-        }, 2000);
 
         retrieveCompanyById(values.companies).then((response) => {            
              const compObj = {
@@ -72,10 +70,11 @@ export default function DepartmentComponent() {
             }
             if(id == -1) {
                 saveDepartment(dept).then((response)=> {
-                    showToast(response?.data?.responseMessage,"success")
+                    setIsDisabled(false)
+                    toast.success(response?.data?.responseMessage)
                     navigate(`/viewdepartments`)
                 }).catch((error) => {
-                    showToast(error?.data?.errorMessage,"error")
+                    toast.success(error?.data?.errorMessage)
                     navigate(`/viewdepartments`)
                 })
             }
@@ -84,10 +83,12 @@ export default function DepartmentComponent() {
                         dept.company = company
                     }
                     updateDepartment(dept).then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
+                        toast.success(response?.data?.responseMessage)
+                        setIsDisabled(false)
                         navigate(`/viewdepartments`)
                     }).catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage)
+                        setIsDisabled(false)
                         navigate(`/viewdepartments`)
                     })
                 }            
@@ -95,7 +96,7 @@ export default function DepartmentComponent() {
     }
  
     return(
-          <div className="container">
+          <Box>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}></Box>
             <Formik
@@ -162,12 +163,10 @@ export default function DepartmentComponent() {
                                     {btnValue}
                                     </Button>
                             </Box>
-                            
                         </Form>
                     )
                 }                
             </Formik>
-                 
-      </div>
+      </Box>
     );
 }

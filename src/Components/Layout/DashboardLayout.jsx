@@ -8,16 +8,16 @@ import {
   Typography,
   IconButton,
   List,
-  ListItem,
   ListItemIcon,
   ListItemText,
   CssBaseline,
   ListItemButton
 } from "@mui/material";
+
 import { useNavigate } from "react-router-dom";
 
 import LogoutIcon from '@mui/icons-material/Logout';
-import DevicesIcon from "@mui/icons-material/Devices";
+import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
 import Groups3Icon from '@mui/icons-material/Groups3';
@@ -156,7 +156,7 @@ function DashboardLayout({ children }) {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           ml: { sm: `${drawerWidth}px` },
-         
+          zIndex: (theme) => theme.zIndex.drawer + 1
         }}
       >
         <Toolbar>
@@ -166,7 +166,8 @@ function DashboardLayout({ children }) {
             edge="start"
             onClick={handleDrawerToggle}
             sx={{ mr: 2, display: { sm: "none" } }}
-          >
+             
+          >  <MenuIcon />
              
           </IconButton>
 

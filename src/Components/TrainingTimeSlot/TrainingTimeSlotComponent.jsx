@@ -63,27 +63,15 @@ export default function TrainingTimeSlotComponent () {
         }).catch((error) => {             
              toast.error(error?.data?.errorMessage)
         })
-    }  
-
-    function addNewTrainingTimeSlot() {
-        navigate(`/trainingtimeslot/-1`)
     }
-
-    function editTrainingTimeSlot(id) {
-        navigate(`/trainingtimeslot/${id}`)
-    }
-
+ 
     function onSubmit(values) {
         setIsDisabled(true)
         let new_id = Number(id)
             const trainingTimeSlot = {
                 training_time_slot_id : new_id , 
                 training_time_slot: values.training_time_slot
-            }
-
-            setTimeout(() => {
-                setIsDisabled(false)
-            }, 1000);
+            } 
 
             if(id == -1) {
                  
@@ -91,11 +79,13 @@ export default function TrainingTimeSlotComponent () {
                     .then((response)=> {
                         toast.success(response?.data?.responseMessage)
                         refreshTrainingTimeSlots()
+                        setIsDisabled(false)
                         navigate(`/trainingtimeslot/-1`)
                         })
-                    .catch((error) => {   
+                    .catch((error) => {
                         toast.error(error?.data?.errorMessage)
                         refreshTrainingTimeSlots()
+                        setIsDisabled(false)
                         navigate(`/trainingtimeslot/-1`)
                     }) 
             }
@@ -105,13 +95,17 @@ export default function TrainingTimeSlotComponent () {
                         
                         toast.success(response?.data?.responseMessage)
                         refreshTrainingTimeSlots()
-                         setTrainingTimeSlot("")
+                        setTrainingTimeSlot("")
                         setBtnValue("Add Training Time Slot")
+                        setIsDisabled(false)
                         navigate(`/trainingtimeslot/-1`)
                     })
                     .catch((error) => {
                         toast.error(error?.data?.errorMessage)
-                       
+                        refreshTrainingTimeSlots()
+                        setTrainingTimeSlot("")
+                        setBtnValue("Add Training Time Slot")
+                        setIsDisabled(false)
                         navigate(`/trainingtimeslot/-1`)
                     })                    
             }
@@ -169,11 +163,12 @@ export default function TrainingTimeSlotComponent () {
                                             helperText={<ErrorMessage name="training_time_slot" />}
                                             fullWidth />
                                
-                          <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 2 }}>
+                          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
                                     <Button
                                         type="submit"                                         
                                         variant="contained"
-                                        color="primary"                                   
+                                        color="primary"
+                                        disabled={isDisabled}
                                     >
                                     {btnValue}
                                     </Button>
@@ -211,7 +206,7 @@ export default function TrainingTimeSlotComponent () {
                             <td>{index+1}</td>
                             <td>{training.training_time_slot}</td>
                             <td>
-                                <Button type="submit" variant="contained" color="success" onClick={() => editTrainingTimeSlot(training.training_time_slot_id)} > <Tooltip title="Update Training Time Slot" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                <Button type="submit" variant="contained" color="success" onClick={() => navigate(`/trainingtimeslot/${training.training_time_slot_id}`)} > <Tooltip title="Update Training Time Slot" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
                             </td>
                             </tr>
                         ))

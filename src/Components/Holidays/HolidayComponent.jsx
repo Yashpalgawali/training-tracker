@@ -203,7 +203,7 @@ export default function HolidayComponent() {
                 {
                 holidaylist.length === 0 ? (
                         <tr>
-                            <td colSpan="3" style={{ textAlign: 'center' }}>
+                            <td colSpan="4" style={{ textAlign: 'center' }}>
                                 No Data available
                             </td>
                         </tr>

@@ -84,18 +84,19 @@ export default function CompanyComponent () {
                 companyId : id , compName: values.compName
             }
 
-            setTimeout(() => {
-                setIsDisabled(false)
-            }, 1000);
-
             if(id == -1) {
                 saveCompany(company)
                     .then((response)=> {                          
                         toast.success(response?.data?.responseMessage)
+                        refreshCompanies()
+                        setCompName("")
                         navigate('/company/-1')
                         })
                     .catch((error) => {   
-                        toast.error(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage)
+                        setIsDisabled(false)
+                        refreshCompanies()
+                        setCompName("")
                         navigate('/company/-1')
                     }) 
             }
@@ -103,13 +104,15 @@ export default function CompanyComponent () {
                 updateCompany(company)
                     .then((response)=> {
                         toast.success(response?.data?.responseMessage)
+                        setIsDisabled(false)
                         refreshCompanies()
                         setCompName("")
                         setBtnValue("Add Company")
                         navigate('/company/-1')
                     })
                     .catch((error) => {
-                        toast.error(error?.data?.errorMessage,"error")
+                        toast.error(error?.data?.errorMessage)
+                        setIsDisabled(false)
                         refreshCompanies()
                         setCompName("")
                         navigate('/company/-1')
@@ -160,56 +163,53 @@ export default function CompanyComponent () {
               fullWidth
             />
 
-            <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 2 }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-start"}}>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
+                disabled={isDisabled}
               >
                 {btnValue}
               </Button>
             </Box>
-
           </Box>
-
         </Form>
       )}
     </Formik>
-
-
-    <Box>
-                    <Typography variant="h4" gutterBottom>View Companies </Typography>
-                </Box>
-                <div>
-                <table ref={tableRef} className="table table-striped table-hover display">
-                    <thead>
-                        <tr >
-                            <th>Sr No.</th>
-                            <th>Company</th>
-                            <th>Action</th>
+        <Box>
+            <Typography variant="h4" gutterBottom>View Companies </Typography>
+        </Box>
+        <div>
+        <table ref={tableRef} className="table table-striped table-hover display">
+            <thead>
+                <tr >
+                    <th>Sr No.</th>
+                    <th>Company</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {complist.length === 0 ? (
+                    <tr>
+                        <td colSpan="3" style={{ textAlign: 'center' }}>
+                            No data available
+                        </td>
+                    </tr>
+                    ) : (
+                    complist.map((comp,index) => (
+                        <tr key={comp.companyId}>
+                        <td>{index+1}</td>
+                        <td>{comp.compName}</td>
+                        <td>
+                            <Button type="submit" variant="contained" color="success" onClick={() => navigate(`/company/${comp.companyId}`)} > <Tooltip title={`Update ${comp.compName}` } placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                        </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                      {complist.length === 0 ? (
-                            <tr>
-                                <td colSpan="3" style={{ textAlign: 'center' }}>
-                                    No data available
-                                </td>
-                            </tr>
-                            ) : (
-                            complist.map((comp,index) => (
-                                <tr key={comp.companyId}>
-                                <td>{index+1}</td>
-                                <td>{comp.compName}</td>
-                                <td>
-                                    <Button type="submit" variant="contained" color="success" onClick={() => navigate(`/company/${comp.companyId}`)} > <Tooltip title={`Update ${comp.compName}` } placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
-                                </td>
-                                </tr>
-                            ))
-                          )}
-                    </tbody>
-                </table>
-            </div>
+                    ))
+                    )}
+            </tbody>
+        </table>
+    </div>
   </Box>
 );
 }

@@ -16,11 +16,10 @@ export const apiClient = axios.create({
 
 // export const apiClient = axios.create({
 //     baseURL : 'http://192.168.0.219:8282/trainingtrackerrest/'
-// }) 
-
+// })
 
 // For Tomcat 10
 // export const apiClient = axios.create({
-//     baseURL : 'http://13.232.150.127:8080/trainingtrackerrest/'
+//     baseURL : 'http://13.232.150.127:8080/trainingtrackerrest/' 
 // })
  

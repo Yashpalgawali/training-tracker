@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react"
+import $ from 'jquery'; // jQuery is required for DataTables to work  
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ErrorMessage,  Formik,Form } from "formik"
-import { Box, Button, TextField, Typography } from "@mui/material"
+import { Box, Button, TextField, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
-import { retrievecompetencyById, savecompetency, updatecompetency } from "../api/CompetencyApiService"
+import { retrieveAllCompetencies, retrievecompetencyById, savecompetency, updatecompetency } from "../api/CompetencyApiService"
 import * as Yup from "yup";
 import { toast } from "react-toastify"
+
+import EditIcon from '@mui/icons-material/Edit';
 
 export default function CompetencyComponent () {
 
@@ -15,6 +20,10 @@ export default function CompetencyComponent () {
     const navigate = useNavigate()
     const [isDisabled, setIsDisabled] = useState(false)
     const [btnValue, setBtnValue] = useState('Add Competency')
+
+    const [competencylist,setCompetencyList] = useState([])
+    const tableRef = useRef(null); // Ref for the table
+    
 
     useEffect(()=> {
         const getCompetencyById = async() => {
@@ -31,11 +40,29 @@ export default function CompetencyComponent () {
                 })
         }
         };
-
         if(id) {
             getCompetencyById()
         }
     }, [id] ) 
+
+        
+        useEffect(()=> refreshCompetencies() , [] )
+        
+        useEffect(() => {
+            // Initialize DataTable only after the component has mounted
+            if (tableRef.current && competencylist.length > 0 ) {
+              $(tableRef.current).DataTable(); // Initialize DataTables
+            }
+          }, [competencylist]); // Re-initialize DataTables when activities data changes       
+    
+        function refreshCompetencies() {
+         
+            retrieveAllCompetencies().then((response)=> {
+                setCompetencyList(response.data)
+            }).catch((error) => {
+                 showToast(error.response.data.errorMessage, "error")
+            })
+        }  
 
     function onSubmit(values) {
         setIsDisabled(true)
@@ -51,22 +78,37 @@ export default function CompetencyComponent () {
                 savecompetency(competency)
                     .then((response)=> {
                         toast.success(response?.data?.responseMessage)
-                        navigate('/competencies')
+                        setScore("")
+                        setIsDisabled(false) 
+                        refreshCompetencies()                      
+                        navigate(`/competency/-1`)
                         })
                     .catch((error) => {   
                         toast.error(error?.data?.errorMessage)
-                        navigate('/competencies')
+                        setScore("")
+                        setBtnValue(false)
+                        setIsDisabled(false)
+                        refreshCompetencies()
+                        navigate(`/competency/-1`)
                     }) 
             }
             else {
                 updatecompetency(competency)
                     .then((response)=> {
                         toast.success(response?.data?.responseMessage)
-                        navigate('/competencies')
+                        setScore("")
+                        setBtnValue("Add Competency")
+                        setIsDisabled(false)
+                        refreshCompetencies()
+                        navigate(`/competency/-1`)
                     })
                     .catch((error) => {
                         toast.error(error?.data?.errorMessage)
-                        navigate('/competencies')
+                        setScore("")
+                        setBtnValue("Add Competency")
+                        setIsDisabled(false)
+                        refreshCompetencies()
+                        navigate(`/competency/-1`)
                     })
             }
          }
@@ -78,7 +120,7 @@ export default function CompetencyComponent () {
  
      return (
          
-          <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}>
+          <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik initialValues={ { competency_id,score} }
                 enableReinitialize={true}
@@ -120,8 +162,38 @@ export default function CompetencyComponent () {
                   )
                }
             </Formik>
-            </Box>
-         
-    ); 
- 
+                <Box sx={{marginTop : "50px"}}>
+                    <Typography variant="h4" gutterBottom>View Competencies </Typography>
+                
+                    <table ref={tableRef} className="table table-striped table-hover display">
+                            <thead>
+                                <tr >
+                                    <th>Sr No.</th>
+                                    <th>Competecny</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {competencylist.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="3" style={{ textAlign: 'center' }}>
+                                            No data available
+                                        </td>
+                                    </tr>
+                                    ) : (
+                                    competencylist.map((comp,index) => (
+                                        <tr key={comp.competency_id}>
+                                        <td>{index+1}</td>
+                                        <td>{comp.score}</td>
+                                        <td>
+                                            <Button type="submit" variant="contained" color="success" onClick={() => navigate(`/competency/${comp.competency_id}`)} > <Tooltip title="Update Competecny" placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                        </td>
+                                        </tr>
+                                    ))
+                                  )}
+                            </tbody>
+                        </table>
+                    </Box>
+            </Box>         
+    );
 }
