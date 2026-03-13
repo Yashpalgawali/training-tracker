@@ -3,7 +3,7 @@ import $ from 'jquery'; // jQuery is required for DataTables to work
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
 
-import { Box, Button, TextField, Tooltip,Typography } from "@mui/material"
+import { Box, Button, CircularProgress, TextField, Tooltip,Typography } from "@mui/material"
 import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
@@ -147,6 +147,9 @@ export default function TrainingComponent() {
                                         variant="contained"
                                         color="primary"
                                         disabled={isDisabled}
+                                         startIcon= {
+                                                    isDisabled ? <CircularProgress size={20} color="teal" /> : null
+                                                    }  
                                     >
                                     {btnValue}
                                     </Button>

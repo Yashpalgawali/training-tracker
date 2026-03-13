@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { getDepartmentById, saveDepartment, updateDepartment } from "../api/DepartmentApiService"
 import { ErrorMessage, Form, Formik } from "formik"
 import { retrieveAllCompanies, retrieveCompanyById } from "../api/CompanyApiService"
-import { Box, Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 
 import * as Yup from "yup";
@@ -110,9 +110,7 @@ export default function DepartmentComponent() {
                 {
                     (props)=> (
                         <Form>
-                            
-                                
-                                 <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
 
                                 {/* Dropdown Select */}
                                 <FormControl
@@ -159,6 +157,9 @@ export default function DepartmentComponent() {
                                         variant="contained"
                                         color="primary"
                                         disabled={isDisabled}
+                                         startIcon= {
+                                                    isDisabled ? <CircularProgress size={20} color="teal" /> : null
+                                                }  
                                     >
                                     {btnValue}
                                     </Button>

@@ -6,7 +6,7 @@ import { ErrorMessage, Field, Form, Formik } from "formik"
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { getAllDesignations, getDesignationById, saveDesignation, updateDesignation } from "../api/DesignationApiService"
-import { Box, Button, TextField,Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, TextField,Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -64,7 +64,9 @@ export default function DesignationComponent() {
                  setDesigName(response.data.desigName)
                  setDesigId(response.data.desigId)
             }).catch((error)=>{
-                sessionStorage.setItem('reserr',error.response.data.errorMessage)
+                toast.error(error.response.data.errorMessage)
+                setDesigName("")
+                setBtnValue("Add Designtion")
                 navigate(`/designation/-1`)
             }) 
 
@@ -150,6 +152,9 @@ export default function DesignationComponent() {
                                             variant="contained"
                                             color="primary"
                                             disabled={isDisabled}
+                                             startIcon= {
+                                                    isDisabled ? <CircularProgress size={20} color="teal" /> : null
+                                                }  
                                         >
                                         {btnValue}
                                         </Button>
@@ -158,7 +163,7 @@ export default function DesignationComponent() {
                     )
                 }
             </Formik>
-            <Box sx={{marginTop : "100px"}}>
+            <Box sx={{marginTop : "50px"}}>
                 <Typography variant="h4" gutterBottom>View Designations </Typography>
             </Box>
         

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { retrieveAllCompanies, retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
 import { ErrorMessage,  Formik,Form } from "formik"
-import { Box, Button, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, TextField, Tooltip, Typography } from "@mui/material"
 
 import { toast } from "react-toastify"
 
@@ -169,6 +169,9 @@ export default function CompanyComponent () {
                 variant="contained"
                 color="primary"
                 disabled={isDisabled}
+                 startIcon= {
+                                isDisabled ? <CircularProgress size={20} color="teal" /> : null
+                                }  
               >
                 {btnValue}
               </Button>

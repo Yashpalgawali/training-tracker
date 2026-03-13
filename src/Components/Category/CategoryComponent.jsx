@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { retrieveAllCategories, retrieveCategoryById, saveCategory, updateCategory } from "../api/CategoryApiService"
 import { ErrorMessage, Field, Formik,Form } from "formik"
-import { Box, Button, Stack, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, Stack, TextField, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
  import EditIcon from '@mui/icons-material/Edit';
 import { toast } from 'react-toastify';
@@ -166,6 +166,9 @@ export default function CategoryComponent () {
                                 variant="contained"
                                 color="primary"
                                 disabled={isDisabled}
+                                startIcon= {
+                                        isDisabled ? <CircularProgress size={20} color="teal" /> : null
+                                        }  
                             >
                             {btnValue}
                             </Button>

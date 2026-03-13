@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { ErrorMessage,  Formik,Form } from "formik"
-import { Box, Button, TextField, Tooltip, Typography } from "@mui/material"
+import { Box, Button, CircularProgress, TextField, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
 import { retrieveAllTrainingTimeSlots, retrieveTrainingTimeSlotById, saveTrainingTimeSlot, updateTrainingTimeSlot } from "../api/TrainingTimeSlotApiService"
 import EditIcon from '@mui/icons-material/Edit';
@@ -163,12 +163,15 @@ export default function TrainingTimeSlotComponent () {
                                             helperText={<ErrorMessage name="training_time_slot" />}
                                             fullWidth />
                                
-                          <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
+                        <Box sx={{ display: "flex", justifyContent: "flex-start" }}>
                                     <Button
-                                        type="submit"                                         
+                                        type="submit"
                                         variant="contained"
                                         color="primary"
                                         disabled={isDisabled}
+                                        startIcon= {
+                                                        isDisabled ? <CircularProgress size={20} color="teal" /> : null
+                                                    }  
                                     >
                                     {btnValue}
                                     </Button>

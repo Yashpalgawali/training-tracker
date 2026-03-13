@@ -15,6 +15,7 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import * as Yup from "yup";
+import { toast } from "react-toastify";
 
 export default function EmployeeComponent() {
 
@@ -138,24 +139,21 @@ export default function EmployeeComponent() {
         }
         if(id == -1) {
             saveEmployee(employee).then((response) => {                
-                showToast(response?.data?.responseMessage,"success")
+                toast.success(response?.data?.responseMessage)
                 navigate(`/viewemployees`)
             })
             .catch((error) => {
-                 
-                console.log(error)
-                showToast(error.response.data?.errorMessage,"error")
+                toast.error(error?.data?.errorMessage)
                 navigate(`/viewemployees`)
             })
         }
         else {
             employee.empId = id
             updateEmployee(employee).then((response)=>{
-               
-                showToast(response?.data?.responseMessage,"success")
+                toast.success(response?.data?.responseMessage)
                 navigate(`/viewemployees`)
             }).catch((error) => {
-                showToast(error?.data?.errorMessage,"error")
+                toast.error(error?.data?.errorMessage)
                 navigate(`/viewemployees`)
             })
         }
