@@ -1,11 +1,19 @@
-import { Box, Button, TextField, Typography } from "@mui/material"
+import $ from 'jquery'; // jQuery is required for DataTables to work
+  
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+
+import { Box, Button, TextField, Tooltip,Typography } from "@mui/material"
 import { ErrorMessage, Field, Form, Formik } from "formik"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { getTrainingById, saveTraining, updateTraining } from "../api/TrainingApiService"
 import { showToast } from "../SharedComponent/showToast"
+import EditIcon from '@mui/icons-material/Edit';
+import { retrieveAllTraining } from "../api/TrainingApiService"
 
 import * as Yup from "yup"
+import { toast } from 'react-toastify';
 
 export default function TrainingComponent() {
     const [btnValue,setBtnValue] = useState('Add Training')
@@ -16,6 +24,36 @@ export default function TrainingComponent() {
 
     const navigate = useNavigate()
 
+    const [training_list,setTrainingList] = useState([])
+         
+        const tableRef = useRef(null); // Ref for the table
+       
+        const didFetchRef = useRef(false);
+        
+        useEffect(() => {
+            if (!didFetchRef.current) {
+                didFetchRef.current = true;
+                retrieveAllTrainings();
+            }
+        }, []);
+    
+        function retrieveAllTrainings() {        
+            retrieveAllTraining().then((response)=> {             
+                setTrainingList(response.data)
+            }).catch((error)=>{           
+               const message =  error?.response?.data?.errorMessage
+               showToast(message , "error")
+               
+            })
+        }
+    
+         useEffect(() => {
+            // Initialize DataTable only after the component has mounted
+            if (tableRef.current && training_list.length >0 ) {
+              $(tableRef.current).DataTable(); // Initialize DataTables
+            }
+          }, [training_list]); // Re-initialize DataTables when activities data changes
+    
     useEffect(()=> {
         if(id != -1)
         {
@@ -35,22 +73,29 @@ export default function TrainingComponent() {
 
         if(id == -1) {
             saveTraining(training).then((response) => {
-                showToast(response?.data?.responseMessage,"success")
-                navigate(`/viewtraining`)
+                toast.success(response?.data?.responseMessage)
+                retrieveAllTrainings()
+                setTrainingName("")
+                navigate(`/training/-1`)
             })
             .catch((error)=>{
-                showToast(error?.data?.errorMessage,"error")
-                navigate(`/viewtraining`)
+                toast.error(error?.data?.errorMessage)
+                setTrainingName("")
+                navigate(`/training/-1`)
             })
         }
         else {
            updateTraining(training).then((response) => {
-                showToast(response?.data?.responseMessage,"success")
-                navigate(`/viewtraining`)
+                toast.success(response?.data?.responseMessage)
+                retrieveAllTrainings()
+                setBtnValue("Add Training")
+                setTrainingName("")
+                navigate(`/training/-1`)
             })
             .catch((error)=>{
-                showToast(error?.data?.errorMessage,"error")
-                navigate(`/viewtraining`)
+                toast.error(error?.data?.errorMessage)                
+                setTrainingName("")
+                navigate(`/training/-1`)
             }) 
         }
     }
@@ -70,9 +115,9 @@ export default function TrainingComponent() {
     })
 
     return(
-         <Box sx={{ width: "100%", maxWidth: 800, mx: "auto", p: 2 }}>         
+         <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", p: 2 }}>         
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>               
-            <div>
+            
                <Formik
                     initialValues={ { training_id, training_name } }
                     enableReinitialize={true}
@@ -115,7 +160,38 @@ export default function TrainingComponent() {
                 }
                </Formik>
               
-            </div>
+                <Box sx={{ marginTop : "100px"}}>
+                            <Typography variant="h4" gutterBottom>View Trainings </Typography>
+                        </Box>
+            
+                        <table ref={tableRef} className="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Sr</th>
+                                    <th>Training</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                (training_list.length == 0) ? (
+                                    <tr>
+                                        <td colSpan={3}> No Data Available</td>
+                                    </tr>
+                                ) : (
+                                    training_list.map((train,index)=>(
+                                        <tr key={train.training_id}>
+                                            <td> {index+1} </td>
+                                            <td>{train.training_name}</td>
+                                            <td>
+                                                <Button variant="contained" color="success" className="m-2"  onClick={()=> navigate(`/training/${train.training_id}`)}> <Tooltip title={`Update ${train.training_name}`} placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )
+                            }
+                            </tbody>
+                        </table>
         </Box>
     )
 }

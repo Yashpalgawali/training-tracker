@@ -1,21 +1,61 @@
-import { useEffect, useState } from "react"
+import $ from 'jquery'; // jQuery is required for DataTables to work
+  
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { retrieveCategoryById, saveCategory, updateCategory } from "../api/CategoryApiService"
+import { retrieveAllCategories, retrieveCategoryById, saveCategory, updateCategory } from "../api/CategoryApiService"
 import { ErrorMessage, Field, Formik,Form } from "formik"
-import { Box, Button, Stack, TextField, Typography } from "@mui/material"
+import { Box, Button, Stack, TextField, Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
- 
+ import EditIcon from '@mui/icons-material/Edit';
+import { toast } from 'react-toastify';
 export default function CategoryComponent () {
 
     const {id} =  useParams()
     const [category , setCategory] = useState('')
     const [category_id ,setCategoryId] = useState('')
 
-    const navigate = useNavigate()
-    
-    const [isDisabled, setIsDisabled] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(false) 
     const [btnValue, setBtnValue] = useState('Add Category')
+   const [categorylist,setCategoryList] = useState([])
 
+    const didFetchRef = useRef(false)
+    const tableRef = useRef(false); // Ref for the table
+    const navigate = useNavigate()
+
+    useEffect(()=> { 
+        if (!didFetchRef.current) {
+                didFetchRef.current = true;  
+            refreshCategories()
+        }
+    } , [] )
+    
+    useEffect(() => {
+      if (tableRef.current) {
+        // 🔴 Destroy old DataTable if exists
+        if ($.fn.DataTable.isDataTable(tableRef.current)) {
+          $(tableRef.current).DataTable().destroy();
+        }
+
+        // ✅ Initialize only when data exists
+        if (categorylist.length > 0) {
+          $(tableRef.current).DataTable({
+            responsive: true,
+            destroy: true // <-- Important, allows re-init
+          });
+        }
+      }
+    }, [categorylist]);   
+
+    function refreshCategories() {     
+        
+        retrieveAllCategories().then((response)=> {
+            setCategoryList(response.data)
+        }).catch((error)=> {             
+             showToast(error.response.data.errorMessage, "error")
+        })
+    }  
     useEffect(()=> {
         const getCategoryById = async() => {
              
@@ -51,23 +91,33 @@ export default function CategoryComponent () {
             if(id == -1) {
                 saveCategory(category)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
-                        navigate('/viewcategories')
+                        toast.success(response?.data?.responseMessage)
+                        refreshCategories()
+                        navigate('/category/-1')
                         })
-                    .catch((error) => {   
-                        showToast(error?.data?.errorMessage,"error")
-                        navigate('/viewcategories')
+                    .catch((error) => {
+                        toast.error(error?.data?.errorMessage)
+                        refreshCategories()
+                        navigate('/category/-1')
                     }) 
             }
             else {
                 updateCategory(category)
                     .then((response)=> {
-                        showToast(response?.data?.responseMessage,"success")
-                        navigate('/viewcategories')
+                        toast.success(response?.data?.responseMessage)
+                        refreshCategories()
+                        setCategory("")
+                        setBtnValue("Add Category")
+                        setIsDisabled(false)
+                        navigate('/category/-1')
                     })
                     .catch((error) => {
-                        showToast(error?.data?.errorMessage,"error")
-                        navigate('/viewcategories')
+                        toast.error(error?.data?.errorMessage)
+                        refreshCategories()
+                        setCategory("")
+                        setBtnValue("Add Category")
+                        setIsDisabled(false)
+                        navigate('/category/-1')
                     })
             }
          }
@@ -82,7 +132,7 @@ export default function CategoryComponent () {
    }
 
      return (
-        <div className="container">
+        <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik initialValues={ { category_id,category} }
                 enableReinitialize={true}
@@ -94,11 +144,7 @@ export default function CategoryComponent () {
                {
                 (props) => (
                     <Form>                       
-                        <Box
-                                sx={{ '& > :not(style)': { m: 1, width: '100ch' } }}
-                                noValidate
-                                autoComplete="off"
-                                >
+                         <Box >
                                 <TextField  id="category"
                                         name="category"
                                         label="Category"
@@ -118,7 +164,8 @@ export default function CategoryComponent () {
                                 type="submit"
                                 style={{ float: 'left' }}
                                 variant="contained"
-                                color="primary"                                   
+                                color="primary"
+                                disabled={isDisabled}
                             >
                             {btnValue}
                             </Button>
@@ -127,7 +174,39 @@ export default function CategoryComponent () {
                   )
                }
             </Formik>
-        </div>
+            <Box sx={{marginTop: "50px"}}>
+                <Typography variant="h4" gutterBottom>View Categories </Typography>
+            </Box>
+        
+            <table ref={tableRef} className="table table-striped table-hover display">
+                <thead>
+                    <tr >
+                        <th>Sr No.</th>
+                        <th>Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {categorylist.length === 0 ? (
+                        <tr>
+                            <td colSpan="3" style={{ textAlign: 'center' }}>
+                                No data available
+                            </td>
+                        </tr>
+                        ) : (
+                        categorylist.map((category,index) => (
+                            <tr key={category.category_id}>
+                            <td>{index+1}</td>
+                            <td>{category.category}</td>
+                            <td>
+                                <Button type="submit" variant="contained" color="success" onClick={() => navigate(`/category/${category.category_id}`)} > <Tooltip title={`Update ${category.category}`} placement="left" arrow><EditIcon /> &nbsp;Update</Tooltip></Button>
+                            </td>
+                            </tr>
+                        ))
+                      )}
+                </tbody>
+            </table>
+        </Box>
     ); 
  
 }

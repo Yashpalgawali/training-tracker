@@ -105,10 +105,13 @@ export default function TrainingTimeSlotComponent () {
                         
                         toast.success(response?.data?.responseMessage)
                         refreshTrainingTimeSlots()
+                         setTrainingTimeSlot("")
+                        setBtnValue("Add Training Time Slot")
                         navigate(`/trainingtimeslot/-1`)
                     })
                     .catch((error) => {
                         toast.error(error?.data?.errorMessage)
+                       
                         navigate(`/trainingtimeslot/-1`)
                     })                    
             }
@@ -180,8 +183,7 @@ export default function TrainingTimeSlotComponent () {
                   )
                }
             </Formik>
-
-              
+                          
             <Box
                 sx={{marginTop : "30px"}}
             >

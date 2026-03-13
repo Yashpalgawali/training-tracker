@@ -22,6 +22,13 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import BusinessIcon from '@mui/icons-material/Business';
 import Groups3Icon from '@mui/icons-material/Groups3';
 import CorporateFareIcon from '@mui/icons-material/CorporateFare';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import LocalPostOfficeIcon from '@mui/icons-material/LocalPostOffice';
+import CategoryIcon from '@mui/icons-material/Category';
+import SsidChartIcon from '@mui/icons-material/SsidChart';
+import OnDeviceTrainingIcon from '@mui/icons-material/OnDeviceTraining';
+import DataExplorationIcon from '@mui/icons-material/DataExploration';
+
 import { useAuth } from "../Security/AuthContext";
 
 const drawerWidth = 200;
@@ -56,7 +63,7 @@ function DashboardLayout({ children }) {
           <ListItemText primary="Dashboard"  ></ListItemText>
         </ListItemButton>
 
-         <ListItemButton button onClick={()=>navigate(`/companies`)}>
+         <ListItemButton button onClick={()=>navigate(`/company/-1`)}>
           <ListItemIcon>
             <BusinessIcon />
           </ListItemIcon>
@@ -72,21 +79,21 @@ function DashboardLayout({ children }) {
 
         <ListItemButton button onClick={()=>navigate(`/train/employee/-1`)}>
           <ListItemIcon>
-            {/* <DevicesIcon /> */}
+            <OnDeviceTrainingIcon />
           </ListItemIcon>
           <ListItemText primary="Train Employees" />
         </ListItemButton>
 
-        <ListItemButton button onClick={()=>navigate(`/viewtraining`)}>
+        <ListItemButton button onClick={()=>navigate(`/training/-1`)}>
           <ListItemIcon>
-             <DevicesIcon />
+             <DataExplorationIcon />
           </ListItemIcon>
           <ListItemText primary="Trainings" />
         </ListItemButton>
 
-        <ListItemButton button onClick={()=>navigate(`/viewdesignations`)}>
+        <ListItemButton button onClick={()=>navigate(`/designation/-1`)}>
           <ListItemIcon>
-            {/* <DevicesIcon /> */}
+            <LocalPostOfficeIcon />
           </ListItemIcon>
           <ListItemText primary="Designation" />
         </ListItemButton>
@@ -98,27 +105,28 @@ function DashboardLayout({ children }) {
           <ListItemText primary="Employees" />
         </ListItemButton>
 
-        <ListItemButton button onClick={()=>navigate(`/viewcategories`)}>
+        <ListItemButton button onClick={()=>navigate(`/category/-1`)}>
           <ListItemIcon>
-            <Groups3Icon />
+            <CategoryIcon />
           </ListItemIcon>
           <ListItemText primary="Category" />
         </ListItemButton>
 
-        <ListItemButton button onClick={()=>navigate(`/trainingtimeslots`)}>
+        <ListItemButton button onClick={()=>navigate(`/trainingtimeslot/-1`)}>
           <ListItemIcon>
-            <Groups3Icon />
+            
+            <AccessTimeIcon />
           </ListItemIcon>
           <ListItemText primary="Training Slots" />
         </ListItemButton>
 
-        <ListItemButton button onClick={()=>navigate(`/competencies`)}>
+        <ListItemButton button onClick={()=>navigate(`/competency/-1`)}>
           <ListItemIcon>
-            <Groups3Icon />
+            <SsidChartIcon />
           </ListItemIcon>
           <ListItemText primary="Competency" />
         </ListItemButton>
-         <ListItemButton button onClick={()=>navigate(`/holidays`)}>
+         <ListItemButton button onClick={()=>navigate(`/holiday/-1`)}>
           <ListItemIcon>
             <Groups3Icon />
           </ListItemIcon>

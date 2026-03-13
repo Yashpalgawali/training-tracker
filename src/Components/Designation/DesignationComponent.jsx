@@ -1,23 +1,61 @@
+import $ from 'jquery'; // jQuery is required for DataTables to work
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+
 import { ErrorMessage, Field, Form, Formik } from "formik"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { getDesignationById, saveDesignation, updateDesignation } from "../api/DesignationApiService"
-import { Box, Button, TextField, Typography } from "@mui/material"
+import { getAllDesignations, getDesignationById, saveDesignation, updateDesignation } from "../api/DesignationApiService"
+import { Box, Button, TextField,Tooltip, Typography } from "@mui/material"
 import { showToast } from "../SharedComponent/showToast"
+import EditIcon from '@mui/icons-material/Edit';
+
 import * as Yup from "yup";
+import { toast } from 'react-toastify';
 
 export default function DesignationComponent() {
     const [btnValue,setBtnValue] = useState('Add Designtion')
     const [desigName,setDesigName]  = useState('')
     const [desigId,setDesigId]  = useState('')
+    const [desiglist,setDesigList] = useState([])
+
+    const [isDisabled,setIsDisabled] = useState(false)
 
     const navigate = useNavigate()
     const {id} = useParams()
+        
+    const tableRef = useRef(null)
+    const didFetchRef = useRef(false);
+
+    useEffect(
+    () => 
+        {               
+            if (!didFetchRef.current) {
+                didFetchRef.current = true;                            
+                retrieveAllDesignations()
+            }
+        },[]) 
+
+    useEffect(() => {
+        // Initialize DataTable only after the component has mounted
+        if (tableRef.current && desiglist.length >0 ) {
+          $(tableRef.current).DataTable(); // Initialize DataTables
+        }
+      }, [desiglist]); // Re-initialize DataTables when activities data changes
+   
+
+    function retrieveAllDesignations() {
+        getAllDesignations().then(
+            (response) => {   setDesigList(response.data) })
+            .catch((error)=> {
+                showToast(error.response.data.errorMessage, "error")
+            })
+    }
 
     useEffect( 
         () => {
             retrieveDesignationById()
-        },[] )
+        },[id] )
 
     function retrieveDesignationById ()  {
         if(id != -1) {
@@ -27,7 +65,7 @@ export default function DesignationComponent() {
                  setDesigId(response.data.desigId)
             }).catch((error)=>{
                 sessionStorage.setItem('reserr',error.response.data.errorMessage)
-                navigate(`/viewdesignations`)
+                navigate(`/designation/-1`)
             }) 
 
         }
@@ -40,6 +78,7 @@ export default function DesignationComponent() {
     })
 
     function onSubmit(values) {
+        setIsDisabled(true)
         let designation = {
             desigId : id,
             desigName : values.desigName
@@ -47,28 +86,36 @@ export default function DesignationComponent() {
         if(id != -1) {
            
             updateDesignation(designation).then((response) => {
-                showToast(response?.data?.responseMessage,"success")
-                navigate(`/viewdesignations`)
+                toast.success(response?.data?.responseMessage)
+                retrieveAllDesignations()
+                setDesigName("")
+                setBtnValue("Add Designation")
+                setIsDisabled(false)
+                navigate(`/designation/-1`)
             })
             .catch((error) => {
-                showToast(error?.data?.errorMessage,"error")
-                navigate(`/viewdesignations`)
+                toast.error(error?.data?.errorMessage)
+                setBtnValue("Add Designation")
+                setIsDisabled(false)
+                navigate(`/designation/-1`)                
             })
         }
         else {
             saveDesignation(designation).then((response) => {
-                showToast(response?.data?.responseMessage,"success")
-                navigate(`/viewdesignations`)
+                toast.success(response?.data?.responseMessage)
+                setIsDisabled(false)
+                navigate(`/designation/-1`)
             })
             .catch((error) => {
-                showToast(error?.data?.errorMessage,"error")
-                navigate(`/viewdesignations`)
+                toast.error(error?.data?.errorMessage)
+                setIsDisabled(false)
+                navigate(`/designation/-1`)
             })
         }
     }
    
     return(
-         <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}>
+         <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", p: 2 }}>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
             <Formik
                 initialValues={ { desigId  , desigName } }
@@ -101,7 +148,8 @@ export default function DesignationComponent() {
                                             type="submit"
                                             style={{ float: 'left' }}
                                             variant="contained"
-                                            color="primary"                                   
+                                            color="primary"
+                                            disabled={isDisabled}
                                         >
                                         {btnValue}
                                         </Button>
@@ -110,7 +158,40 @@ export default function DesignationComponent() {
                     )
                 }
             </Formik>
-          
+            <Box sx={{marginTop : "100px"}}>
+                <Typography variant="h4" gutterBottom>View Designations </Typography>
+            </Box>
+        
+            <table ref={tableRef} className="table table-striped table-hover display">
+                <thead>
+                    <tr >
+                        <th>Sr No.</th>
+                        <th>Designation</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                    desiglist.length === 0 ? (
+                        <tr>
+                            <td colSpan="3" style={{ textAlign: 'center' }}>
+                                No data available
+                            </td>
+                        </tr>
+                        ) : (
+                        desiglist.map((desig,index) => (
+                            <tr key={desig.desigId}>
+                            <td>{index+1}</td>
+                            <td>{desig.desigName}</td>
+                            <td>
+                                <Button type="submit" variant="contained" color="success" onClick={() => navigate(`/designation/${desig.desigId}`)} > <Tooltip arrow placement="left" title={`Update ${desig.desigName}`}> <EditIcon /> &nbsp;Update</Tooltip></Button>
+                            </td>
+                            </tr>
+                        ))
+                        )
+                    }    
+                </tbody>
+            </table>  
         </Box>
     )
 }
