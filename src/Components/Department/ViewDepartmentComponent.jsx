@@ -1,49 +1,48 @@
+import $ from 'jquery'; // jQuery is required for DataTables to work
+import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
+import 'datatables.net'; // DataTables core functionality
+
 import { useEffect, useRef, useState } from "react"
 import { downAllDepartmentList, getAllDepartments } from "../api/DepartmentApiService"
 import { useNavigate } from "react-router-dom"
 
-import $ from 'jquery'; // jQuery is required for DataTables to work
-import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
-import 'datatables.net'; // DataTables core functionality
-import { showToast } from "../SharedComponent/showToast";
-
 import { Box, Button, Tooltip, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
+import { toast } from 'react-toastify';
 
 
 export default function ViewDepartmentComponent() {
 
     const [deptlist, setDeptList] = useState([])
-    const [successMessage,setSuccessMessage] = useState('')
-    const [errorMessage,setErrorMessage] = useState('')
+
     const tableRef = useRef(null); // Ref for the table
 
     const navigate = useNavigate()
     const didFetchRef = useRef(false)
+
     useEffect(
         () =>  {
             if (!didFetchRef.current) {
                 didFetchRef.current = true; 
                 retrieveAllDepartments()
             }
-            if(sessionStorage.getItem('response')!= null) {
-                setSuccessMessage(sessionStorage.getItem('response'))
-                setErrorMessage('')
-                setTimeout(() => {
-                    setSuccessMessage('')
-                    sessionStorage.removeItem('response')
-                }, 2000);
-            }
+            // if(sessionStorage.getItem('response')!= null) {
+            //     setSuccessMessage(sessionStorage.getItem('response'))
+            //     setErrorMessage('')
+            //     setTimeout(() => {
+            //         setSuccessMessage('')
+            //         sessionStorage.removeItem('response')
+            //     }, 2000);
+            // }
     
-            if(sessionStorage.getItem('reserr')!= null) {
-                setErrorMessage(sessionStorage.getItem('reserr'))
-                setSuccessMessage('')
-                setTimeout(() => {
-                    setErrorMessage('')
-                    sessionStorage.removeItem('reserr')
-                }, 2000);
-            }
+            // if(sessionStorage.getItem('reserr')!= null) {
+            //     setErrorMessage(sessionStorage.getItem('reserr'))
+            //     setTimeout(() => {
+            //         setErrorMessage('')
+            //         sessionStorage.removeItem('reserr')
+            //     }, 2000);
+            // }
         } , []
     )
 
@@ -57,7 +56,7 @@ export default function ViewDepartmentComponent() {
     function retrieveAllDepartments() {
         getAllDepartments()
             .then((response) => setDeptList(response.data))
-            .catch((error) => { showToast(error.response.data.errorMessage, "error") })
+            .catch((error) => { toast.error(error.response.data.errorMessage) })
     }
 
     function updateDepartmentById(id) {

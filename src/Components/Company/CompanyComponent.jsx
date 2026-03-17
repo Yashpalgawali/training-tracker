@@ -1,17 +1,18 @@
-import { useEffect, useRef, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { retrieveAllCompanies, retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
-import { ErrorMessage,  Formik,Form } from "formik"
-import { Box, Button, CircularProgress, TextField, Tooltip, Typography } from "@mui/material"
-
-import { toast } from "react-toastify"
-
-import EditIcon from '@mui/icons-material/Edit';
-
 import $ from 'jquery'; // jQuery is required for DataTables to work
 
 import 'datatables.net-dt/css/dataTables.dataTables.css'; // DataTables CSS styles
 import 'datatables.net'; // DataTables core functionality
+
+import { useEffect, useRef, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { retrieveAllCompanies, retrieveCompanyById, saveCompany, updateCompany } from "../api/CompanyApiService"
+import { ErrorMessage,  Formik,Form } from "formik"
+
+import { Box, Button, CircularProgress, TextField, Tooltip, Typography } from "@mui/material"
+import EditIcon from '@mui/icons-material/Edit';
+
+import { toast } from "react-toastify"
+
 
 export default function CompanyComponent () {
 
@@ -43,9 +44,7 @@ export default function CompanyComponent () {
         if(id){
             getCompanyById()
         }
-    }, [id] ) 
-       
-
+    }, [id] )
     
     useEffect(()=> refreshCompanies() , [] )
 

@@ -98,7 +98,7 @@ export default function DepartmentComponent() {
     return(
           <Box>
             <Typography variant="h4" gutterBottom>{btnValue}</Typography>
-            <Box sx={{ width: "100%", maxWidth: 600, mx: "auto", p: 2 }}></Box>
+            <Box sx={{ width: "100%", maxWidth: 1000, mx: "auto", p: 2 }}></Box>
             <Formik
                 initialValues={ {  deptId , deptName , companies: selectedCompanyId } }
                 enableReinitialize={true}
